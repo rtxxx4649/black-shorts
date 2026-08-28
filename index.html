@@ -1,7 +1,7 @@
-<!DOCTYPE html><html lang="ja">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title></title>  <style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>TREND SHORTS</title>  <style>
     * {
       margin: 0;
       padding: 0;
@@ -20,7 +20,7 @@
       font-family: Arial, sans-serif;
     }
 
-    /* タイトル */
+    /* Site Title */
 
     .site-title {
       color: #fff;
@@ -31,7 +31,7 @@
     }
 
 
-    /* 広告スペース */
+    /* Advertisement Space */
 
     .ad-space {
       width: calc(100% - 40px);
@@ -43,7 +43,7 @@
     }
 
 
-    /* 国 */
+    /* Country */
 
     .country {
       margin-bottom: 50px;
@@ -57,7 +57,7 @@
     }
 
 
-    /* 横スライダー */
+    /* Horizontal Slider */
 
     .slider {
       display: flex;
@@ -79,7 +79,7 @@
     }
 
 
-    /* 動画枠 */
+    /* Video Card */
 
     .item {
       flex: 0 0 220px;
@@ -99,7 +99,7 @@
     }
 
 
-    /* スコア */
+    /* Score */
 
     .score {
       width: 100%;
@@ -113,31 +113,31 @@
       align-items: center;
       justify-content: center;
     }
-  </style></head><body>  <!-- サイトタイトル -->  <div class="site-title">
+  </style></head><body>  <!-- Site Title -->  <div class="site-title">
     TREND SHORTS
-  </div>  <!-- 広告スペース -->  <div class="ad-space"></div>  <!-- 国別スライダー生成 -->  <script>
+  </div>  <!-- Advertisement Space -->  <div class="ad-space"></div>  <!-- Country Sliders -->  <script>
 
     const countries = [
 
-      ["🇺🇸", "アメリカ"],
-      ["🇬🇧", "イギリス"],
-      ["🇦🇺", "オーストラリア"],
-      ["🇨🇦", "カナダ"],
+      ["🇺🇸", "UNITED STATES"],
+      ["🇬🇧", "UNITED KINGDOM"],
+      ["🇦🇺", "AUSTRALIA"],
+      ["🇨🇦", "CANADA"],
 
-      ["🇩🇪", "ドイツ"],
-      ["🇵🇭", "フィリピン"],
-      ["🇪🇸", "スペイン"],
-      ["🇫🇷", "フランス"],
-      ["🇰🇷", "韓国"],
-      ["🇮🇹", "イタリア"],
-      ["🇻🇳", "ベトナム"],
-      ["🇹🇷", "トルコ"],
-      ["🇮🇳", "インド"],
-      ["🇧🇷", "ブラジル"],
-      ["🇮🇩", "インドネシア"],
-      ["🇯🇵", "日本"],
-      ["🇲🇽", "メキシコ"],
-      ["🇹🇭", "タイ"]
+      ["🇩🇪", "GERMANY"],
+      ["🇵🇭", "PHILIPPINES"],
+      ["🇪🇸", "SPAIN"],
+      ["🇫🇷", "FRANCE"],
+      ["🇰🇷", "SOUTH KOREA"],
+      ["🇮🇹", "ITALY"],
+      ["🇻🇳", "VIETNAM"],
+      ["🇹🇷", "TURKEY"],
+      ["🇮🇳", "INDIA"],
+      ["🇧🇷", "BRAZIL"],
+      ["🇮🇩", "INDONESIA"],
+      ["🇯🇵", "JAPAN"],
+      ["🇲🇽", "MEXICO"],
+      ["🇹🇭", "THAILAND"]
 
     ];
 
@@ -174,11 +174,11 @@
         item.innerHTML = `
 
           <div class="thumbnail">
-            サムネイル
+            THUMBNAIL
           </div>
 
           <div class="score">
-            スコア
+            SCORE
           </div>
 
         `;

@@ -15,14 +15,34 @@
       background: #000;
     }
 
+    body {
+      padding: 40px 0;
+    }
+
+    .country {
+      margin-bottom: 50px;
+    }
+
+    .country-name {
+      color: #fff;
+      font-size: 20px;
+      padding: 0 20px;
+      margin-bottom: 15px;
+    }
+
     .slider {
       display: flex;
       gap: 16px;
+
       width: 100%;
+
       overflow-x: auto;
       overflow-y: hidden;
-      padding: 40px 20px;
+
+      padding: 0 20px;
+
       scrollbar-width: none;
+
       -webkit-overflow-scrolling: touch;
     }
 
@@ -44,28 +64,92 @@
       width: 100%;
       height: 40px;
       margin-top: 10px;
+
       color: #fff;
+
       display: flex;
       align-items: center;
       justify-content: center;
     }
-  </style></head><body>  <div class="slider"><div class="item"><div class="video"></div><div class="score">スコア</div></div>
-<div class="item"><div class="video"></div><div class="score">スコア</div></div>
-<div class="item"><div class="video"></div><div class="score">スコア</div></div>
-<div class="item"><div class="video"></div><div class="score">スコア</div></div>
-<div class="item"><div class="video"></div><div class="score">スコア</div></div>
+  </style></head><body>  <script>
 
-<div class="item"><div class="video"></div><div class="score">スコア</div></div>
-<div class="item"><div class="video"></div><div class="score">スコア</div></div>
-<div class="item"><div class="video"></div><div class="score">スコア</div></div>
-<div class="item"><div class="video"></div><div class="score">スコア</div></div>
-<div class="item"><div class="video"></div><div class="score">スコア</div></div>
+    const countries = [
 
-<div class="item"><div class="video"></div><div class="score">スコア</div></div>
-<div class="item"><div class="video"></div><div class="score">スコア</div></div>
-<div class="item"><div class="video"></div><div class="score">スコア</div></div>
-<div class="item"><div class="video"></div><div class="score">スコア</div></div>
-<div class="item"><div class="video"></div><div class="score">スコア</div></div>
+      ["🇺🇸", "アメリカ"],
+      ["🇬🇧", "イギリス"],
+      ["🇦🇺", "オーストラリア"],
+      ["🇨🇦", "カナダ"],
 
-  </div></body>
+      ["🇩🇪", "ドイツ"],
+      ["🇵🇭", "フィリピン"],
+      ["🇪🇸", "スペイン"],
+      ["🇫🇷", "フランス"],
+      ["🇰🇷", "韓国"],
+      ["🇮🇹", "イタリア"],
+      ["🇻🇳", "ベトナム"],
+      ["🇹🇷", "トルコ"],
+      ["🇮🇳", "インド"],
+      ["🇧🇷", "ブラジル"],
+      ["🇮🇩", "インドネシア"],
+      ["🇯🇵", "日本"],
+      ["🇲🇽", "メキシコ"],
+      ["🇹🇭", "タイ"]
+
+    ];
+
+
+    const body = document.body;
+
+
+    countries.forEach(([flag, name]) => {
+
+      const section = document.createElement("section");
+
+      section.className = "country";
+
+
+      const title = document.createElement("div");
+
+      title.className = "country-name";
+
+      title.textContent = `${flag} ${name}`;
+
+
+      const slider = document.createElement("div");
+
+      slider.className = "slider";
+
+
+      for (let i = 0; i < 15; i++) {
+
+        const item = document.createElement("div");
+
+        item.className = "item";
+
+
+        item.innerHTML = `
+
+          <div class="video"></div>
+
+          <div class="score">
+            スコア
+          </div>
+
+        `;
+
+
+        slider.appendChild(item);
+
+      }
+
+
+      section.appendChild(title);
+
+      section.appendChild(slider);
+
+      body.appendChild(section);
+
+    });
+
+  </script></body>
 </html>

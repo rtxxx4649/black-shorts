@@ -17,7 +17,33 @@
 
     body {
       padding: 40px 0;
+      font-family: Arial, sans-serif;
     }
+
+    /* タイトル */
+
+    .site-title {
+      color: #fff;
+      font-size: 48px;
+      font-weight: bold;
+      padding: 0 20px;
+      margin-bottom: 30px;
+    }
+
+
+    /* 広告スペース */
+
+    .ad-space {
+      width: calc(100% - 40px);
+      height: 120px;
+
+      margin: 0 20px 60px;
+
+      background: #111;
+    }
+
+
+    /* 国 */
 
     .country {
       margin-bottom: 50px;
@@ -29,6 +55,9 @@
       padding: 0 20px;
       margin-bottom: 15px;
     }
+
+
+    /* 横スライダー */
 
     .slider {
       display: flex;
@@ -42,7 +71,6 @@
       padding: 0 20px;
 
       scrollbar-width: none;
-
       -webkit-overflow-scrolling: touch;
     }
 
@@ -50,19 +78,33 @@
       display: none;
     }
 
+
+    /* 動画枠 */
+
     .item {
       flex: 0 0 220px;
     }
 
-    .video {
+    .thumbnail {
       width: 100%;
       aspect-ratio: 9 / 16;
+
       background: #111;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: #666;
     }
+
+
+    /* スコア */
 
     .score {
       width: 100%;
       height: 40px;
+
       margin-top: 10px;
 
       color: #fff;
@@ -71,7 +113,9 @@
       align-items: center;
       justify-content: center;
     }
-  </style></head><body>  <script>
+  </style></head><body>  <!-- サイトタイトル -->  <div class="site-title">
+    TREND SHORTS
+  </div>  <!-- 広告スペース -->  <div class="ad-space"></div>  <!-- 国別スライダー生成 -->  <script>
 
     const countries = [
 
@@ -120,7 +164,7 @@
       slider.className = "slider";
 
 
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < 50; i++) {
 
         const item = document.createElement("div");
 
@@ -129,7 +173,9 @@
 
         item.innerHTML = `
 
-          <div class="video"></div>
+          <div class="thumbnail">
+            サムネイル
+          </div>
 
           <div class="score">
             スコア

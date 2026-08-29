@@ -9,7 +9,7 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>TREND SHORTS</title>
+  <title>TREND WORLD</title>
 
   <style>
 
@@ -43,11 +43,18 @@
     }
 
     .site-title {
-      color: #fff;
       font-size: 48px;
       font-weight: 700;
       line-height: 1;
       white-space: nowrap;
+    }
+
+    .site-title .trend {
+      color: #fff;
+    }
+
+    .site-title .world {
+      color: #ff0000;
     }
 
     .site-subtitle {
@@ -344,7 +351,8 @@
   <header class="header">
 
     <div class="site-title">
-      TREND SHORTS
+      <span class="trend">TREND</span>
+      <span class="world">WORLD</span>
     </div>
 
     <div class="site-subtitle">
@@ -541,11 +549,6 @@
     ==========================================
        SHUFFLE
     ==========================================
-
-       Fisher-Yates shuffle
-
-       Each country is shuffled
-       independently.
     */
 
     function shuffle(array) {
@@ -790,10 +793,8 @@
       /*
       RANDOM POSITIONS
 
-      20 slotsから動画本数分だけ
-      ランダムに選択。
-
-      国ごとに独立している。
+      Each country is shuffled
+      independently.
       */
 
       const positions =
@@ -909,9 +910,6 @@
           /*
           SCORE
 
-          YouTube Data APIから
-          現在取得できる情報のみ表示。
-
           投稿時間は表示しない。
           */
 
@@ -1002,9 +1000,7 @@
 
 
       /*
-      YOUTUBE PRIVACY-ENHANCED MODE
-
-      youtube-nocookie.com
+      PRIVACY-ENHANCED MODE
       */
 
       youtubePlayer.src =

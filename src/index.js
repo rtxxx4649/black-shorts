@@ -4,6 +4,21 @@ export default {
   },
 
   async fetch(request, env) {
+    const url = new URL(request.url);
+
+    if (url.pathname === "/test") {
+      const result = await updateVideos(env);
+
+      return new Response(
+        JSON.stringify(result, null, 2),
+        {
+          headers: {
+            "content-type": "application/json; charset=UTF-8"
+          }
+        }
+      );
+    }
+
     return new Response("TREND WORLD updater is running.");
   }
 };
@@ -35,66 +50,25 @@ async function updateVideos(env) {
       const data = await response.json();
 
       if (!response.ok) {
-        console.error(
-          `YouTube API error ${regionCode}:`,
-          JSON.stringify(data)
-        );
-
         results.push({
           regionCode,
           success: false,
           error: data
         });
-
         continue;
       }
-
-      const videos = (data.items || []).map((item) => ({
-        region_code: regionCode,
-        video_id: item.id,
-        title: item.snippet?.title || "",
-        thumbnail:
-          item.snippet?.thumbnails?.high?.url ||
-          item.snippet?.thumbnails?.medium?.url ||
-          item.snippet?.thumbnails?.default?.url ||
-          "",
-        channel_title:
-          item.snippet?.channelTitle || "",
-        duration:
-          item.contentDetails?.duration || "",
-        views:
-          Number(item.statistics?.viewCount || 0),
-        likes:
-          Number(item.statistics?.likeCount || 0),
-        comments:
-          Number(item.statistics?.commentCount || 0),
-        published_at:
-          item.snippet?.publishedAt || null,
-        category_id:
-          item.snippet?.categoryId || "20"
-      }));
-
-      /*
-       * 現段階ではDBには保存しない。
-       * Cloudflare Worker内で取得結果を処理するだけ。
-       */
 
       results.push({
         regionCode,
         success: true,
-        count: videos.length
+        count: (data.items || []).length
       });
 
       console.log(
-        `${regionCode}: ${videos.length} videos`
+        `${regionCode}: ${(data.items || []).length} videos`
       );
 
     } catch (error) {
-      console.error(
-        `Failed ${regionCode}:`,
-        error
-      );
-
       results.push({
         regionCode,
         success: false,
@@ -103,8 +77,8 @@ async function updateVideos(env) {
     }
   }
 
-  console.log(
-    "Update finished:",
-    JSON.stringify(results)
-  );
+  return {
+    success: results.every((r) => r.success),
+    results
+  };
 }

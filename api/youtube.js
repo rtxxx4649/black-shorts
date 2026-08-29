@@ -20,6 +20,7 @@ export default async function handler(req, res) {
       part: "snippet,contentDetails,statistics",
       chart: "mostPopular",
       regionCode,
+      videoCategoryId: "10",
       maxResults: "50",
       key: apiKey
     });
@@ -33,21 +34,6 @@ export default async function handler(req, res) {
     if (!response.ok) {
       return res.status(response.status).json(data);
     }
-
-    const videos = (data.items || []).map((video) => ({
-      id: video.id,
-      title: video.snippet?.title || "",
-      thumbnail:
-        video.snippet?.thumbnails?.high?.url ||
-        video.snippet?.thumbnails?.medium?.url ||
-        video.snippet?.thumbnails?.default?.url ||
-        "",
-      duration: video.contentDetails?.duration || "",
-      views: Number(video.statistics?.viewCount || 0),
-      likes: Number(video.statistics?.likeCount || 0),
-      comments: Number(video.statistics?.commentCount || 0),
-      publishedAt: video.snippet?.publishedAt || ""
-    }));
 
     function durationToSeconds(duration) {
       const match = duration.match(
@@ -63,16 +49,32 @@ export default async function handler(req, res) {
       return hours * 3600 + minutes * 60 + seconds;
     }
 
-    const shortsCandidates = videos.filter((video) => {
-      const seconds = durationToSeconds(video.duration);
+    const musicPopular = (data.items || [])
+      .map((video) => ({
+        id: video.id,
+        title: video.snippet?.title || "",
+        thumbnail:
+          video.snippet?.thumbnails?.high?.url ||
+          video.snippet?.thumbnails?.medium?.url ||
+          video.snippet?.thumbnails?.default?.url ||
+          "",
+        duration: video.contentDetails?.duration || "",
+        views: Number(video.statistics?.viewCount || 0),
+        likes: Number(video.statistics?.likeCount || 0),
+        comments: Number(video.statistics?.commentCount || 0),
+        publishedAt: video.snippet?.publishedAt || ""
+      }))
+      .filter((video) => {
+        const seconds = durationToSeconds(video.duration);
 
-      return seconds !== null && seconds > 0 && seconds <= 60;
-    });
+        return seconds !== null && seconds > 180;
+      })
+      .slice(0, 10);
 
     return res.status(200).json({
       regionCode,
-      fetched: videos.length,
-      shortsCandidates: shortsCandidates.slice(0, 10)
+      fetched: data.items?.length || 0,
+      musicPopular
     });
 
   } catch (error) {

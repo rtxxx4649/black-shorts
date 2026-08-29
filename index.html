@@ -65,7 +65,9 @@
     .ad-space {
       width: calc(100% - 40px);
       height: 120px;
+
       margin: 0 20px 60px;
+
       background: #111;
     }
 
@@ -75,15 +77,18 @@
        ========================= */
 
     .country {
-      margin-bottom: 50px;
+      margin-bottom: 55px;
     }
 
     .country-name {
       color: #fff;
+
       font-size: 20px;
       font-weight: 600;
+
       padding: 0 20px;
-      margin-bottom: 15px;
+
+      margin-bottom: 18px;
     }
 
 
@@ -93,6 +98,7 @@
 
     .slider {
       display: flex;
+
       gap: 24px;
 
       width: 100%;
@@ -117,8 +123,10 @@
        ========================= */
 
     .item {
-      flex: 0 0 220px;
-      width: 220px;
+      flex: 0 0 300px;
+
+      width: 300px;
+
       cursor: pointer;
     }
 
@@ -131,11 +139,14 @@
       position: relative;
 
       width: 100%;
-      aspect-ratio: 9 / 16;
+
+      aspect-ratio: 16 / 9;
 
       background: #111;
 
       overflow: hidden;
+
+      border-radius: 2px;
     }
 
     .thumbnail img {
@@ -149,30 +160,23 @@
 
 
     /* =========================
-       EMPTY SLOT
-       ========================= */
-
-    .item.empty .thumbnail {
-      background: #111;
-    }
-
-
-    /* =========================
        VIDEO TITLE
        ========================= */
 
     .video-title {
       width: 100%;
 
-      margin-top: 10px;
+      margin-top: 12px;
 
       color: #fff;
 
-      font-size: 14px;
+      font-size: 15px;
+
+      font-weight: 500;
 
       line-height: 1.4;
 
-      height: 58.8px;
+      height: 63px;
 
       display: -webkit-box;
 
@@ -212,8 +216,6 @@
     .score {
       width: 100%;
 
-      min-height: 44px;
-
       margin-top: 0;
 
       color: #aaa;
@@ -250,7 +252,7 @@
     .player-container {
       position: relative;
 
-      width: min(900px, 94vw);
+      width: min(1000px, 94vw);
 
       aspect-ratio: 16 / 9;
 
@@ -309,9 +311,20 @@
         font-size: 15px;
       }
 
+      .country {
+        margin-bottom: 45px;
+      }
+
       .item {
-        flex-basis: 180px;
-        width: 180px;
+        flex-basis: 270px;
+
+        width: 270px;
+      }
+
+      .video-title {
+        font-size: 14px;
+
+        height: 58.8px;
       }
 
     }
@@ -523,7 +536,7 @@
 
     /*
     ==========================================
-       RANDOM SHUFFLE
+       SHUFFLE
     ==========================================
     */
 
@@ -685,7 +698,7 @@
 
     /*
     ==========================================
-       LOAD COUNTRY VIDEOS
+       LOAD VIDEOS
     ==========================================
     */
 
@@ -717,7 +730,7 @@
 
 
         /*
-        GAMING DATA
+        GAMING POPULAR
         */
 
         const videos =
@@ -727,10 +740,6 @@
             ? data.gamingPopular
             : [];
 
-
-        /*
-        MAX 10 VIDEOS
-        */
 
         insertVideos(
           country,
@@ -767,10 +776,8 @@
 
 
       /*
-      RANDOM 50 SLOTS
-
-      Every country gets
-      its own independent shuffle.
+      EACH COUNTRY GETS
+      ITS OWN RANDOM POSITIONS
       */
 
       const positions =
@@ -884,11 +891,9 @@
 
 
           /*
-          TRENDING
+          SCORE
 
-          Real-time hourly growth
-          data is not currently
-          provided by this API.
+          投稿時間は表示しない。
           */
 
           score.innerHTML = `
@@ -911,7 +916,7 @@
 
 
           /*
-          ACTIVE CARD
+          ACTIVE
           */
 
           item.classList.remove(
@@ -920,7 +925,7 @@
 
 
           /*
-          CLICK TO PLAY
+          CLICK
           */
 
           item.addEventListener(
@@ -979,8 +984,6 @@
 
       /*
       PRIVACY-ENHANCED MODE
-
-      youtube-nocookie.com
       */
 
       youtubePlayer.src =

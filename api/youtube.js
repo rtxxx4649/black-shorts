@@ -4,23 +4,11 @@ export default async function handler(req, res) {
       req.query.regionCode || ""
     ).toUpperCase();
 
-    /*
-    ==========================================
-      REGION CODE VALIDATION
-    ==========================================
-    */
-
     if (!/^[A-Z]{2}$/.test(regionCode)) {
       return res.status(400).json({
         error: "Invalid regionCode"
       });
     }
-
-    /*
-    ==========================================
-      YOUTUBE API KEY
-    ==========================================
-    */
 
     const apiKey =
       process.env.YOUTUBE_API_KEY;
@@ -31,27 +19,6 @@ export default async function handler(req, res) {
           "YOUTUBE_API_KEY is not configured"
       });
     }
-
-
-    /*
-    ==========================================
-      MOST POPULAR GAMING
-    ==========================================
-
-      chart:
-        mostPopular
-
-      regionCode:
-        各国の地域コード
-
-      videoCategoryId:
-        20 = Gaming
-
-      Search API:
-        使用しない
-
-      最大50件取得
-    */
 
     const params =
       new URLSearchParams({
@@ -74,28 +41,13 @@ export default async function handler(req, res) {
           apiKey
       });
 
-
-    /*
-    ==========================================
-      YOUTUBE DATA API
-    ==========================================
-    */
-
     const response =
       await fetch(
         `https://www.googleapis.com/youtube/v3/videos?${params.toString()}`
       );
 
-
     const data =
       await response.json();
-
-
-    /*
-    ==========================================
-      API ERROR
-    ==========================================
-    */
 
     if (!response.ok) {
       return res.status(
@@ -103,23 +55,11 @@ export default async function handler(req, res) {
       ).json(data);
     }
 
-
-    /*
-    ==========================================
-      FORMAT VIDEOS
-    ==========================================
-
-      フロント側では
-      data.gamingPopular
-      を使用する。
-    */
-
     const gamingPopular =
       (data.items || []).map(
         item => {
 
           return {
-
             id:
               item.id,
 
@@ -167,40 +107,27 @@ export default async function handler(req, res) {
             categoryId:
               item.snippet
                 ?.categoryId || "20"
-
           };
 
         }
       );
 
-
-    /*
-    ==========================================
-      RESPONSE
-    ==========================================
-    */
-
     return res.status(200).json({
 
       regionCode:
-
         regionCode,
 
       fetched:
-
         gamingPopular.length,
 
       gamingPopular:
-
         gamingPopular
 
     });
 
-
   } catch (error) {
 
     console.error(error);
-
 
     return res.status(500).json({
       error:

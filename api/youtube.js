@@ -20,7 +20,6 @@ export default async function handler(req, res) {
       part: "snippet,contentDetails,statistics",
       chart: "mostPopular",
       regionCode,
-      videoCategoryId: "10",
       maxResults: "50",
       key: apiKey
     });
@@ -35,7 +34,7 @@ export default async function handler(req, res) {
       return res.status(response.status).json(data);
     }
 
-    const videos = (data.items || []).map(video => ({
+    const videos = (data.items || []).map((video) => ({
       id: video.id,
       title: video.snippet?.title || "",
       thumbnail:
@@ -50,23 +49,24 @@ export default async function handler(req, res) {
       publishedAt: video.snippet?.publishedAt || ""
     }));
 
-    /*
-     * YouTube Data APIにはShorts専用フィールドがないため、
-     * ここでは60秒以下を「Shorts候補」として扱う。
-     *
-     * これは公式なShorts判定ではありません。
-     */
-    const shortsCandidates = videos.filter(video => {
-      const match = video.duration.match(
-        /^PT(?:(\d+)M)?(?:(\d+)S)?$/
+    function durationToSeconds(duration) {
+      const match = duration.match(
+        /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/
       );
 
-      if (!match) return false;
+      if (!match) return null;
 
-      const minutes = Number(match[1] || 0);
-      const seconds = Number(match[2] || 0);
+      const hours = Number(match[1] || 0);
+      const minutes = Number(match[2] || 0);
+      const seconds = Number(match[3] || 0);
 
-      return minutes === 0 && seconds > 0 && seconds <= 60;
+      return hours * 3600 + minutes * 60 + seconds;
+    }
+
+    const shortsCandidates = videos.filter((video) => {
+      const seconds = durationToSeconds(video.duration);
+
+      return seconds !== null && seconds > 0 && seconds <= 60;
     });
 
     return res.status(200).json({

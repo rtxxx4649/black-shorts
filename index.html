@@ -66,7 +66,6 @@
       width: calc(100% - 40px);
       height: 120px;
       margin: 0 20px 60px;
-
       background: #111;
     }
 
@@ -81,12 +80,9 @@
 
     .country-name {
       color: #fff;
-
       font-size: 20px;
       font-weight: 600;
-
       padding: 0 20px;
-
       margin-bottom: 15px;
     }
 
@@ -97,7 +93,6 @@
 
     .slider {
       display: flex;
-
       gap: 24px;
 
       width: 100%;
@@ -123,9 +118,7 @@
 
     .item {
       flex: 0 0 220px;
-
       width: 220px;
-
       cursor: pointer;
     }
 
@@ -138,7 +131,6 @@
       position: relative;
 
       width: 100%;
-
       aspect-ratio: 9 / 16;
 
       background: #111;
@@ -319,7 +311,6 @@
 
       .item {
         flex-basis: 180px;
-
         width: 180px;
       }
 
@@ -538,9 +529,7 @@
 
     function shuffle(array) {
 
-      const result = [
-        ...array
-      ];
+      const result = [...array];
 
       for (
         let i = result.length - 1;
@@ -550,8 +539,7 @@
 
         const j =
           Math.floor(
-            Math.random() *
-            (i + 1)
+            Math.random() * (i + 1)
           );
 
         [
@@ -728,13 +716,21 @@
           await response.json();
 
 
+        /*
+        GAMING DATA
+        */
+
         const videos =
           Array.isArray(
-            data.musicPopular
+            data.gamingPopular
           )
-            ? data.musicPopular
+            ? data.gamingPopular
             : [];
 
+
+        /*
+        MAX 10 VIDEOS
+        */
 
         insertVideos(
           country,
@@ -773,8 +769,8 @@
       /*
       RANDOM 50 SLOTS
 
-      Each country is shuffled
-      independently.
+      Every country gets
+      its own independent shuffle.
       */
 
       const positions =
@@ -845,18 +841,14 @@
                 "img"
               );
 
-
             image.src =
               video.thumbnail;
-
 
             image.alt =
               video.title || "";
 
-
             image.loading =
               "lazy";
-
 
             thumbnail.appendChild(
               image
@@ -878,7 +870,7 @@
           */
 
           category.textContent =
-            "🎵 MUSIC";
+            "🎮 GAMING";
 
 
           /*
@@ -894,8 +886,9 @@
           /*
           TRENDING
 
-          Real-time growth data
-          is not available yet.
+          Real-time hourly growth
+          data is not currently
+          provided by this API.
           */
 
           score.innerHTML = `
@@ -987,7 +980,7 @@
       /*
       PRIVACY-ENHANCED MODE
 
-      NO-COOKIE DOMAIN
+      youtube-nocookie.com
       */
 
       youtubePlayer.src =

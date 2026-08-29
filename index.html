@@ -536,11 +536,13 @@
        SETTINGS
     ==========================================
 
-       20 FIXED SLOTS
-       MAXIMUM 20 VIDEOS
+       UI = 50 FIXED SLOTS
+
+       GAMING VIDEOS
+       = MAXIMUM 20
     */
 
-    const TOTAL_SLOTS = 20;
+    const TOTAL_SLOTS = 50;
 
     const MAX_VIDEOS = 20;
 
@@ -635,7 +637,7 @@
 
 
         /*
-        CREATE 20 FIXED SLOTS
+        CREATE 50 FIXED SLOTS
         */
 
         for (
@@ -753,7 +755,7 @@
 
 
         /*
-        MAXIMUM 20
+        MAXIMUM 20 VIDEOS
         */
 
         insertVideos(
@@ -791,10 +793,12 @@
 
 
       /*
-      RANDOM POSITIONS
+      CHOOSE RANDOM SLOTS
 
-      Each country is shuffled
-      independently.
+      50 UI slotsの中から
+      最大20個をランダム選択。
+
+      各国ごとに独立。
       */
 
       const positions =
@@ -988,6 +992,8 @@
 
     /*
     OPEN PLAYER
+
+    Privacy Enhanced Mode
     */
 
     function openPlayer(
@@ -998,10 +1004,6 @@
         return;
       }
 
-
-      /*
-      PRIVACY-ENHANCED MODE
-      */
 
       youtubePlayer.src =
         `https://www.youtube-nocookie.com/embed/${encodeURIComponent(

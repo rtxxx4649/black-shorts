@@ -4,107 +4,209 @@ export default async function handler(req, res) {
       req.query.regionCode || ""
     ).toUpperCase();
 
+    /*
+    ==========================================
+      REGION CODE VALIDATION
+    ==========================================
+    */
+
     if (!/^[A-Z]{2}$/.test(regionCode)) {
       return res.status(400).json({
         error: "Invalid regionCode"
       });
     }
 
+
+    /*
+    ==========================================
+      YOUTUBE API KEY
+    ==========================================
+    */
+
     const apiKey =
       process.env.YOUTUBE_API_KEY;
 
     if (!apiKey) {
       return res.status(500).json({
-        error: "YOUTUBE_API_KEY is not configured"
+        error:
+          "YOUTUBE_API_KEY is not configured"
       });
     }
 
-    const params = new URLSearchParams({
-      part: "snippet,contentDetails,statistics",
-      chart: "mostPopular",
 
-      /*
-       * YouTube Gaming category
-       */
-      videoCategoryId: "20",
+    /*
+    ==========================================
+      MOST POPULAR GAMING
+    ==========================================
 
-      regionCode,
+      chart:
+        mostPopular
 
-      maxResults: "50",
+      regionCode:
+        各国の地域コード
 
-      key: apiKey
-    });
+      videoCategoryId:
+        20 = Gaming
 
-    const response = await fetch(
-      `https://www.googleapis.com/youtube/v3/videos?${params}`
-    );
+      Search API:
+        使用しない
+
+      最大50件取得
+    */
+
+    const params =
+      new URLSearchParams({
+        part:
+          "snippet,contentDetails,statistics",
+
+        chart:
+          "mostPopular",
+
+        regionCode:
+          regionCode,
+
+        videoCategoryId:
+          "20",
+
+        maxResults:
+          "50",
+
+        key:
+          apiKey
+      });
+
+
+    /*
+    ==========================================
+      YOUTUBE DATA API
+    ==========================================
+    */
+
+    const response =
+      await fetch(
+        `https://www.googleapis.com/youtube/v3/videos?${params.toString()}`
+      );
+
 
     const data =
       await response.json();
 
+
+    /*
+    ==========================================
+      API ERROR
+    ==========================================
+    */
+
     if (!response.ok) {
-      return res
-        .status(response.status)
-        .json(data);
+
+      return res.status(
+        response.status
+      ).json(data);
+
     }
-
-    const videos =
-      (data.items || []).map(video => ({
-        id: video.id,
-
-        title:
-          video.snippet?.title || "",
-
-        thumbnail:
-          video.snippet?.thumbnails?.high?.url ||
-          video.snippet?.thumbnails?.medium?.url ||
-          video.snippet?.thumbnails?.default?.url ||
-          "",
-
-        duration:
-          video.contentDetails?.duration || "",
-
-        views:
-          Number(
-            video.statistics?.viewCount || 0
-          ),
-
-        likes:
-          Number(
-            video.statistics?.likeCount || 0
-          ),
-
-        comments:
-          Number(
-            video.statistics?.commentCount || 0
-          ),
-
-        publishedAt:
-          video.snippet?.publishedAt || ""
-      }));
 
 
     /*
-     * Gaming動画
-     */
+    ==========================================
+      FORMAT VIDEOS
+    ==========================================
+
+      フロント側では
+      data.gamingPopular
+      を使用する。
+    */
+
+    const gamingPopular =
+      (data.items || []).map(
+        item => {
+
+          return {
+
+            id:
+              item.id,
+
+            title:
+              item.snippet?.title || "",
+
+            thumbnail:
+              item.snippet?.thumbnails
+                ?.high?.url ||
+              item.snippet?.thumbnails
+                ?.medium?.url ||
+              item.snippet?.thumbnails
+                ?.default?.url ||
+              "",
+
+            duration:
+              item.contentDetails
+                ?.duration || "",
+
+            views:
+              Number(
+                item.statistics
+                  ?.viewCount || 0
+              ),
+
+            likes:
+              Number(
+                item.statistics
+                  ?.likeCount || 0
+              ),
+
+            comments:
+              Number(
+                item.statistics
+                  ?.commentCount || 0
+              ),
+
+            publishedAt:
+              item.snippet
+                ?.publishedAt || "",
+
+            categoryId:
+              item.snippet
+                ?.categoryId || "20"
+
+          };
+
+        }
+      );
+
+
+    /*
+    ==========================================
+      RESPONSE
+    ==========================================
+    */
 
     return res.status(200).json({
-      regionCode,
+
+      regionCode:
+
+        regionCode,
 
       fetched:
-        videos.length,
+
+        gamingPopular.length,
 
       gamingPopular:
-        videos
+
+        gamingPopular
+
     });
+
 
   } catch (error) {
 
     console.error(error);
 
+
     return res.status(500).json({
+
       error:
-        "Failed to fetch YouTube data"
+        "Failed to fetch YouTube videos"
+
     });
 
   }

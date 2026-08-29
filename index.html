@@ -71,12 +71,9 @@
     .ad-space {
       width: calc(100% - 40px);
       height: 120px;
-
       margin: 0 20px 60px;
-
       background: #111;
     }
-
 
     /* =========================
        COUNTRY
@@ -88,13 +85,9 @@
 
     .country-name {
       color: #fff;
-
       font-size: 28px;
-
       font-weight: 600;
-
       padding: 0 20px;
-
       margin-bottom: 18px;
     }
 
@@ -104,25 +97,18 @@
 
     .slider {
       display: flex;
-
       gap: 24px;
-
       width: 100%;
-
       overflow-x: auto;
       overflow-y: hidden;
-
       padding: 0 20px;
-
       scrollbar-width: none;
-
       -webkit-overflow-scrolling: touch;
     }
 
     .slider::-webkit-scrollbar {
       display: none;
     }
-
 
     /* =========================
        VIDEO CARD
@@ -131,10 +117,8 @@
     .item {
       flex: 0 0 300px;
       width: 300px;
-
       cursor: pointer;
     }
-
 
     /* =========================
        THUMBNAIL
@@ -142,27 +126,19 @@
 
     .thumbnail {
       position: relative;
-
       width: 100%;
-
       aspect-ratio: 16 / 9;
-
       background: #111;
-
       overflow: hidden;
-
       border-radius: 2px;
     }
 
     .thumbnail img {
       width: 100%;
       height: 100%;
-
       display: block;
-
       object-fit: cover;
     }
-
 
     /* =========================
        VIDEO TITLE
@@ -170,30 +146,18 @@
 
     .video-title {
       width: 100%;
-
       margin-top: 12px;
-
       color: #fff;
-
       font-size: 15px;
-
       font-weight: 500;
-
       line-height: 1.4;
-
       height: 63px;
-
       display: -webkit-box;
-
       -webkit-box-orient: vertical;
-
       -webkit-line-clamp: 3;
-
       overflow: hidden;
-
       word-break: break-word;
     }
-
 
     /* =========================
        CATEGORY
@@ -201,18 +165,12 @@
 
     .video-category {
       width: 100%;
-
       margin-top: 10px;
-
       color: #fff;
-
       font-size: 13px;
-
       font-weight: 600;
-
       line-height: 1.4;
     }
-
 
     /* =========================
        SCORE
@@ -220,16 +178,11 @@
 
     .score {
       width: 100%;
-
       margin-top: 0;
-
       color: #aaa;
-
       font-size: 13px;
-
       line-height: 1.6;
     }
-
 
     /* =========================
        YOUTUBE PLAYER
@@ -237,16 +190,11 @@
 
     .player-overlay {
       position: fixed;
-
       inset: 0;
-
       z-index: 9999;
-
       display: none;
-
       align-items: center;
       justify-content: center;
-
       background: rgba(0, 0, 0, 0.95);
     }
 
@@ -256,47 +204,32 @@
 
     .player-container {
       position: relative;
-
       width: min(1000px, 94vw);
-
       aspect-ratio: 16 / 9;
-
       background: #000;
     }
 
     .player-container iframe {
       width: 100%;
       height: 100%;
-
       border: 0;
-
       display: block;
     }
 
     .close-player {
       position: absolute;
-
       top: -45px;
       right: 0;
-
       width: 36px;
       height: 36px;
-
       border: 0;
-
       border-radius: 50%;
-
       background: #fff;
-
       color: #000;
-
       font-size: 22px;
-
       line-height: 36px;
-
       cursor: pointer;
     }
-
 
     /* =========================
        MOBILE
@@ -326,13 +259,11 @@
 
       .item {
         flex-basis: 270px;
-
         width: 270px;
       }
 
       .video-title {
         font-size: 14px;
-
         height: 58.8px;
       }
 
@@ -342,9 +273,7 @@
 
 </head>
 
-
 <body>
-
 
   <!-- =========================
        HEADER
@@ -353,17 +282,9 @@
   <header class="header">
 
     <div class="site-title">
-
-      <span class="trend">
-        TREND
-      </span>
-
-      <span class="world">
-        WORLD
-      </span>
-
+      <span class="trend">TREND</span>
+      <span class="world">WORLD</span>
     </div>
-
 
     <div class="site-subtitle">
       DISCOVER WHAT'S TRENDING
@@ -371,20 +292,17 @@
 
   </header>
 
-
   <!-- =========================
        ADVERTISEMENT
        ========================= -->
 
   <div class="ad-space"></div>
 
-
   <!-- =========================
        COUNTRY SLIDERS
        ========================= -->
 
   <main id="countries"></main>
-
 
   <!-- =========================
        YOUTUBE PLAYER
@@ -406,7 +324,6 @@
         ×
       </button>
 
-
       <iframe
         id="youtubePlayer"
         title="YouTube video player"
@@ -419,9 +336,7 @@
 
   </div>
 
-
   <script>
-
 
     /*
     ==========================================
@@ -430,117 +345,25 @@
     */
 
     const countries = [
-
-      {
-        flag: "🇺🇸",
-        name: "UNITED STATES",
-        regionCode: "US"
-      },
-
-      {
-        flag: "🇬🇧",
-        name: "UNITED KINGDOM",
-        regionCode: "GB"
-      },
-
-      {
-        flag: "🇦🇺",
-        name: "AUSTRALIA",
-        regionCode: "AU"
-      },
-
-      {
-        flag: "🇨🇦",
-        name: "CANADA",
-        regionCode: "CA"
-      },
-
-      {
-        flag: "🇩🇪",
-        name: "GERMANY",
-        regionCode: "DE"
-      },
-
-      {
-        flag: "🇵🇭",
-        name: "PHILIPPINES",
-        regionCode: "PH"
-      },
-
-      {
-        flag: "🇪🇸",
-        name: "SPAIN",
-        regionCode: "ES"
-      },
-
-      {
-        flag: "🇫🇷",
-        name: "FRANCE",
-        regionCode: "FR"
-      },
-
-      {
-        flag: "🇰🇷",
-        name: "SOUTH KOREA",
-        regionCode: "KR"
-      },
-
-      {
-        flag: "🇮🇹",
-        name: "ITALY",
-        regionCode: "IT"
-      },
-
-      {
-        flag: "🇻🇳",
-        name: "VIETNAM",
-        regionCode: "VN"
-      },
-
-      {
-        flag: "🇹🇷",
-        name: "TURKEY",
-        regionCode: "TR"
-      },
-
-      {
-        flag: "🇮🇳",
-        name: "INDIA",
-        regionCode: "IN"
-      },
-
-      {
-        flag: "🇧🇷",
-        name: "BRAZIL",
-        regionCode: "BR"
-      },
-
-      {
-        flag: "🇮🇩",
-        name: "INDONESIA",
-        regionCode: "ID"
-      },
-
-      {
-        flag: "🇯🇵",
-        name: "JAPAN",
-        regionCode: "JP"
-      },
-
-      {
-        flag: "🇲🇽",
-        name: "MEXICO",
-        regionCode: "MX"
-      },
-
-      {
-        flag: "🇹🇭",
-        name: "THAILAND",
-        regionCode: "TH"
-      }
-
+      { flag: "🇺🇸", name: "UNITED STATES", regionCode: "US" },
+      { flag: "🇬🇧", name: "UNITED KINGDOM", regionCode: "GB" },
+      { flag: "🇦🇺", name: "AUSTRALIA", regionCode: "AU" },
+      { flag: "🇨🇦", name: "CANADA", regionCode: "CA" },
+      { flag: "🇩🇪", name: "GERMANY", regionCode: "DE" },
+      { flag: "🇵🇭", name: "PHILIPPINES", regionCode: "PH" },
+      { flag: "🇪🇸", name: "SPAIN", regionCode: "ES" },
+      { flag: "🇫🇷", name: "FRANCE", regionCode: "FR" },
+      { flag: "🇰🇷", name: "SOUTH KOREA", regionCode: "KR" },
+      { flag: "🇮🇹", name: "ITALY", regionCode: "IT" },
+      { flag: "🇻🇳", name: "VIETNAM", regionCode: "VN" },
+      { flag: "🇹🇷", name: "TURKEY", regionCode: "TR" },
+      { flag: "🇮🇳", name: "INDIA", regionCode: "IN" },
+      { flag: "🇧🇷", name: "BRAZIL", regionCode: "BR" },
+      { flag: "🇮🇩", name: "INDONESIA", regionCode: "ID" },
+      { flag: "🇯🇵", name: "JAPAN", regionCode: "JP" },
+      { flag: "🇲🇽", name: "MEXICO", regionCode: "MX" },
+      { flag: "🇹🇭", name: "THAILAND", regionCode: "TH" }
     ];
-
 
     /*
     ==========================================
@@ -549,9 +372,7 @@
     */
 
     const TOTAL_SLOTS = 50;
-
-    const MAX_VIDEOS = 20;
-
+    const MAX_VIDEOS = 50;
 
     /*
     ==========================================
@@ -563,35 +384,21 @@
 
       const result = [...array];
 
-
-      for (
-        let i = result.length - 1;
-        i > 0;
-        i--
-      ) {
+      for (let i = result.length - 1; i > 0; i--) {
 
         const j =
           Math.floor(
             Math.random() * (i + 1)
           );
 
-
-        [
-          result[i],
-          result[j]
-        ] =
-        [
-          result[j],
-          result[i]
-        ];
+        [result[i], result[j]] =
+          [result[j], result[i]];
 
       }
-
 
       return result;
 
     }
-
 
     /*
     ==========================================
@@ -600,66 +407,38 @@
     */
 
     const container =
-      document.getElementById(
-        "countries"
-      );
-
+      document.getElementById("countries");
 
     countries.forEach(country => {
 
       const section =
-        document.createElement(
-          "section"
-        );
+        document.createElement("section");
 
-
-      section.className =
-        "country";
-
+      section.className = "country";
 
       const title =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
-
-      title.className =
-        "country-name";
-
+      title.className = "country-name";
 
       title.textContent =
         `${country.flag} ${country.name}`;
 
-
       const slider =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
-
-      slider.className =
-        "slider";
-
+      slider.className = "slider";
 
       /*
       CREATE 50 FIXED SLOTS
       */
 
-      for (
-        let i = 0;
-        i < TOTAL_SLOTS;
-        i++
-      ) {
+      for (let i = 0; i < TOTAL_SLOTS; i++) {
 
         const item =
-          document.createElement(
-            "div"
-          );
+          document.createElement("div");
 
-
-        item.className =
-          "item empty";
-
+        item.className = "item empty";
 
         item.innerHTML = `
 
@@ -682,50 +461,21 @@
 
         `;
 
-
-        slider.appendChild(
-          item
-        );
+        slider.appendChild(item);
 
       }
 
+      section.appendChild(title);
+      section.appendChild(slider);
+      container.appendChild(section);
 
-      section.appendChild(
-        title
-      );
-
-
-      section.appendChild(
-        slider
-      );
-
-
-      container.appendChild(
-        section
-      );
-
-
-      /*
-      SAVE REFERENCES
-      */
-
-      country.element =
-        section;
-
-
-      country.slider =
-        slider;
-
+      country.element = section;
+      country.slider = slider;
 
       country.items =
-        [
-          ...slider.querySelectorAll(
-            ".item"
-          )
-        ];
+        [...slider.querySelectorAll(".item")];
 
     });
-
 
     /*
     ==========================================
@@ -733,9 +483,7 @@
     ==========================================
     */
 
-    async function loadCountryVideos(
-      country
-    ) {
+    async function loadCountryVideos(country) {
 
       try {
 
@@ -746,7 +494,6 @@
             )}`
           );
 
-
         if (!response.ok) {
 
           throw new Error(
@@ -755,31 +502,22 @@
 
         }
 
-
         const data =
           await response.json();
 
-
         const videos =
-          Array.isArray(
-            data.gamingPopular
-          )
+          Array.isArray(data.gamingPopular)
             ? data.gamingPopular
             : [];
 
-
         /*
-        MAXIMUM 20 VIDEOS
+        MAXIMUM 50 VIDEOS
         */
 
         insertVideos(
           country,
-          videos.slice(
-            0,
-            MAX_VIDEOS
-          )
+          videos.slice(0, MAX_VIDEOS)
         );
-
 
       } catch (error) {
 
@@ -792,17 +530,13 @@
 
     }
 
-
     /*
     ==========================================
        INSERT VIDEOS
     ==========================================
     */
 
-    function insertVideos(
-      country,
-      videos
-    ) {
+    function insertVideos(country, videos) {
 
       /*
       RANDOMLY SELECT VIDEO POSITIONS
@@ -811,177 +545,119 @@
 
       const positions =
         shuffle(
-          [
-            ...Array(
-              TOTAL_SLOTS
-            ).keys()
-          ]
+          [...Array(TOTAL_SLOTS).keys()]
         ).slice(
           0,
           videos.length
         );
 
+      videos.forEach((video, videoIndex) => {
 
-      videos.forEach(
-        (
-          video,
-          videoIndex
-        ) => {
+        const slotIndex =
+          positions[videoIndex];
 
-          const slotIndex =
-            positions[
-              videoIndex
-            ];
+        const item =
+          country.items[slotIndex];
 
+        if (!item) {
+          return;
+        }
 
-          const item =
-            country.items[
-              slotIndex
-            ];
+        const thumbnail =
+          item.querySelector(".thumbnail");
 
+        const title =
+          item.querySelector(".video-title");
 
-          if (!item) {
-            return;
-          }
+        const category =
+          item.querySelector(".video-category");
 
+        const score =
+          item.querySelector(".score");
 
-          const thumbnail =
-            item.querySelector(
-              ".thumbnail"
-            );
+        /*
+        THUMBNAIL
+        */
 
+        if (video.thumbnail) {
 
-          const title =
-            item.querySelector(
-              ".video-title"
-            );
+          const image =
+            document.createElement("img");
 
+          image.src =
+            video.thumbnail;
 
-          const category =
-            item.querySelector(
-              ".video-category"
-            );
-
-
-          const score =
-            item.querySelector(
-              ".score"
-            );
-
-
-          /*
-          THUMBNAIL
-          */
-
-          if (video.thumbnail) {
-
-            const image =
-              document.createElement(
-                "img"
-              );
-
-
-            image.src =
-              video.thumbnail;
-
-
-            image.alt =
-              video.title || "";
-
-
-            image.loading =
-              "lazy";
-
-
-            thumbnail.appendChild(
-              image
-            );
-
-          }
-
-
-          /*
-          TITLE
-          */
-
-          title.textContent =
+          image.alt =
             video.title || "";
 
+          image.loading =
+            "lazy";
 
-          /*
-          CATEGORY
-          */
-
-          category.textContent =
-            "";
-
-
-          /*
-          VIEWS
-          */
-
-          const views =
-            Number(
-              video.views || 0
-            ).toLocaleString();
-
-
-          /*
-          SCORE
-          */
-
-          score.innerHTML = `
-
-            🎮 GAMING<br>
-
-            🔥 — Trending<br>
-
-            👤 ${
-              video.channelTitle || "—"
-            }<br>
-
-            👁 ${views} views
-
-          `;
-
-
-          /*
-          VIDEO ID
-          */
-
-          item.dataset.videoId =
-            video.id;
-
-
-          /*
-          ACTIVE CARD
-          */
-
-          item.classList.remove(
-            "empty"
-          );
-
-
-          /*
-          CLICK TO PLAY
-          */
-
-          item.addEventListener(
-            "click",
-            () => {
-
-              openPlayer(
-                video.id
-              );
-
-            }
-          );
+          thumbnail.appendChild(image);
 
         }
-      );
+
+        /*
+        TITLE
+        */
+
+        title.textContent =
+          video.title || "";
+
+        /*
+        CATEGORY
+        */
+
+        category.textContent =
+          "";
+
+        /*
+        VIEWS
+        */
+
+        const views =
+          Number(
+            video.views || 0
+          ).toLocaleString();
+
+        /*
+        SCORE
+        */
+
+        score.innerHTML = `
+          🎮 GAMING<br>
+          🔥 — Trending<br>
+          👤 ${video.channelTitle || "—"}<br>
+          👁 ${views} views
+        `;
+
+        /*
+        VIDEO ID
+        */
+
+        item.dataset.videoId =
+          video.id;
+
+        /*
+        ACTIVE CARD
+        */
+
+        item.classList.remove("empty");
+
+        /*
+        CLICK TO PLAY
+        */
+
+        item.addEventListener(
+          "click",
+          () => {
+            openPlayer(video.id);
+          }
+        );
+
+      });
 
     }
-
 
     /*
     ==========================================
@@ -994,33 +670,26 @@
         "playerOverlay"
       );
 
-
     const youtubePlayer =
       document.getElementById(
         "youtubePlayer"
       );
-
 
     const closePlayer =
       document.getElementById(
         "closePlayer"
       );
 
-
-    function openPlayer(
-      videoId
-    ) {
+    function openPlayer(videoId) {
 
       if (!videoId) {
         return;
       }
 
-
       youtubePlayer.src =
         `https://www.youtube-nocookie.com/embed/${encodeURIComponent(
           videoId
         )}?rel=0`;
-
 
       playerOverlay.classList.add(
         "active"
@@ -1028,12 +697,9 @@
 
     }
 
-
     function closeVideoPlayer() {
 
-      youtubePlayer.src =
-        "";
-
+      youtubePlayer.src = "";
 
       playerOverlay.classList.remove(
         "active"
@@ -1041,21 +707,16 @@
 
     }
 
-
     closePlayer.addEventListener(
       "click",
       closeVideoPlayer
     );
 
-
     playerOverlay.addEventListener(
       "click",
       event => {
 
-        if (
-          event.target ===
-          playerOverlay
-        ) {
+        if (event.target === playerOverlay) {
 
           closeVideoPlayer();
 
@@ -1063,16 +724,12 @@
 
       }
     );
-
 
     document.addEventListener(
       "keydown",
       event => {
 
-        if (
-          event.key ===
-          "Escape"
-        ) {
+        if (event.key === "Escape") {
 
           closeVideoPlayer();
 
@@ -1080,7 +737,6 @@
 
       }
     );
-
 
     /*
     ==========================================
@@ -1088,15 +744,11 @@
     ==========================================
     */
 
-    countries.forEach(
-      country => {
+    countries.forEach(country => {
 
-        loadCountryVideos(
-          country
-        );
+      loadCountryVideos(country);
 
-      }
-    );
+    });
 
   </script>
 

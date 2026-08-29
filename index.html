@@ -169,8 +169,9 @@
       line-height: 1.6;
       font-weight: 500;
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      column-gap: 8px;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-rows: repeat(3, auto);
+      column-gap: 12px;
       row-gap: 2px;
       align-items: center;
     }
@@ -180,6 +181,36 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    .score-item:nth-child(1) {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .score-item:nth-child(2) {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .score-item:nth-child(3) {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .score-item:nth-child(4) {
+      grid-column: 2;
+      grid-row: 2;
+    }
+
+    .score-item:nth-child(5) {
+      grid-column: 1;
+      grid-row: 3;
+    }
+
+    .score-item:nth-child(6) {
+      grid-column: 2;
+      grid-row: 3;
     }
 
     .player-overlay {
@@ -266,7 +297,7 @@
       }
 
       .score {
-        column-gap: 5px;
+        column-gap: 8px;
         font-size: 12px;
       }
 
@@ -432,15 +463,11 @@
             </div>
 
             <div class="score-item">
-              👁 —
-            </div>
-
-            <div class="score-item">
-              👍 —
-            </div>
-
-            <div class="score-item">
               👤 —
+            </div>
+
+            <div class="score-item">
+              👁 — views
             </div>
 
             <div class="score-item">
@@ -448,7 +475,11 @@
             </div>
 
             <div class="score-item">
-              💬 —
+              👍 — likes
+            </div>
+
+            <div class="score-item">
+              💬 — comments
             </div>
 
           </div>
@@ -542,12 +573,6 @@
         const title =
           item.querySelector(".video-title");
 
-        const category =
-          item.querySelector(".video-category");
-
-        const score =
-          item.querySelector(".score");
-
         if (video.thumbnail) {
 
           const image =
@@ -569,9 +594,6 @@
         title.textContent =
           video.title || "";
 
-        category.textContent =
-          "";
-
         const likes =
           video.likes == null
             ? "—"
@@ -587,6 +609,9 @@
             ? "—"
             : formatNumber(video.comments);
 
+        const score =
+          item.querySelector(".score");
+
         score.innerHTML = `
 
           <div class="score-item">
@@ -594,15 +619,11 @@
           </div>
 
           <div class="score-item">
-            👁 ${views}
-          </div>
-
-          <div class="score-item">
-            👍 ${likes}
-          </div>
-
-          <div class="score-item">
             👤 ${video.channel_title || "—"}
+          </div>
+
+          <div class="score-item">
+            👁 ${views} views
           </div>
 
           <div class="score-item">
@@ -610,7 +631,11 @@
           </div>
 
           <div class="score-item">
-            💬 ${comments}
+            👍 ${likes} likes
+          </div>
+
+          <div class="score-item">
+            💬 ${comments} comments
           </div>
 
         `;

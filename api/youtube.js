@@ -35,17 +35,82 @@ export default async function handler(req, res) {
       return res.status(response.status).json(data);
     }
 
+    const videos = (data.items || []).map(video => {
+      const duration = parseDuration(
+        video.contentDetails?.duration
+      );
+
+      return {
+        id: video.id,
+        title: video.snippet?.title || "",
+        publishedAt: video.snippet?.publishedAt || "",
+        thumbnail:
+          video.snippet?.thumbnails?.high?.url ||
+          video.snippet?.thumbnails?.medium?.url ||
+          video.snippet?.thumbnails?.default?.url ||
+          "",
+        duration,
+        viewCount: Number(video.statistics?.viewCount || 0),
+        likeCount: Number(video.statistics?.likeCount || 0),
+        commentCount: Number(video.statistics?.commentCount || 0)
+      };
+    });
+
+    /*
+     * YouTube officially classifies eligible square/vertical
+     * videos up to 3 minutes as Shorts.
+     *
+     * videos.list does not expose a direct "isShort" field,
+     * so this endpoint does not claim a 100% definitive Shorts
+     * classification from API metadata alone.
+     */
+    const candidates = videos.filter(video => {
+      return video.duration > 0 && video.duration <= 180;
+    });
+
+    const shorts = candidates.slice(0, 10);
+
     return res.status(200).json({
       regionCode,
-      count: data.items?.length || 0,
-      items: data.items || []
+      fetched: videos.length,
+      shorts: shorts.length,
+      items: shorts
     });
 
   } catch (error) {
     console.error(error);
 
     return res.status(500).json({
-      error: "Failed to fetch YouTube videos"
+      error: "Failed to fetch YouTube data"
     });
   }
+}
+
+
+/*
+ * ISO 8601 duration
+ * Example:
+ * PT45S   -> 45
+ * PT1M20S -> 80
+ * PT2M    -> 120
+ * PT3M    -> 180
+ */
+function parseDuration(value) {
+  if (!value) {
+    return 0;
+  }
+
+  const match = value.match(
+    /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/
+  );
+
+  if (!match) {
+    return 0;
+  }
+
+  const hours = Number(match[1] || 0);
+  const minutes = Number(match[2] || 0);
+  const seconds = Number(match[3] || 0);
+
+  return hours * 3600 + minutes * 60 + seconds;
 }

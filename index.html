@@ -32,10 +32,6 @@
       color: #fff;
     }
 
-    /* =========================
-       HEADER
-       ========================= */
-
     .header {
       padding: 0 20px;
       margin-bottom: 30px;
@@ -56,20 +52,12 @@
       white-space: nowrap;
     }
 
-    /* =========================
-       ADVERTISEMENT
-       ========================= */
-
     .ad-space {
       width: calc(100% - 40px);
       height: 120px;
       margin: 0 20px 60px;
       background: #111;
     }
-
-    /* =========================
-       COUNTRY
-       ========================= */
 
     .country {
       margin-bottom: 50px;
@@ -83,23 +71,14 @@
       margin-bottom: 15px;
     }
 
-    /* =========================
-       SLIDER
-       ========================= */
-
     .slider {
       display: flex;
       gap: 16px;
-
       width: 100%;
-
       overflow-x: auto;
       overflow-y: hidden;
-
       padding: 0 20px;
-
       scrollbar-width: none;
-
       -webkit-overflow-scrolling: touch;
     }
 
@@ -107,65 +86,102 @@
       display: none;
     }
 
-    /* =========================
-       VIDEO SLOT
-       ========================= */
-
     .item {
+      position: relative;
       flex: 0 0 220px;
       width: 220px;
+      cursor: pointer;
     }
 
     .thumbnail {
       position: relative;
-
       width: 100%;
       aspect-ratio: 9 / 16;
-
       background: #111;
-
       overflow: hidden;
     }
 
     .thumbnail img {
       width: 100%;
       height: 100%;
-
       display: block;
-
       object-fit: cover;
     }
-
-    /* =========================
-       EMPTY SLOT
-       ========================= */
 
     .item.empty .thumbnail {
       background: #111;
     }
 
-    /* =========================
-       SCORE
-       ========================= */
-
     .score {
       width: 100%;
       height: 40px;
-
       margin-top: 10px;
-
       display: flex;
       align-items: center;
       justify-content: center;
-
       color: #fff;
-
       font-size: 14px;
     }
 
-    /* =========================
-       MOBILE
-       ========================= */
+    /*
+    ==========================================
+    PLAYER
+    ==========================================
+    */
+
+    .player-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+
+      display: none;
+      align-items: center;
+      justify-content: center;
+
+      background: rgba(0, 0, 0, 0.95);
+    }
+
+    .player-overlay.active {
+      display: flex;
+    }
+
+    .player-container {
+      position: relative;
+
+      width: min(900px, 94vw);
+      aspect-ratio: 16 / 9;
+
+      background: #000;
+    }
+
+    .player-container iframe {
+      width: 100%;
+      height: 100%;
+
+      border: 0;
+      display: block;
+    }
+
+    .close-player {
+      position: absolute;
+
+      top: -45px;
+      right: 0;
+
+      width: 36px;
+      height: 36px;
+
+      border: 0;
+      border-radius: 50%;
+
+      background: #fff;
+      color: #000;
+
+      font-size: 22px;
+      line-height: 36px;
+
+      cursor: pointer;
+    }
 
     @media (max-width: 600px) {
 
@@ -186,6 +202,10 @@
         width: 180px;
       }
 
+      .player-container {
+        width: 94vw;
+      }
+
     }
 
   </style>
@@ -193,10 +213,6 @@
 </head>
 
 <body>
-
-  <!-- =========================
-       HEADER
-       ========================= -->
 
   <header class="header">
 
@@ -211,18 +227,45 @@
   </header>
 
 
-  <!-- =========================
-       ADVERTISEMENT
-       ========================= -->
-
   <div class="ad-space"></div>
 
 
-  <!-- =========================
-       COUNTRY SLIDERS
-       ========================= -->
-
   <main id="countries"></main>
+
+
+  <!--
+  ==========================================
+  YOUTUBE PLAYER
+  ==========================================
+  -->
+
+  <div
+    id="playerOverlay"
+    class="player-overlay"
+  >
+
+    <div class="player-container">
+
+      <button
+        id="closePlayer"
+        class="close-player"
+        type="button"
+        aria-label="Close"
+      >
+        ×
+      </button>
+
+      <iframe
+        id="youtubePlayer"
+        title="YouTube video player"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        referrerpolicy="strict-origin-when-cross-origin"
+      ></iframe>
+
+    </div>
+
+  </div>
 
 
   <script>
@@ -348,48 +391,80 @@
 
     /*
     ==========================================
-    UI SETTINGS
+    SETTINGS
     ==========================================
     */
 
-    // 1 country = 50 slots
-
     const TOTAL_SLOTS = 50;
-
-    // Music mostPopular = maximum 10 videos
 
     const MAX_VIDEOS = 10;
 
 
     /*
     ==========================================
-    CREATE COUNTRY UI
+    SHUFFLE
+    ==========================================
+    */
+
+    function shuffle(array) {
+
+      const result =
+        [...array];
+
+      for (
+        let i = result.length - 1;
+        i > 0;
+        i--
+      ) {
+
+        const j =
+          Math.floor(
+            Math.random() * (i + 1)
+          );
+
+        [
+          result[i],
+          result[j]
+        ] =
+        [
+          result[j],
+          result[i]
+        ];
+
+      }
+
+      return result;
+
+    }
+
+
+    /*
+    ==========================================
+    CREATE UI
     ==========================================
     */
 
     const container =
-      document.getElementById("countries");
+      document.getElementById(
+        "countries"
+      );
 
 
     countries.forEach(country => {
 
-      /*
-      COUNTRY SECTION
-      */
-
       const section =
-        document.createElement("section");
+        document.createElement(
+          "section"
+        );
 
       section.className =
         "country";
 
 
-      /*
-      COUNTRY NAME
-      */
-
       const title =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
       title.className =
         "country-name";
@@ -398,20 +473,14 @@
         `${country.flag} ${country.name}`;
 
 
-      /*
-      SLIDER
-      */
-
       const slider =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
       slider.className =
         "slider";
 
-
-      /*
-      CREATE 50 FIXED SLOTS
-      */
 
       for (
         let i = 0;
@@ -420,7 +489,9 @@
       ) {
 
         const item =
-          document.createElement("div");
+          document.createElement(
+            "div"
+          );
 
         item.className =
           "item empty";
@@ -435,25 +506,25 @@
         `;
 
 
-        slider.appendChild(item);
+        slider.appendChild(
+          item
+        );
 
       }
 
 
-      /*
-      ADD TO PAGE
-      */
+      section.appendChild(
+        title
+      );
 
-      section.appendChild(title);
+      section.appendChild(
+        slider
+      );
 
-      section.appendChild(slider);
+      container.appendChild(
+        section
+      );
 
-      container.appendChild(section);
-
-
-      /*
-      SAVE REFERENCES
-      */
 
       country.element =
         section;
@@ -463,7 +534,9 @@
 
       country.items =
         [
-          ...slider.querySelectorAll(".item")
+          ...slider.querySelectorAll(
+            ".item"
+          )
         ];
 
     });
@@ -471,11 +544,13 @@
 
     /*
     ==========================================
-    LOAD COUNTRY VIDEOS
+    LOAD VIDEOS
     ==========================================
     */
 
-    async function loadCountryVideos(country) {
+    async function loadCountryVideos(
+      country
+    ) {
 
       try {
 
@@ -500,30 +575,20 @@
           await response.json();
 
 
-        /*
-        API CURRENTLY RETURNS:
-
-        {
-          regionCode,
-          fetched,
-          musicPopular
-        }
-        */
-
-
         const videos =
-          Array.isArray(data.musicPopular)
+          Array.isArray(
+            data.musicPopular
+          )
             ? data.musicPopular
             : [];
 
 
-        /*
-        MAXIMUM 10
-        */
-
         insertVideos(
           country,
-          videos.slice(0, MAX_VIDEOS)
+          videos.slice(
+            0,
+            MAX_VIDEOS
+          )
         );
 
 
@@ -550,25 +615,36 @@
       videos
     ) {
 
-      videos.forEach(
-        (video, index) => {
+      /*
+      RANDOM POSITIONS
+      */
 
-          /*
-          GET SLOT
-          */
+      const positions =
+        shuffle(
+          [...Array(TOTAL_SLOTS).keys()]
+        ).slice(
+          0,
+          videos.length
+        );
+
+
+      videos.forEach(
+        (video, videoIndex) => {
+
+          const slotIndex =
+            positions[videoIndex];
+
 
           const item =
-            country.items[index];
+            country.items[
+              slotIndex
+            ];
 
 
           if (!item) {
             return;
           }
 
-
-          /*
-          GET ELEMENTS
-          */
 
           const thumbnail =
             item.querySelector(
@@ -614,7 +690,7 @@
 
 
           /*
-          VIEW COUNT
+          SCORE
           */
 
           score.textContent =
@@ -624,11 +700,35 @@
 
 
           /*
-          MARK SLOT AS ACTIVE
+          SAVE VIDEO ID
           */
+
+          item.dataset.videoId =
+            video.id;
+
+
+          item.dataset.title =
+            video.title || "";
+
 
           item.classList.remove(
             "empty"
+          );
+
+
+          /*
+          CLICK
+          */
+
+          item.addEventListener(
+            "click",
+            () => {
+
+              openPlayer(
+                video.id
+              );
+
+            }
           );
 
         }
@@ -639,13 +739,119 @@
 
     /*
     ==========================================
+    YOUTUBE PLAYER
+    ==========================================
+    */
+
+    const playerOverlay =
+      document.getElementById(
+        "playerOverlay"
+      );
+
+
+    const youtubePlayer =
+      document.getElementById(
+        "youtubePlayer"
+      );
+
+
+    const closePlayer =
+      document.getElementById(
+        "closePlayer"
+      );
+
+
+    function openPlayer(
+      videoId
+    ) {
+
+      if (!videoId) {
+        return;
+      }
+
+
+      /*
+      PRIVACY-ENHANCED MODE
+
+      YouTube official no-cookie domain
+      */
+
+      youtubePlayer.src =
+        `https://www.youtube-nocookie.com/embed/${encodeURIComponent(
+          videoId
+        )}?rel=0`;
+
+
+      playerOverlay.classList.add(
+        "active"
+      );
+
+    }
+
+
+    function closeVideoPlayer() {
+
+      youtubePlayer.src = "";
+
+      playerOverlay.classList.remove(
+        "active"
+      );
+
+    }
+
+
+    closePlayer.addEventListener(
+      "click",
+      closeVideoPlayer
+    );
+
+
+    playerOverlay.addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target ===
+          playerOverlay
+        ) {
+
+          closeVideoPlayer();
+
+        }
+
+      }
+    );
+
+
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key === "Escape"
+        ) {
+
+          closeVideoPlayer();
+
+        }
+
+      }
+    );
+
+
+    /*
+    ==========================================
     LOAD ALL COUNTRIES
     ==========================================
     */
 
     countries.forEach(
       country => {
-        loadCountryVideos(country);
+
+        loadCountryVideos(
+          country
+        );
+
       }
     );
 

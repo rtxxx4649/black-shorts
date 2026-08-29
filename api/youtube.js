@@ -37,38 +37,39 @@ export default async function handler(req, res) {
 
     const videos = (data.items || []).map(video => {
       const duration = parseDuration(
-        video.contentDetails?.duration
+        video.contentDetails?.duration || "PT0S"
       );
 
       return {
         id: video.id,
         title: video.snippet?.title || "",
-        publishedAt: video.snippet?.publishedAt || "",
+        publishedAt: video.snippet?.publishedAt || null,
         thumbnail:
           video.snippet?.thumbnails?.high?.url ||
           video.snippet?.thumbnails?.medium?.url ||
           video.snippet?.thumbnails?.default?.url ||
           "",
         duration,
-        viewCount: Number(video.statistics?.viewCount || 0),
-        likeCount: Number(video.statistics?.likeCount || 0),
-        commentCount: Number(video.statistics?.commentCount || 0)
+        viewCount:
+          Number(video.statistics?.viewCount || 0),
+        likeCount:
+          Number(video.statistics?.likeCount || 0),
+        commentCount:
+          Number(video.statistics?.commentCount || 0)
       };
     });
 
     /*
-     * YouTube officially classifies eligible square/vertical
-     * videos up to 3 minutes as Shorts.
+     * Shorts判定
      *
-     * videos.list does not expose a direct "isShort" field,
-     * so this endpoint does not claim a 100% definitive Shorts
-     * classification from API metadata alone.
+     * YouTube Data APIにはShorts専用フィールドがないため、
+     * 現在は動画時間を利用した候補判定。
+     *
+     * 60秒以下をShorts候補とする。
      */
-    const candidates = videos.filter(video => {
-      return video.duration > 0 && video.duration <= 180;
-    });
-
-    const shorts = candidates.slice(0, 10);
+    const shorts = videos
+      .filter(video => video.duration <= 60)
+      .slice(0, 10);
 
     return res.status(200).json({
       regionCode,
@@ -89,18 +90,14 @@ export default async function handler(req, res) {
 
 /*
  * ISO 8601 duration
- * Example:
- * PT45S   -> 45
- * PT1M20S -> 80
- * PT2M    -> 120
- * PT3M    -> 180
+ * 例:
+ * PT30S     → 30
+ * PT1M      → 60
+ * PT1M30S   → 90
+ * PT2H      → 7200
  */
-function parseDuration(value) {
-  if (!value) {
-    return 0;
-  }
-
-  const match = value.match(
+function parseDuration(duration) {
+  const match = duration.match(
     /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/
   );
 

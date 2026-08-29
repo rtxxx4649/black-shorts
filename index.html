@@ -1,7 +1,18 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>TREND SHORTS</title>  <style>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>TREND SHORTS</title>
+
+  <style>
+
     * {
       margin: 0;
       padding: 0;
@@ -21,7 +32,9 @@
       color: #fff;
     }
 
-    /* HEADER */
+    /* =========================
+       HEADER
+       ========================= */
 
     .header {
       padding: 0 20px;
@@ -43,7 +56,9 @@
       white-space: nowrap;
     }
 
-    /* ADVERTISEMENT */
+    /* =========================
+       ADVERTISEMENT
+       ========================= */
 
     .ad-space {
       width: calc(100% - 40px);
@@ -52,7 +67,9 @@
       background: #111;
     }
 
-    /* COUNTRY */
+    /* =========================
+       COUNTRY
+       ========================= */
 
     .country {
       margin-bottom: 50px;
@@ -66,7 +83,9 @@
       margin-bottom: 15px;
     }
 
-    /* SLIDER */
+    /* =========================
+       SLIDER
+       ========================= */
 
     .slider {
       display: flex;
@@ -80,6 +99,7 @@
       padding: 0 20px;
 
       scrollbar-width: none;
+
       -webkit-overflow-scrolling: touch;
     }
 
@@ -87,7 +107,9 @@
       display: none;
     }
 
-    /* VIDEO SLOT */
+    /* =========================
+       VIDEO SLOT
+       ========================= */
 
     .item {
       flex: 0 0 220px;
@@ -114,13 +136,17 @@
       object-fit: cover;
     }
 
-    /* EMPTY SLOT */
+    /* =========================
+       EMPTY SLOT
+       ========================= */
 
     .item.empty .thumbnail {
       background: #111;
     }
 
-    /* SCORE */
+    /* =========================
+       SCORE
+       ========================= */
 
     .score {
       width: 100%;
@@ -137,7 +163,9 @@
       font-size: 14px;
     }
 
-    /* MOBILE */
+    /* =========================
+       MOBILE
+       ========================= */
 
     @media (max-width: 600px) {
 
@@ -159,15 +187,45 @@
       }
 
     }
-  </style></head><body>  <!-- HEADER -->  <header class="header"><div class="site-title">
-  TREND SHORTS
-</div>
 
-<div class="site-subtitle">
-  DISCOVER WHAT'S TRENDING
-</div>
+  </style>
 
-  </header>  <!-- ADVERTISEMENT -->  <div class="ad-space"></div>  <!-- COUNTRY SLIDERS -->  <main id="countries"></main>  <script>
+</head>
+
+<body>
+
+  <!-- =========================
+       HEADER
+       ========================= -->
+
+  <header class="header">
+
+    <div class="site-title">
+      TREND SHORTS
+    </div>
+
+    <div class="site-subtitle">
+      DISCOVER WHAT'S TRENDING
+    </div>
+
+  </header>
+
+
+  <!-- =========================
+       ADVERTISEMENT
+       ========================= -->
+
+  <div class="ad-space"></div>
+
+
+  <!-- =========================
+       COUNTRY SLIDERS
+       ========================= -->
+
+  <main id="countries"></main>
+
+
+  <script>
 
     /*
     ==========================================
@@ -292,20 +350,20 @@
     ==========================================
     UI SETTINGS
     ==========================================
-
-    50 UI SLOTS PER COUNTRY
-
-    Maximum 10 actual Shorts displayed.
     */
 
+    // 1 country = 50 slots
+
     const TOTAL_SLOTS = 50;
+
+    // Music mostPopular = maximum 10 videos
 
     const MAX_VIDEOS = 10;
 
 
     /*
     ==========================================
-    CREATE UI
+    CREATE COUNTRY UI
     ==========================================
     */
 
@@ -315,41 +373,57 @@
 
     countries.forEach(country => {
 
+      /*
+      COUNTRY SECTION
+      */
+
       const section =
         document.createElement("section");
 
-      section.className = "country";
+      section.className =
+        "country";
 
 
-      /* COUNTRY NAME */
+      /*
+      COUNTRY NAME
+      */
 
       const title =
         document.createElement("div");
 
-      title.className = "country-name";
+      title.className =
+        "country-name";
 
       title.textContent =
         `${country.flag} ${country.name}`;
 
 
-      /* SLIDER */
+      /*
+      SLIDER
+      */
 
       const slider =
         document.createElement("div");
 
-      slider.className = "slider";
+      slider.className =
+        "slider";
 
 
       /*
       CREATE 50 FIXED SLOTS
       */
 
-      for (let i = 0; i < TOTAL_SLOTS; i++) {
+      for (
+        let i = 0;
+        i < TOTAL_SLOTS;
+        i++
+      ) {
 
         const item =
           document.createElement("div");
 
-        item.className = "item empty";
+        item.className =
+          "item empty";
 
 
         item.innerHTML = `
@@ -366,6 +440,10 @@
       }
 
 
+      /*
+      ADD TO PAGE
+      */
+
       section.appendChild(title);
 
       section.appendChild(slider);
@@ -377,84 +455,202 @@
       SAVE REFERENCES
       */
 
-      country.element = section;
+      country.element =
+        section;
 
-      country.slider = slider;
+      country.slider =
+        slider;
 
       country.items =
-        [...slider.querySelectorAll(".item")];
+        [
+          ...slider.querySelectorAll(".item")
+        ];
 
     });
 
 
     /*
     ==========================================
-    INSERT SHORTS
+    LOAD COUNTRY VIDEOS
     ==========================================
-
-    API will later return up to 50 videos.
-
-    Only videos already confirmed as Shorts
-    should be passed here.
-
-    Maximum 10 are displayed.
     */
 
-    function insertVideos(country, videos) {
+    async function loadCountryVideos(country) {
 
-      const shorts =
-        videos.slice(0, MAX_VIDEOS);
+      try {
 
-
-      shorts.forEach((video, index) => {
-
-        const item =
-          country.items[index];
-
-        if (!item) {
-          return;
-        }
+        const response =
+          await fetch(
+            `/api/youtube?regionCode=${encodeURIComponent(
+              country.regionCode
+            )}`
+          );
 
 
-        const thumbnail =
-          item.querySelector(".thumbnail");
+        if (!response.ok) {
 
-        const score =
-          item.querySelector(".score");
-
-
-        /*
-        THUMBNAIL
-        */
-
-        if (video.thumbnail) {
-
-          const image =
-            document.createElement("img");
-
-          image.src =
-            video.thumbnail;
-
-          image.alt = "";
-
-          thumbnail.appendChild(image);
+          throw new Error(
+            `API error: ${response.status}`
+          );
 
         }
 
 
+        const data =
+          await response.json();
+
+
         /*
-        SCORE
+        API CURRENTLY RETURNS:
+
+        {
+          regionCode,
+          fetched,
+          musicPopular
+        }
         */
 
-        score.textContent =
-          video.score ?? "SCORE";
+
+        const videos =
+          Array.isArray(data.musicPopular)
+            ? data.musicPopular
+            : [];
 
 
-        item.classList.remove("empty");
+        /*
+        MAXIMUM 10
+        */
 
-      });
+        insertVideos(
+          country,
+          videos.slice(0, MAX_VIDEOS)
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          `Failed to load ${country.regionCode}:`,
+          error
+        );
+
+      }
 
     }
 
-  </script></body>
+
+    /*
+    ==========================================
+    INSERT VIDEOS
+    ==========================================
+    */
+
+    function insertVideos(
+      country,
+      videos
+    ) {
+
+      videos.forEach(
+        (video, index) => {
+
+          /*
+          GET SLOT
+          */
+
+          const item =
+            country.items[index];
+
+
+          if (!item) {
+            return;
+          }
+
+
+          /*
+          GET ELEMENTS
+          */
+
+          const thumbnail =
+            item.querySelector(
+              ".thumbnail"
+            );
+
+
+          const score =
+            item.querySelector(
+              ".score"
+            );
+
+
+          /*
+          THUMBNAIL
+          */
+
+          if (video.thumbnail) {
+
+            const image =
+              document.createElement(
+                "img"
+              );
+
+
+            image.src =
+              video.thumbnail;
+
+
+            image.alt =
+              video.title || "";
+
+
+            image.loading =
+              "lazy";
+
+
+            thumbnail.appendChild(
+              image
+            );
+
+          }
+
+
+          /*
+          VIEW COUNT
+          */
+
+          score.textContent =
+            Number(
+              video.views || 0
+            ).toLocaleString();
+
+
+          /*
+          MARK SLOT AS ACTIVE
+          */
+
+          item.classList.remove(
+            "empty"
+          );
+
+        }
+      );
+
+    }
+
+
+    /*
+    ==========================================
+    LOAD ALL COUNTRIES
+    ==========================================
+    */
+
+    countries.forEach(
+      country => {
+        loadCountryVideos(country);
+      }
+    );
+
+  </script>
+
+</body>
+
 </html>

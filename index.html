@@ -82,7 +82,6 @@
       color: #fff;
       font-size: 20px;
       font-weight: 600;
-
       padding: 0 20px;
       margin-bottom: 15px;
     }
@@ -153,11 +152,21 @@
 
 
     /* =========================
-       EMPTY SLOT
+       CATEGORY
        ========================= */
 
-    .item.empty .thumbnail {
-      background: #111;
+    .video-category {
+      width: 100%;
+
+      margin-top: 10px;
+
+      color: #fff;
+
+      font-size: 13px;
+
+      font-weight: 600;
+
+      line-height: 1.4;
     }
 
 
@@ -168,7 +177,7 @@
     .video-title {
       width: 100%;
 
-      margin-top: 10px;
+      margin-top: 5px;
 
       color: #fff;
 
@@ -197,7 +206,7 @@
     .score {
       width: 100%;
 
-      min-height: 24px;
+      min-height: 44px;
 
       margin-top: 6px;
 
@@ -205,7 +214,16 @@
 
       font-size: 13px;
 
-      line-height: 1.5;
+      line-height: 1.6;
+    }
+
+
+    /* =========================
+       EMPTY SLOT
+       ========================= */
+
+    .item.empty .thumbnail {
+      background: #111;
     }
 
 
@@ -378,7 +396,7 @@
 
     /*
     ==========================================
-    COUNTRIES
+       COUNTRIES
     ==========================================
     */
 
@@ -514,7 +532,9 @@
 
     function shuffle(array) {
 
-      const result = [...array];
+      const result = [
+        ...array
+      ];
 
       for (
         let i = result.length - 1;
@@ -524,7 +544,8 @@
 
         const j =
           Math.floor(
-            Math.random() * (i + 1)
+            Math.random() *
+            (i + 1)
           );
 
         [
@@ -544,7 +565,7 @@
 
     /*
     ==========================================
-       CREATE COUNTRY UI
+       CREATE UI
     ==========================================
     */
 
@@ -554,119 +575,123 @@
       );
 
 
-    countries.forEach(country => {
+    countries.forEach(
+      country => {
 
-      const section =
-        document.createElement(
-          "section"
-        );
+        const section =
+          document.createElement(
+            "section"
+          );
 
-      section.className =
-        "country";
-
-
-      /*
-      COUNTRY NAME
-      */
-
-      const title =
-        document.createElement(
-          "div"
-        );
-
-      title.className =
-        "country-name";
-
-      title.textContent =
-        `${country.flag} ${country.name}`;
+        section.className =
+          "country";
 
 
-      /*
-      SLIDER
-      */
+        /*
+        COUNTRY NAME
+        */
 
-      const slider =
-        document.createElement(
-          "div"
-        );
-
-      slider.className =
-        "slider";
-
-
-      /*
-      CREATE 50 SLOTS
-      */
-
-      for (
-        let i = 0;
-        i < TOTAL_SLOTS;
-        i++
-      ) {
-
-        const item =
+        const title =
           document.createElement(
             "div"
           );
 
-        item.className =
-          "item empty";
+        title.className =
+          "country-name";
+
+        title.textContent =
+          `${country.flag} ${country.name}`;
 
 
-        item.innerHTML = `
+        /*
+        SLIDER
+        */
 
-          <div class="thumbnail"></div>
+        const slider =
+          document.createElement(
+            "div"
+          );
 
-          <div class="video-title"></div>
-
-          <div class="score"></div>
-
-        `;
+        slider.className =
+          "slider";
 
 
-        slider.appendChild(
-          item
+        /*
+        CREATE 50 SLOTS
+        */
+
+        for (
+          let i = 0;
+          i < TOTAL_SLOTS;
+          i++
+        ) {
+
+          const item =
+            document.createElement(
+              "div"
+            );
+
+          item.className =
+            "item empty";
+
+
+          item.innerHTML = `
+
+            <div class="thumbnail"></div>
+
+            <div class="video-category"></div>
+
+            <div class="video-title"></div>
+
+            <div class="score"></div>
+
+          `;
+
+
+          slider.appendChild(
+            item
+          );
+
+        }
+
+
+        section.appendChild(
+          title
         );
 
+        section.appendChild(
+          slider
+        );
+
+        container.appendChild(
+          section
+        );
+
+
+        /*
+        SAVE REFERENCES
+        */
+
+        country.element =
+          section;
+
+        country.slider =
+          slider;
+
+        country.items =
+          [
+            ...slider.querySelectorAll(
+              ".item"
+            )
+          ];
+
       }
-
-
-      section.appendChild(
-        title
-      );
-
-      section.appendChild(
-        slider
-      );
-
-      container.appendChild(
-        section
-      );
-
-
-      /*
-      SAVE REFERENCES
-      */
-
-      country.element =
-        section;
-
-      country.slider =
-        slider;
-
-      country.items =
-        [
-          ...slider.querySelectorAll(
-            ".item"
-          )
-        ];
-
-    });
+    );
 
 
     /*
     ==========================================
-       LOAD COUNTRY VIDEOS
+       LOAD VIDEOS
     ==========================================
     */
 
@@ -743,7 +768,11 @@
 
       const positions =
         shuffle(
-          [...Array(TOTAL_SLOTS).keys()]
+          [
+            ...Array(
+              TOTAL_SLOTS
+            ).keys()
+          ]
         ).slice(
           0,
           videos.length
@@ -754,7 +783,9 @@
         (video, videoIndex) => {
 
           const slotIndex =
-            positions[videoIndex];
+            positions[
+              videoIndex
+            ];
 
 
           const item =
@@ -771,6 +802,12 @@
           const thumbnail =
             item.querySelector(
               ".thumbnail"
+            );
+
+
+          const category =
+            item.querySelector(
+              ".video-category"
             );
 
 
@@ -818,6 +855,14 @@
 
 
           /*
+          CATEGORY
+          */
+
+          category.textContent =
+            "🎵 MUSIC";
+
+
+          /*
           TITLE
           */
 
@@ -826,7 +871,7 @@
 
 
           /*
-          SCORE
+          VIEWS
           */
 
           const views =
@@ -835,9 +880,16 @@
             ).toLocaleString();
 
 
+          /*
+          TRENDING DATA
+
+          Real-time hourly growth
+          is not available yet.
+          */
+
           score.innerHTML = `
             👁 ${views} views<br>
-            ⏱ ${formatPublishedTime(video.publishedAt)}
+            📈 —
           `;
 
 
@@ -881,81 +933,6 @@
 
     /*
     ==========================================
-       PUBLISHED TIME
-    ==========================================
-    */
-
-    function formatPublishedTime(
-      publishedAt
-    ) {
-
-      if (!publishedAt) {
-        return "—";
-      }
-
-
-      const published =
-        new Date(
-          publishedAt
-        );
-
-
-      const now =
-        new Date();
-
-
-      const seconds =
-        Math.floor(
-          (now - published) / 1000
-        );
-
-
-      if (seconds < 60) {
-
-        return `${seconds}s ago`;
-
-      }
-
-
-      const minutes =
-        Math.floor(
-          seconds / 60
-        );
-
-
-      if (minutes < 60) {
-
-        return `${minutes}m ago`;
-
-      }
-
-
-      const hours =
-        Math.floor(
-          minutes / 60
-        );
-
-
-      if (hours < 24) {
-
-        return `${hours}h ago`;
-
-      }
-
-
-      const days =
-        Math.floor(
-          hours / 24
-        );
-
-
-      return `${days}d ago`;
-
-    }
-
-
-    /*
-    ==========================================
        YOUTUBE PLAYER
     ==========================================
     */
@@ -988,9 +965,9 @@
 
 
       /*
-      YOUTUBE PRIVACY-ENHANCED MODE
+      PRIVACY-ENHANCED MODE
 
-      NO-COOKIE DOMAIN
+      youtube-nocookie.com
       */
 
       youtubePlayer.src =
@@ -1006,6 +983,10 @@
     }
 
 
+    /*
+    CLOSE PLAYER
+    */
+
     function closeVideoPlayer() {
 
       youtubePlayer.src = "";
@@ -1016,10 +997,6 @@
 
     }
 
-
-    /*
-    CLOSE BUTTON
-    */
 
     closePlayer.addEventListener(
       "click",

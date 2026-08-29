@@ -81,7 +81,8 @@ content="width=device-width, initial-scale=1.0"
     .country-name {
       color: #fff;
 
-      font-size: 20px;
+      font-size: 28px;
+
       font-weight: 600;
 
       padding: 0 20px;
@@ -308,6 +309,10 @@ content="width=device-width, initial-scale=1.0"
         margin-bottom: 45px;
       }
 
+      .country-name {
+        font-size: 24px;
+      }
+
       .item {
         flex-basis: 270px;
 
@@ -365,7 +370,6 @@ content="width=device-width, initial-scale=1.0"
 
   </div>  <script>
 
-
     /*
     ==========================================
        COUNTRIES
@@ -373,124 +377,30 @@ content="width=device-width, initial-scale=1.0"
     */
 
     const countries = [
-      {
-        flag: "🇺🇸",
-        name: "UNITED STATES",
-        regionCode: "US"
-      },
-
-      {
-        flag: "🇬🇧",
-        name: "UNITED KINGDOM",
-        regionCode: "GB"
-      },
-
-      {
-        flag: "🇦🇺",
-        name: "AUSTRALIA",
-        regionCode: "AU"
-      },
-
-      {
-        flag: "🇨🇦",
-        name: "CANADA",
-        regionCode: "CA"
-      },
-
-      {
-        flag: "🇩🇪",
-        name: "GERMANY",
-        regionCode: "DE"
-      },
-
-      {
-        flag: "🇵🇭",
-        name: "PHILIPPINES",
-        regionCode: "PH"
-      },
-
-      {
-        flag: "🇪🇸",
-        name: "SPAIN",
-        regionCode: "ES"
-      },
-
-      {
-        flag: "🇫🇷",
-        name: "FRANCE",
-        regionCode: "FR"
-      },
-
-      {
-        flag: "🇰🇷",
-        name: "SOUTH KOREA",
-        regionCode: "KR"
-      },
-
-      {
-        flag: "🇮🇹",
-        name: "ITALY",
-        regionCode: "IT"
-      },
-
-      {
-        flag: "🇻🇳",
-        name: "VIETNAM",
-        regionCode: "VN"
-      },
-
-      {
-        flag: "🇹🇷",
-        name: "TURKEY",
-        regionCode: "TR"
-      },
-
-      {
-        flag: "🇮🇳",
-        name: "INDIA",
-        regionCode: "IN"
-      },
-
-      {
-        flag: "🇧🇷",
-        name: "BRAZIL",
-        regionCode: "BR"
-      },
-
-      {
-        flag: "🇮🇩",
-        name: "INDONESIA",
-        regionCode: "ID"
-      },
-
-      {
-        flag: "🇯🇵",
-        name: "JAPAN",
-        regionCode: "JP"
-      },
-
-      {
-        flag: "🇲🇽",
-        name: "MEXICO",
-        regionCode: "MX"
-      },
-
-      {
-        flag: "🇹🇭",
-        name: "THAILAND",
-        regionCode: "TH"
-      }
+      { flag: "🇺🇸", name: "UNITED STATES", regionCode: "US" },
+      { flag: "🇬🇧", name: "UNITED KINGDOM", regionCode: "GB" },
+      { flag: "🇦🇺", name: "AUSTRALIA", regionCode: "AU" },
+      { flag: "🇨🇦", name: "CANADA", regionCode: "CA" },
+      { flag: "🇩🇪", name: "GERMANY", regionCode: "DE" },
+      { flag: "🇵🇭", name: "PHILIPPINES", regionCode: "PH" },
+      { flag: "🇪🇸", name: "SPAIN", regionCode: "ES" },
+      { flag: "🇫🇷", name: "FRANCE", regionCode: "FR" },
+      { flag: "🇰🇷", name: "SOUTH KOREA", regionCode: "KR" },
+      { flag: "🇮🇹", name: "ITALY", regionCode: "IT" },
+      { flag: "🇻🇳", name: "VIETNAM", regionCode: "VN" },
+      { flag: "🇹🇷", name: "TURKEY", regionCode: "TR" },
+      { flag: "🇮🇳", name: "INDIA", regionCode: "IN" },
+      { flag: "🇧🇷", name: "BRAZIL", regionCode: "BR" },
+      { flag: "🇮🇩", name: "INDONESIA", regionCode: "ID" },
+      { flag: "🇯🇵", name: "JAPAN", regionCode: "JP" },
+      { flag: "🇲🇽", name: "MEXICO", regionCode: "MX" },
+      { flag: "🇹🇭", name: "THAILAND", regionCode: "TH" }
     ];
 
 
     /*
     ==========================================
        SETTINGS
-
-       UI = 50 FIXED SLOTS
-
-       GAMING VIDEOS
-       = MAXIMUM 20
     ==========================================
     */
 
@@ -508,24 +418,15 @@ content="width=device-width, initial-scale=1.0"
 
       const result = [...array];
 
-      for (
-        let i = result.length - 1;
-        i > 0;
-        i--
-      ) {
+      for (let i = result.length - 1; i > 0; i--) {
 
         const j =
           Math.floor(
             Math.random() * (i + 1)
           );
 
-        [
-          result[i],
-          result[j]
-        ] = [
-          result[j],
-          result[i]
-        ];
+        [result[i], result[j]] =
+          [result[j], result[i]];
 
       }
 
@@ -541,135 +442,88 @@ content="width=device-width, initial-scale=1.0"
     */
 
     const container =
-      document.getElementById(
-        "countries"
-      );
+      document.getElementById("countries");
 
 
-    countries.forEach(
-      country => {
+    countries.forEach(country => {
 
-        const section =
-          document.createElement(
-            "section"
-          );
+      const section =
+        document.createElement("section");
 
-        section.className =
-          "country";
+      section.className = "country";
 
 
-        /*
-        COUNTRY NAME
-        */
+      const title =
+        document.createElement("div");
 
-        const title =
-          document.createElement(
-            "div"
-          );
+      title.className = "country-name";
 
-        title.className =
-          "country-name";
-
-        title.textContent =
-          `${country.flag} ${country.name}`;
+      title.textContent =
+        `${country.flag} ${country.name}`;
 
 
-        /*
-        SLIDER
-        */
+      const slider =
+        document.createElement("div");
 
-        const slider =
-          document.createElement(
-            "div"
-          );
-
-        slider.className =
-          "slider";
+      slider.className = "slider";
 
 
-        /*
-        CREATE 50 FIXED SLOTS
-        */
+      /*
+      CREATE 50 FIXED SLOTS
+      */
 
-        for (
-          let i = 0;
-          i < TOTAL_SLOTS;
-          i++
-        ) {
+      for (let i = 0; i < TOTAL_SLOTS; i++) {
 
-          const item =
-            document.createElement(
-              "div"
-            );
+        const item =
+          document.createElement("div");
 
-          item.className =
-            "item empty";
+        item.className = "item empty";
 
 
-          /*
-          仮のYouTube掲載枠
-          */
+        item.innerHTML = `
 
-          item.innerHTML = `
+          <div class="thumbnail"></div>
 
-            <div class="thumbnail"></div>
+          <div class="video-title">
+            TRENDING VIDEO
+          </div>
 
-            <div class="video-title">
-              TRENDING VIDEO
-            </div>
+          <div class="video-category">
+            🎮 GAMING
+          </div>
 
-            <div class="video-category">
-              🎮 GAMING
-            </div>
+          <div class="score">
+            🔥 — Trending<br>
+            👁 — views<br>
+            📈 — / last hour
+          </div>
 
-            <div class="score">
-              🔥 — Trending<br>
-              👁 — views<br>
-              📈 — / last hour
-            </div>
-
-          `;
+        `;
 
 
-          slider.appendChild(
-            item
-          );
-
-        }
-
-
-        section.appendChild(
-          title
-        );
-
-        section.appendChild(
-          slider
-        );
-
-        container.appendChild(
-          section
-        );
-
-
-        /*
-        SAVE REFERENCES
-        */
-
-        country.element =
-          section;
-
-        country.slider =
-          slider;
-
-        country.items =
-          [
-            ...slider.querySelectorAll(
-              ".item"
-            )
-          ];
+        slider.appendChild(item);
 
       }
-    );
+
+
+      section.appendChild(title);
+      section.appendChild(slider);
+
+      container.appendChild(section);
+
+
+      /*
+      SAVE REFERENCES
+      */
+
+      country.element = section;
+
+      country.slider = slider;
+
+      country.items =
+        [...slider.querySelectorAll(".item")];
+
+    });
 
 
     /*
@@ -678,9 +532,7 @@ content="width=device-width, initial-scale=1.0"
     ==========================================
     */
 
-    async function loadCountryVideos(
-      country
-    ) {
+    async function loadCountryVideos(country) {
 
       try {
 
@@ -705,14 +557,8 @@ content="width=device-width, initial-scale=1.0"
           await response.json();
 
 
-        /*
-        GAMING POPULAR
-        */
-
         const videos =
-          Array.isArray(
-            data.gamingPopular
-          )
+          Array.isArray(data.gamingPopular)
             ? data.gamingPopular
             : [];
 
@@ -723,11 +569,7 @@ content="width=device-width, initial-scale=1.0"
 
         insertVideos(
           country,
-
-          videos.slice(
-            0,
-            MAX_VIDEOS
-          )
+          videos.slice(0, MAX_VIDEOS)
         );
 
       } catch (error) {
@@ -748,182 +590,139 @@ content="width=device-width, initial-scale=1.0"
     ==========================================
     */
 
-    function insertVideos(
-      country,
-      videos
-    ) {
-
+    function insertVideos(country, videos) {
 
       /*
-      CHOOSE RANDOM SLOTS
-
-      50 UI slotsの中から
-      最大20個をランダム選択。
-
-      各国ごとに独立。
+      RANDOMLY SELECT VIDEO POSITIONS
+      FROM 50 FIXED SLOTS
       */
 
       const positions =
         shuffle(
-          [
-            ...Array(
-              TOTAL_SLOTS
-            ).keys()
-          ]
+          [...Array(TOTAL_SLOTS).keys()]
         ).slice(
           0,
           videos.length
         );
 
 
-      videos.forEach(
-        (video, videoIndex) => {
+      videos.forEach((video, videoIndex) => {
 
-          const slotIndex =
-            positions[
-              videoIndex
-            ];
+        const slotIndex =
+          positions[videoIndex];
 
 
-          const item =
-            country.items[
-              slotIndex
-            ];
+        const item =
+          country.items[slotIndex];
 
 
-          if (!item) {
-            return;
-          }
+        if (!item) {
+          return;
+        }
 
 
-          const thumbnail =
-            item.querySelector(
-              ".thumbnail"
-            );
+        const thumbnail =
+          item.querySelector(".thumbnail");
 
 
-          const title =
-            item.querySelector(
-              ".video-title"
-            );
+        const title =
+          item.querySelector(".video-title");
 
 
-          const category =
-            item.querySelector(
-              ".video-category"
-            );
+        const category =
+          item.querySelector(".video-category");
 
 
-          const score =
-            item.querySelector(
-              ".score"
-            );
+        const score =
+          item.querySelector(".score");
 
 
-          /*
-          THUMBNAIL
-          */
+        /*
+        THUMBNAIL
+        */
 
-          if (video.thumbnail) {
+        if (video.thumbnail) {
 
-            const image =
-              document.createElement(
-                "img"
-              );
+          const image =
+            document.createElement("img");
 
-            image.src =
-              video.thumbnail;
+          image.src =
+            video.thumbnail;
 
-            image.alt =
-              video.title || "";
-
-            image.loading =
-              "lazy";
-
-            thumbnail.appendChild(
-              image
-            );
-
-          }
-
-
-          /*
-          TITLE
-          */
-
-          title.textContent =
+          image.alt =
             video.title || "";
 
+          image.loading = "lazy";
 
-          /*
-          CATEGORY
-          */
-
-          category.textContent =
-            "🎮 GAMING";
-
-
-          /*
-          VIEWS
-          */
-
-          const views =
-            Number(
-              video.views || 0
-            ).toLocaleString();
-
-
-          /*
-          SCORE
-
-          投稿時間は表示しない。
-          */
-
-          score.innerHTML = `
-
-            🔥 — Trending<br>
-
-            👁 ${views} views<br>
-
-            📈 — / last hour
-
-          `;
-
-
-          /*
-          VIDEO ID
-          */
-
-          item.dataset.videoId =
-            video.id;
-
-
-          /*
-          ACTIVE CARD
-          */
-
-          item.classList.remove(
-            "empty"
-          );
-
-
-          /*
-          CLICK TO PLAY
-          */
-
-          item.addEventListener(
-            "click",
-            () => {
-
-              openPlayer(
-                video.id
-              );
-
-            }
-          );
+          thumbnail.appendChild(image);
 
         }
-      );
+
+
+        /*
+        TITLE
+        */
+
+        title.textContent =
+          video.title || "";
+
+
+        /*
+        CATEGORY
+        */
+
+        category.textContent =
+          "🎮 GAMING";
+
+
+        /*
+        VIEWS
+        */
+
+        const views =
+          Number(
+            video.views || 0
+          ).toLocaleString();
+
+
+        /*
+        SCORE
+        */
+
+        score.innerHTML = `
+          🔥 — Trending<br>
+          👁 ${views} views<br>
+          📈 — / last hour
+        `;
+
+
+        /*
+        VIDEO ID
+        */
+
+        item.dataset.videoId =
+          video.id;
+
+
+        /*
+        ACTIVE CARD
+        */
+
+        item.classList.remove("empty");
+
+
+        /*
+        CLICK TO PLAY
+        */
+
+        item.addEventListener(
+          "click",
+          () => {
+            openPlayer(video.id);
+          }
+        );
+
+      });
 
     }
 
@@ -944,22 +743,13 @@ content="width=device-width, initial-scale=1.0"
         "youtubePlayer"
       );
 
-
     const closePlayer =
       document.getElementById(
         "closePlayer"
       );
 
 
-    /*
-    OPEN PLAYER
-
-    Privacy Enhanced Mode
-    */
-
-    function openPlayer(
-      videoId
-    ) {
+    function openPlayer(videoId) {
 
       if (!videoId) {
         return;
@@ -971,16 +761,13 @@ content="width=device-width, initial-scale=1.0"
           videoId
         )}?rel=0`;
 
+
       playerOverlay.classList.add(
         "active"
       );
 
     }
 
-
-    /*
-    CLOSE PLAYER
-    */
 
     function closeVideoPlayer() {
 
@@ -993,28 +780,17 @@ content="width=device-width, initial-scale=1.0"
     }
 
 
-    /*
-    CLOSE BUTTON
-    */
-
     closePlayer.addEventListener(
       "click",
       closeVideoPlayer
     );
 
 
-    /*
-    CLOSE BACKGROUND
-    */
-
     playerOverlay.addEventListener(
       "click",
       event => {
 
-        if (
-          event.target ===
-          playerOverlay
-        ) {
+        if (event.target === playerOverlay) {
 
           closeVideoPlayer();
 
@@ -1024,17 +800,11 @@ content="width=device-width, initial-scale=1.0"
     );
 
 
-    /*
-    ESC KEY
-    */
-
     document.addEventListener(
       "keydown",
       event => {
 
-        if (
-          event.key === "Escape"
-        ) {
+        if (event.key === "Escape") {
 
           closeVideoPlayer();
 
@@ -1050,15 +820,11 @@ content="width=device-width, initial-scale=1.0"
     ==========================================
     */
 
-    countries.forEach(
-      country => {
+    countries.forEach(country => {
 
-        loadCountryVideos(
-          country
-        );
+      loadCountryVideos(country);
 
-      }
-    );
+    });
 
-
-  </script></body></html>
+  </script></body>
+</html>

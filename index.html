@@ -527,17 +527,25 @@
     ==========================================
        SETTINGS
     ==========================================
+
+       20 FIXED SLOTS
+       MAXIMUM 20 VIDEOS
     */
 
-    const TOTAL_SLOTS = 50;
+    const TOTAL_SLOTS = 20;
 
-    const MAX_VIDEOS = 10;
+    const MAX_VIDEOS = 20;
 
 
     /*
     ==========================================
        SHUFFLE
     ==========================================
+
+       Fisher-Yates shuffle
+
+       Each country is shuffled
+       independently.
     */
 
     function shuffle(array) {
@@ -624,7 +632,7 @@
 
 
         /*
-        CREATE 50 FIXED SLOTS
+        CREATE 20 FIXED SLOTS
         */
 
         for (
@@ -698,7 +706,7 @@
 
     /*
     ==========================================
-       LOAD VIDEOS
+       LOAD COUNTRY VIDEOS
     ==========================================
     */
 
@@ -741,6 +749,10 @@
             : [];
 
 
+        /*
+        MAXIMUM 20
+        */
+
         insertVideos(
           country,
 
@@ -776,8 +788,12 @@
 
 
       /*
-      EACH COUNTRY GETS
-      ITS OWN RANDOM POSITIONS
+      RANDOM POSITIONS
+
+      20 slotsから動画本数分だけ
+      ランダムに選択。
+
+      国ごとに独立している。
       */
 
       const positions =
@@ -893,6 +909,9 @@
           /*
           SCORE
 
+          YouTube Data APIから
+          現在取得できる情報のみ表示。
+
           投稿時間は表示しない。
           */
 
@@ -908,7 +927,7 @@
 
 
           /*
-          SAVE VIDEO ID
+          VIDEO ID
           */
 
           item.dataset.videoId =
@@ -916,7 +935,7 @@
 
 
           /*
-          ACTIVE
+          ACTIVE CARD
           */
 
           item.classList.remove(
@@ -925,7 +944,7 @@
 
 
           /*
-          CLICK
+          CLICK TO PLAY
           */
 
           item.addEventListener(
@@ -983,7 +1002,9 @@
 
 
       /*
-      PRIVACY-ENHANCED MODE
+      YOUTUBE PRIVACY-ENHANCED MODE
+
+      youtube-nocookie.com
       */
 
       youtubePlayer.src =

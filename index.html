@@ -168,6 +168,18 @@
       font-size: 13px;
       line-height: 1.6;
       font-weight: 500;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      column-gap: 8px;
+      row-gap: 2px;
+      align-items: center;
+    }
+
+    .score-item {
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .player-overlay {
@@ -251,6 +263,11 @@
       .video-title {
         font-size: 14px;
         height: 58.8px;
+      }
+
+      .score {
+        column-gap: 5px;
+        font-size: 12px;
       }
 
     }
@@ -352,6 +369,30 @@
 
     }
 
+    function formatCompactNumber(value) {
+
+      const number = Number(value || 0);
+
+      if (!Number.isFinite(number)) {
+        return "—";
+      }
+
+      if (number >= 1000000000) {
+        return `${(number / 1000000000).toFixed(1).replace(/\.0$/, "")}B`;
+      }
+
+      if (number >= 1000000) {
+        return `${(number / 1000000).toFixed(1).replace(/\.0$/, "")}M`;
+      }
+
+      if (number >= 1000) {
+        return `${(number / 1000).toFixed(1).replace(/\.0$/, "")}K`;
+      }
+
+      return number.toLocaleString();
+
+    }
+
     const container =
       document.getElementById("countries");
 
@@ -397,10 +438,31 @@
           </div>
 
           <div class="score">
-            🎮 GAMING<br>
-            🔥 Trending<br>
-            👤 —<br>
-            👁 — views
+
+            <div class="score-item">
+              🎮 GAMING
+            </div>
+
+            <div class="score-item">
+              👍 —
+            </div>
+
+            <div class="score-item">
+              👁 —
+            </div>
+
+            <div class="score-item">
+              👤 —
+            </div>
+
+            <div class="score-item">
+              💬 —
+            </div>
+
+            <div class="score-item">
+              📈 —/h
+            </div>
+
           </div>
 
         `;
@@ -522,16 +584,47 @@
         category.textContent =
           "";
 
+        const likes =
+          video.likes == null
+            ? "—"
+            : formatCompactNumber(video.likes);
+
         const views =
-          Number(
-            video.views || 0
-          ).toLocaleString();
+          video.views == null
+            ? "—"
+            : formatCompactNumber(video.views);
+
+        const comments =
+          video.comments == null
+            ? "—"
+            : formatCompactNumber(video.comments);
 
         score.innerHTML = `
-          🎮 GAMING<br>
-          🔥 Trending<br>
-          👤 ${video.channel_title || "—"}<br>
-          👁 ${views} views
+
+          <div class="score-item">
+            🎮 GAMING
+          </div>
+
+          <div class="score-item">
+            👍 ${likes}
+          </div>
+
+          <div class="score-item">
+            👁 ${views}
+          </div>
+
+          <div class="score-item">
+            👤 ${video.channel_title || "—"}
+          </div>
+
+          <div class="score-item">
+            💬 ${comments}
+          </div>
+
+          <div class="score-item">
+            📈 —/h
+          </div>
+
         `;
 
         item.dataset.videoId =

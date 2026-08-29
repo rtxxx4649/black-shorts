@@ -16,7 +16,6 @@ export default async function handler(req, res) {
       });
     }
 
-
     /*
     ==========================================
       YOUTUBE API KEY
@@ -33,25 +32,10 @@ export default async function handler(req, res) {
       });
     }
 
-
     /*
     ==========================================
       MOST POPULAR GAMING
     ==========================================
-
-      chart:
-        mostPopular
-
-      regionCode:
-        各国の地域コード
-
-      videoCategoryId:
-        20 = Gaming
-
-      Search API:
-        使用しない
-
-      最大50件取得
     */
 
     const params =
@@ -75,7 +59,6 @@ export default async function handler(req, res) {
           apiKey
       });
 
-
     /*
     ==========================================
       YOUTUBE DATA API
@@ -87,10 +70,8 @@ export default async function handler(req, res) {
         `https://www.googleapis.com/youtube/v3/videos?${params.toString()}`
       );
 
-
     const data =
       await response.json();
-
 
     /*
     ==========================================
@@ -99,22 +80,15 @@ export default async function handler(req, res) {
     */
 
     if (!response.ok) {
-
       return res.status(
         response.status
       ).json(data);
-
     }
-
 
     /*
     ==========================================
       FORMAT VIDEOS
     ==========================================
-
-      フロント側では
-      data.gamingPopular
-      を使用する。
     */
 
     const gamingPopular =
@@ -122,7 +96,6 @@ export default async function handler(req, res) {
         item => {
 
           return {
-
             id:
               item.id,
 
@@ -137,6 +110,9 @@ export default async function handler(req, res) {
               item.snippet?.thumbnails
                 ?.default?.url ||
               "",
+
+            channelTitle:
+              item.snippet?.channelTitle || "",
 
             duration:
               item.contentDetails
@@ -167,12 +143,10 @@ export default async function handler(req, res) {
             categoryId:
               item.snippet
                 ?.categoryId || "20"
-
           };
 
         }
       );
-
 
     /*
     ==========================================
@@ -183,30 +157,23 @@ export default async function handler(req, res) {
     return res.status(200).json({
 
       regionCode:
-
         regionCode,
 
       fetched:
-
         gamingPopular.length,
 
       gamingPopular:
-
         gamingPopular
 
     });
-
 
   } catch (error) {
 
     console.error(error);
 
-
     return res.status(500).json({
-
       error:
         "Failed to fetch YouTube videos"
-
     });
 
   }

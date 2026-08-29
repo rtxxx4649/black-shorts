@@ -1,10 +1,18 @@
-<!DOCTYPE html><html lang="en"><head>  <meta charset="UTF-8"><meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
+<!DOCTYPE html>
+<html lang="en">
 
-«»
+<head>
 
-  <title>TREND WORLD</title>  <style>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>TREND WORLD</title>
+
+  <style>
 
     * {
       margin: 0;
@@ -155,6 +163,7 @@ content="width=device-width, initial-scale=1.0"
       object-fit: cover;
     }
 
+
     /* =========================
        VIDEO TITLE
        ========================= */
@@ -184,6 +193,7 @@ content="width=device-width, initial-scale=1.0"
 
       word-break: break-word;
     }
+
 
     /* =========================
        CATEGORY
@@ -219,6 +229,7 @@ content="width=device-width, initial-scale=1.0"
 
       line-height: 1.6;
     }
+
 
     /* =========================
        YOUTUBE PLAYER
@@ -327,40 +338,90 @@ content="width=device-width, initial-scale=1.0"
 
     }
 
-  </style></head><body>  <header class="header"><div class="site-title">
-  <span class="trend">TREND</span>
-  <span class="world">WORLD</span>
-</div>
+  </style>
 
-<div class="site-subtitle">
-  DISCOVER WHAT'S TRENDING
-</div>
+</head>
 
-  </header>  <div class="ad-space"></div>  <main id="countries"></main>  <div
+
+<body>
+
+
+  <!-- =========================
+       HEADER
+       ========================= -->
+
+  <header class="header">
+
+    <div class="site-title">
+
+      <span class="trend">
+        TREND
+      </span>
+
+      <span class="world">
+        WORLD
+      </span>
+
+    </div>
+
+
+    <div class="site-subtitle">
+      DISCOVER WHAT'S TRENDING
+    </div>
+
+  </header>
+
+
+  <!-- =========================
+       ADVERTISEMENT
+       ========================= -->
+
+  <div class="ad-space"></div>
+
+
+  <!-- =========================
+       COUNTRY SLIDERS
+       ========================= -->
+
+  <main id="countries"></main>
+
+
+  <!-- =========================
+       YOUTUBE PLAYER
+       ========================= -->
+
+  <div
     id="playerOverlay"
     class="player-overlay"
-  ><div class="player-container">
-
-  <button
-    id="closePlayer"
-    class="close-player"
-    type="button"
-    aria-label="Close"
   >
-    ×
-  </button>
 
-  <iframe
-    id="youtubePlayer"
-    title="YouTube video player"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    allowfullscreen
-    referrerpolicy="strict-origin-when-cross-origin"
-  ></iframe>
+    <div class="player-container">
 
-</div>
+      <button
+        id="closePlayer"
+        class="close-player"
+        type="button"
+        aria-label="Close"
+      >
+        ×
+      </button>
 
-  </div>  <script>
+
+      <iframe
+        id="youtubePlayer"
+        title="YouTube video player"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        referrerpolicy="strict-origin-when-cross-origin"
+      ></iframe>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
 
     /*
     ==========================================
@@ -369,24 +430,115 @@ content="width=device-width, initial-scale=1.0"
     */
 
     const countries = [
-      { flag: "🇺🇸", name: "UNITED STATES", regionCode: "US" },
-      { flag: "🇬🇧", name: "UNITED KINGDOM", regionCode: "GB" },
-      { flag: "🇦🇺", name: "AUSTRALIA", regionCode: "AU" },
-      { flag: "🇨🇦", name: "CANADA", regionCode: "CA" },
-      { flag: "🇩🇪", name: "GERMANY", regionCode: "DE" },
-      { flag: "🇵🇭", name: "PHILIPPINES", regionCode: "PH" },
-      { flag: "🇪🇸", name: "SPAIN", regionCode: "ES" },
-      { flag: "🇫🇷", name: "FRANCE", regionCode: "FR" },
-      { flag: "🇰🇷", name: "SOUTH KOREA", regionCode: "KR" },
-      { flag: "🇮🇹", name: "ITALY", regionCode: "IT" },
-      { flag: "🇻🇳", name: "VIETNAM", regionCode: "VN" },
-      { flag: "🇹🇷", name: "TURKEY", regionCode: "TR" },
-      { flag: "🇮🇳", name: "INDIA", regionCode: "IN" },
-      { flag: "🇧🇷", name: "BRAZIL", regionCode: "BR" },
-      { flag: "🇮🇩", name: "INDONESIA", regionCode: "ID" },
-      { flag: "🇯🇵", name: "JAPAN", regionCode: "JP" },
-      { flag: "🇲🇽", name: "MEXICO", regionCode: "MX" },
-      { flag: "🇹🇭", name: "THAILAND", regionCode: "TH" }
+
+      {
+        flag: "🇺🇸",
+        name: "UNITED STATES",
+        regionCode: "US"
+      },
+
+      {
+        flag: "🇬🇧",
+        name: "UNITED KINGDOM",
+        regionCode: "GB"
+      },
+
+      {
+        flag: "🇦🇺",
+        name: "AUSTRALIA",
+        regionCode: "AU"
+      },
+
+      {
+        flag: "🇨🇦",
+        name: "CANADA",
+        regionCode: "CA"
+      },
+
+      {
+        flag: "🇩🇪",
+        name: "GERMANY",
+        regionCode: "DE"
+      },
+
+      {
+        flag: "🇵🇭",
+        name: "PHILIPPINES",
+        regionCode: "PH"
+      },
+
+      {
+        flag: "🇪🇸",
+        name: "SPAIN",
+        regionCode: "ES"
+      },
+
+      {
+        flag: "🇫🇷",
+        name: "FRANCE",
+        regionCode: "FR"
+      },
+
+      {
+        flag: "🇰🇷",
+        name: "SOUTH KOREA",
+        regionCode: "KR"
+      },
+
+      {
+        flag: "🇮🇹",
+        name: "ITALY",
+        regionCode: "IT"
+      },
+
+      {
+        flag: "🇻🇳",
+        name: "VIETNAM",
+        regionCode: "VN"
+      },
+
+      {
+        flag: "🇹🇷",
+        name: "TURKEY",
+        regionCode: "TR"
+      },
+
+      {
+        flag: "🇮🇳",
+        name: "INDIA",
+        regionCode: "IN"
+      },
+
+      {
+        flag: "🇧🇷",
+        name: "BRAZIL",
+        regionCode: "BR"
+      },
+
+      {
+        flag: "🇮🇩",
+        name: "INDONESIA",
+        regionCode: "ID"
+      },
+
+      {
+        flag: "🇯🇵",
+        name: "JAPAN",
+        regionCode: "JP"
+      },
+
+      {
+        flag: "🇲🇽",
+        name: "MEXICO",
+        regionCode: "MX"
+      },
+
+      {
+        flag: "🇹🇭",
+        name: "THAILAND",
+        regionCode: "TH"
+      }
+
     ];
 
 
@@ -397,7 +549,8 @@ content="width=device-width, initial-scale=1.0"
     */
 
     const TOTAL_SLOTS = 50;
-    const MAX_VIDEOS = 50;
+
+    const MAX_VIDEOS = 20;
 
 
     /*
@@ -410,17 +563,30 @@ content="width=device-width, initial-scale=1.0"
 
       const result = [...array];
 
-      for (let i = result.length - 1; i > 0; i--) {
+
+      for (
+        let i = result.length - 1;
+        i > 0;
+        i--
+      ) {
 
         const j =
           Math.floor(
             Math.random() * (i + 1)
           );
 
-        [result[i], result[j]] =
-          [result[j], result[i]];
+
+        [
+          result[i],
+          result[j]
+        ] =
+        [
+          result[j],
+          result[i]
+        ];
 
       }
+
 
       return result;
 
@@ -434,42 +600,65 @@ content="width=device-width, initial-scale=1.0"
     */
 
     const container =
-      document.getElementById("countries");
+      document.getElementById(
+        "countries"
+      );
 
 
     countries.forEach(country => {
 
       const section =
-        document.createElement("section");
+        document.createElement(
+          "section"
+        );
 
-      section.className = "country";
+
+      section.className =
+        "country";
 
 
       const title =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
-      title.className = "country-name";
+
+      title.className =
+        "country-name";
+
 
       title.textContent =
         `${country.flag} ${country.name}`;
 
 
       const slider =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
-      slider.className = "slider";
+
+      slider.className =
+        "slider";
 
 
       /*
       CREATE 50 FIXED SLOTS
       */
 
-      for (let i = 0; i < TOTAL_SLOTS; i++) {
+      for (
+        let i = 0;
+        i < TOTAL_SLOTS;
+        i++
+      ) {
 
         const item =
-          document.createElement("div");
+          document.createElement(
+            "div"
+          );
 
-        item.className = "item empty";
+
+        item.className =
+          "item empty";
 
 
         item.innerHTML = `
@@ -485,30 +674,55 @@ content="width=device-width, initial-scale=1.0"
           </div>
 
           <div class="score">
+            🎮 GAMING<br>
             🔥 — Trending<br>
-            👁 — views<br>
-            📈 — / last hour
+            👤 —<br>
+            👁 — views
           </div>
 
         `;
 
 
-        slider.appendChild(item);
+        slider.appendChild(
+          item
+        );
 
       }
 
 
-      section.appendChild(title);
-      section.appendChild(slider);
-      container.appendChild(section);
+      section.appendChild(
+        title
+      );
 
 
-      country.element = section;
+      section.appendChild(
+        slider
+      );
 
-      country.slider = slider;
+
+      container.appendChild(
+        section
+      );
+
+
+      /*
+      SAVE REFERENCES
+      */
+
+      country.element =
+        section;
+
+
+      country.slider =
+        slider;
+
 
       country.items =
-        [...slider.querySelectorAll(".item")];
+        [
+          ...slider.querySelectorAll(
+            ".item"
+          )
+        ];
 
     });
 
@@ -519,7 +733,9 @@ content="width=device-width, initial-scale=1.0"
     ==========================================
     */
 
-    async function loadCountryVideos(country) {
+    async function loadCountryVideos(
+      country
+    ) {
 
       try {
 
@@ -545,19 +761,25 @@ content="width=device-width, initial-scale=1.0"
 
 
         const videos =
-          Array.isArray(data.gamingPopular)
+          Array.isArray(
+            data.gamingPopular
+          )
             ? data.gamingPopular
             : [];
 
 
         /*
-        MAXIMUM 50 VIDEOS
+        MAXIMUM 20 VIDEOS
         */
 
         insertVideos(
           country,
-          videos.slice(0, MAX_VIDEOS)
+          videos.slice(
+            0,
+            MAX_VIDEOS
+          )
         );
+
 
       } catch (error) {
 
@@ -577,7 +799,10 @@ content="width=device-width, initial-scale=1.0"
     ==========================================
     */
 
-    function insertVideos(country, videos) {
+    function insertVideos(
+      country,
+      videos
+    ) {
 
       /*
       RANDOMLY SELECT VIDEO POSITIONS
@@ -586,130 +811,174 @@ content="width=device-width, initial-scale=1.0"
 
       const positions =
         shuffle(
-          [...Array(TOTAL_SLOTS).keys()]
+          [
+            ...Array(
+              TOTAL_SLOTS
+            ).keys()
+          ]
         ).slice(
           0,
           videos.length
         );
 
 
-      videos.forEach((video, videoIndex) => {
+      videos.forEach(
+        (
+          video,
+          videoIndex
+        ) => {
 
-        const slotIndex =
-          positions[videoIndex];
-
-
-        const item =
-          country.items[slotIndex];
-
-
-        if (!item) {
-          return;
-        }
+          const slotIndex =
+            positions[
+              videoIndex
+            ];
 
 
-        const thumbnail =
-          item.querySelector(".thumbnail");
+          const item =
+            country.items[
+              slotIndex
+            ];
 
 
-        const title =
-          item.querySelector(".video-title");
+          if (!item) {
+            return;
+          }
 
 
-        const category =
-          item.querySelector(".video-category");
+          const thumbnail =
+            item.querySelector(
+              ".thumbnail"
+            );
 
 
-        const score =
-          item.querySelector(".score");
+          const title =
+            item.querySelector(
+              ".video-title"
+            );
 
 
-        /*
-        THUMBNAIL
-        */
+          const category =
+            item.querySelector(
+              ".video-category"
+            );
 
-        if (video.thumbnail) {
 
-          const image =
-            document.createElement("img");
+          const score =
+            item.querySelector(
+              ".score"
+            );
 
-          image.src =
-            video.thumbnail;
 
-          image.alt =
+          /*
+          THUMBNAIL
+          */
+
+          if (video.thumbnail) {
+
+            const image =
+              document.createElement(
+                "img"
+              );
+
+
+            image.src =
+              video.thumbnail;
+
+
+            image.alt =
+              video.title || "";
+
+
+            image.loading =
+              "lazy";
+
+
+            thumbnail.appendChild(
+              image
+            );
+
+          }
+
+
+          /*
+          TITLE
+          */
+
+          title.textContent =
             video.title || "";
 
-          image.loading = "lazy";
 
-          thumbnail.appendChild(image);
+          /*
+          CATEGORY
+          */
+
+          category.textContent =
+            "";
+
+
+          /*
+          VIEWS
+          */
+
+          const views =
+            Number(
+              video.views || 0
+            ).toLocaleString();
+
+
+          /*
+          SCORE
+          */
+
+          score.innerHTML = `
+
+            🎮 GAMING<br>
+
+            🔥 — Trending<br>
+
+            👤 ${
+              video.channelTitle || "—"
+            }<br>
+
+            👁 ${views} views
+
+          `;
+
+
+          /*
+          VIDEO ID
+          */
+
+          item.dataset.videoId =
+            video.id;
+
+
+          /*
+          ACTIVE CARD
+          */
+
+          item.classList.remove(
+            "empty"
+          );
+
+
+          /*
+          CLICK TO PLAY
+          */
+
+          item.addEventListener(
+            "click",
+            () => {
+
+              openPlayer(
+                video.id
+              );
+
+            }
+          );
 
         }
-
-
-        /*
-        TITLE
-        */
-
-        title.textContent =
-          video.title || "";
-
-
-        /*
-        CATEGORY
-        */
-
-        category.textContent =
-          "🎮 GAMING";
-
-
-        /*
-        VIEWS
-        */
-
-        const views =
-          Number(
-            video.views || 0
-          ).toLocaleString();
-
-
-        /*
-        SCORE
-        */
-
-        score.innerHTML = `
-          🔥 — Trending<br>
-          👁 ${views} views<br>
-          📈 — / last hour
-        `;
-
-
-        /*
-        VIDEO ID
-        */
-
-        item.dataset.videoId =
-          video.id;
-
-
-        /*
-        ACTIVE CARD
-        */
-
-        item.classList.remove("empty");
-
-
-        /*
-        CLICK TO PLAY
-        */
-
-        item.addEventListener(
-          "click",
-          () => {
-            openPlayer(video.id);
-          }
-        );
-
-      });
+      );
 
     }
 
@@ -725,10 +994,12 @@ content="width=device-width, initial-scale=1.0"
         "playerOverlay"
       );
 
+
     const youtubePlayer =
       document.getElementById(
         "youtubePlayer"
       );
+
 
     const closePlayer =
       document.getElementById(
@@ -736,7 +1007,9 @@ content="width=device-width, initial-scale=1.0"
       );
 
 
-    function openPlayer(videoId) {
+    function openPlayer(
+      videoId
+    ) {
 
       if (!videoId) {
         return;
@@ -758,7 +1031,9 @@ content="width=device-width, initial-scale=1.0"
 
     function closeVideoPlayer() {
 
-      youtubePlayer.src = "";
+      youtubePlayer.src =
+        "";
+
 
       playerOverlay.classList.remove(
         "active"
@@ -777,7 +1052,10 @@ content="width=device-width, initial-scale=1.0"
       "click",
       event => {
 
-        if (event.target === playerOverlay) {
+        if (
+          event.target ===
+          playerOverlay
+        ) {
 
           closeVideoPlayer();
 
@@ -791,7 +1069,10 @@ content="width=device-width, initial-scale=1.0"
       "keydown",
       event => {
 
-        if (event.key === "Escape") {
+        if (
+          event.key ===
+          "Escape"
+        ) {
 
           closeVideoPlayer();
 
@@ -807,11 +1088,18 @@ content="width=device-width, initial-scale=1.0"
     ==========================================
     */
 
-    countries.forEach(country => {
+    countries.forEach(
+      country => {
 
-      loadCountryVideos(country);
+        loadCountryVideos(
+          country
+        );
 
-    });
+      }
+    );
 
-  </script></body>
+  </script>
+
+</body>
+
 </html>

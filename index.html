@@ -10,7 +10,7 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>TREND WORLD</title>
+  <title>TREND HUB</title>
 
   <style>
 
@@ -85,6 +85,19 @@
       font-weight: 600;
       padding: 0 20px;
       margin-bottom: 18px;
+      text-align: center;
+    }
+
+    .country-flag {
+      font-size: 38px;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .country-title {
+      font-size: 28px;
+      font-weight: 600;
+      line-height: 1.2;
     }
 
     .slider {
@@ -222,6 +235,14 @@
         font-size: 24px;
       }
 
+      .country-flag {
+        font-size: 34px;
+      }
+
+      .country-title {
+        font-size: 24px;
+      }
+
       .item {
         flex-basis: 270px;
         width: 270px;
@@ -346,8 +367,10 @@
 
       title.className = "country-name";
 
-      title.textContent =
-        `${country.flag} ${country.name}`;
+      title.innerHTML = `
+        <div class="country-flag">${country.flag}</div>
+        <div class="country-title">🔥 TRENDING VIDEOS 🔥</div>
+      `;
 
       const slider =
         document.createElement("div");

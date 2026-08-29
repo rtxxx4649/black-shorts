@@ -17,36 +17,33 @@
 
     body {
       padding: 40px 0;
-      font-family: Arial, sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #fff;
     }
 
-    /* Header */
+    /* HEADER */
 
     .header {
       padding: 0 20px;
       margin-bottom: 30px;
     }
 
-    /* Site Title */
-
     .site-title {
       color: #fff;
       font-size: 48px;
-      font-weight: bold;
+      font-weight: 700;
+      line-height: 1;
       white-space: nowrap;
     }
-
-    /* Site Subtitle */
 
     .site-subtitle {
       color: #aaa;
       font-size: 18px;
-      margin-top: 6px;
+      margin-top: 8px;
       white-space: nowrap;
     }
 
-
-    /* Advertisement Space */
+    /* ADVERTISEMENT */
 
     .ad-space {
       width: calc(100% - 40px);
@@ -55,8 +52,7 @@
       background: #111;
     }
 
-
-    /* Country */
+    /* COUNTRY */
 
     .country {
       margin-bottom: 50px;
@@ -65,20 +61,24 @@
     .country-name {
       color: #fff;
       font-size: 20px;
+      font-weight: 600;
       padding: 0 20px;
       margin-bottom: 15px;
     }
 
-
-    /* Horizontal Slider */
+    /* SLIDER */
 
     .slider {
       display: flex;
       gap: 16px;
+
       width: 100%;
+
       overflow-x: auto;
       overflow-y: hidden;
+
       padding: 0 20px;
+
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
     }
@@ -87,40 +87,79 @@
       display: none;
     }
 
-
-    /* Video Card */
+    /* VIDEO SLOT */
 
     .item {
       flex: 0 0 220px;
+      width: 220px;
     }
 
     .thumbnail {
+      position: relative;
+
       width: 100%;
       aspect-ratio: 9 / 16;
+
       background: #111;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      color: #666;
+      overflow: hidden;
     }
 
+    .thumbnail img {
+      width: 100%;
+      height: 100%;
 
-    /* Score */
+      display: block;
+
+      object-fit: cover;
+    }
+
+    /* EMPTY SLOT */
+
+    .item.empty .thumbnail {
+      background: #111;
+    }
+
+    /* SCORE */
 
     .score {
       width: 100%;
       height: 40px;
-      margin-top: 10px;
 
-      color: #fff;
+      margin-top: 10px;
 
       display: flex;
       align-items: center;
       justify-content: center;
+
+      color: #fff;
+
+      font-size: 14px;
     }
-  </style></head><body>  <!-- Header -->  <div class="header"><div class="site-title">
+
+    /* MOBILE */
+
+    @media (max-width: 600px) {
+
+      body {
+        padding-top: 25px;
+      }
+
+      .site-title {
+        font-size: 36px;
+      }
+
+      .site-subtitle {
+        font-size: 15px;
+      }
+
+      .item {
+        flex-basis: 180px;
+        width: 180px;
+      }
+
+    }
+  </style></head><body>  <!-- HEADER -->  <header class="header"><div class="site-title">
   TREND SHORTS
 </div>
 
@@ -128,71 +167,196 @@
   DISCOVER WHAT'S TRENDING
 </div>
 
-  </div>  <!-- Advertisement Space -->  <div class="ad-space"></div>  <!-- Country Sliders -->  <script>
+  </header>  <!-- ADVERTISEMENT -->  <div class="ad-space"></div>  <!-- COUNTRY SLIDERS -->  <main id="countries"></main>  <script>
+
+    /*
+    ==========================================
+    COUNTRIES
+    ==========================================
+    */
 
     const countries = [
 
-      ["🇺🇸", "UNITED STATES"],
-      ["🇬🇧", "UNITED KINGDOM"],
-      ["🇦🇺", "AUSTRALIA"],
-      ["🇨🇦", "CANADA"],
+      {
+        flag: "🇺🇸",
+        name: "UNITED STATES",
+        regionCode: "US"
+      },
 
-      ["🇩🇪", "GERMANY"],
-      ["🇵🇭", "PHILIPPINES"],
-      ["🇪🇸", "SPAIN"],
-      ["🇫🇷", "FRANCE"],
-      ["🇰🇷", "SOUTH KOREA"],
-      ["🇮🇹", "ITALY"],
-      ["🇻🇳", "VIETNAM"],
-      ["🇹🇷", "TURKEY"],
-      ["🇮🇳", "INDIA"],
-      ["🇧🇷", "BRAZIL"],
-      ["🇮🇩", "INDONESIA"],
-      ["🇯🇵", "JAPAN"],
-      ["🇲🇽", "MEXICO"],
-      ["🇹🇭", "THAILAND"]
+      {
+        flag: "🇬🇧",
+        name: "UNITED KINGDOM",
+        regionCode: "GB"
+      },
+
+      {
+        flag: "🇦🇺",
+        name: "AUSTRALIA",
+        regionCode: "AU"
+      },
+
+      {
+        flag: "🇨🇦",
+        name: "CANADA",
+        regionCode: "CA"
+      },
+
+      {
+        flag: "🇩🇪",
+        name: "GERMANY",
+        regionCode: "DE"
+      },
+
+      {
+        flag: "🇵🇭",
+        name: "PHILIPPINES",
+        regionCode: "PH"
+      },
+
+      {
+        flag: "🇪🇸",
+        name: "SPAIN",
+        regionCode: "ES"
+      },
+
+      {
+        flag: "🇫🇷",
+        name: "FRANCE",
+        regionCode: "FR"
+      },
+
+      {
+        flag: "🇰🇷",
+        name: "SOUTH KOREA",
+        regionCode: "KR"
+      },
+
+      {
+        flag: "🇮🇹",
+        name: "ITALY",
+        regionCode: "IT"
+      },
+
+      {
+        flag: "🇻🇳",
+        name: "VIETNAM",
+        regionCode: "VN"
+      },
+
+      {
+        flag: "🇹🇷",
+        name: "TURKEY",
+        regionCode: "TR"
+      },
+
+      {
+        flag: "🇮🇳",
+        name: "INDIA",
+        regionCode: "IN"
+      },
+
+      {
+        flag: "🇧🇷",
+        name: "BRAZIL",
+        regionCode: "BR"
+      },
+
+      {
+        flag: "🇮🇩",
+        name: "INDONESIA",
+        regionCode: "ID"
+      },
+
+      {
+        flag: "🇯🇵",
+        name: "JAPAN",
+        regionCode: "JP"
+      },
+
+      {
+        flag: "🇲🇽",
+        name: "MEXICO",
+        regionCode: "MX"
+      },
+
+      {
+        flag: "🇹🇭",
+        name: "THAILAND",
+        regionCode: "TH"
+      }
 
     ];
 
 
-    const body = document.body;
+    /*
+    ==========================================
+    UI SETTINGS
+    ==========================================
+
+    50 UI SLOTS PER COUNTRY
+
+    Maximum 10 actual Shorts displayed.
+    */
+
+    const TOTAL_SLOTS = 50;
+
+    const MAX_VIDEOS = 10;
 
 
-    countries.forEach(([flag, name]) => {
+    /*
+    ==========================================
+    CREATE UI
+    ==========================================
+    */
 
-      const section = document.createElement("section");
+    const container =
+      document.getElementById("countries");
+
+
+    countries.forEach(country => {
+
+      const section =
+        document.createElement("section");
 
       section.className = "country";
 
 
-      const title = document.createElement("div");
+      /* COUNTRY NAME */
+
+      const title =
+        document.createElement("div");
 
       title.className = "country-name";
 
-      title.textContent = `${flag} ${name}`;
+      title.textContent =
+        `${country.flag} ${country.name}`;
 
 
-      const slider = document.createElement("div");
+      /* SLIDER */
+
+      const slider =
+        document.createElement("div");
 
       slider.className = "slider";
 
 
-      for (let i = 0; i < 20; i++) {
+      /*
+      CREATE 50 FIXED SLOTS
+      */
 
-        const item = document.createElement("div");
+      for (let i = 0; i < TOTAL_SLOTS; i++) {
 
-        item.className = "item";
+        const item =
+          document.createElement("div");
+
+        item.className = "item empty";
 
 
         item.innerHTML = `
 
-          <div class="thumbnail">
-            THUMBNAIL
-          </div>
+          <div class="thumbnail"></div>
 
-          <div class="score">
-            SCORE
-          </div>
+          <div class="score"></div>
 
         `;
 
@@ -206,9 +370,91 @@
 
       section.appendChild(slider);
 
-      body.appendChild(section);
+      container.appendChild(section);
+
+
+      /*
+      SAVE REFERENCES
+      */
+
+      country.element = section;
+
+      country.slider = slider;
+
+      country.items =
+        [...slider.querySelectorAll(".item")];
 
     });
+
+
+    /*
+    ==========================================
+    INSERT SHORTS
+    ==========================================
+
+    API will later return up to 50 videos.
+
+    Only videos already confirmed as Shorts
+    should be passed here.
+
+    Maximum 10 are displayed.
+    */
+
+    function insertVideos(country, videos) {
+
+      const shorts =
+        videos.slice(0, MAX_VIDEOS);
+
+
+      shorts.forEach((video, index) => {
+
+        const item =
+          country.items[index];
+
+        if (!item) {
+          return;
+        }
+
+
+        const thumbnail =
+          item.querySelector(".thumbnail");
+
+        const score =
+          item.querySelector(".score");
+
+
+        /*
+        THUMBNAIL
+        */
+
+        if (video.thumbnail) {
+
+          const image =
+            document.createElement("img");
+
+          image.src =
+            video.thumbnail;
+
+          image.alt = "";
+
+          thumbnail.appendChild(image);
+
+        }
+
+
+        /*
+        SCORE
+        */
+
+        score.textContent =
+          video.score ?? "SCORE";
+
+
+        item.classList.remove("empty");
+
+      });
+
+    }
 
   </script></body>
 </html>

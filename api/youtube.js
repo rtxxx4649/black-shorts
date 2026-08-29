@@ -35,47 +35,44 @@ export default async function handler(req, res) {
       return res.status(response.status).json(data);
     }
 
-    const videos = (data.items || []).map(video => {
-      const duration = parseDuration(
-        video.contentDetails?.duration || "PT0S"
-      );
-
-      return {
-        id: video.id,
-        title: video.snippet?.title || "",
-        publishedAt: video.snippet?.publishedAt || null,
-        thumbnail:
-          video.snippet?.thumbnails?.high?.url ||
-          video.snippet?.thumbnails?.medium?.url ||
-          video.snippet?.thumbnails?.default?.url ||
-          "",
-        duration,
-        viewCount:
-          Number(video.statistics?.viewCount || 0),
-        likeCount:
-          Number(video.statistics?.likeCount || 0),
-        commentCount:
-          Number(video.statistics?.commentCount || 0)
-      };
-    });
+    const videos = (data.items || []).map(video => ({
+      id: video.id,
+      title: video.snippet?.title || "",
+      thumbnail:
+        video.snippet?.thumbnails?.high?.url ||
+        video.snippet?.thumbnails?.medium?.url ||
+        video.snippet?.thumbnails?.default?.url ||
+        "",
+      duration: video.contentDetails?.duration || "",
+      views: Number(video.statistics?.viewCount || 0),
+      likes: Number(video.statistics?.likeCount || 0),
+      comments: Number(video.statistics?.commentCount || 0),
+      publishedAt: video.snippet?.publishedAt || ""
+    }));
 
     /*
-     * Shorts判定
-     *
      * YouTube Data APIにはShorts専用フィールドがないため、
-     * 現在は動画時間を利用した候補判定。
+     * ここでは60秒以下を「Shorts候補」として扱う。
      *
-     * 60秒以下をShorts候補とする。
+     * これは公式なShorts判定ではありません。
      */
-    const shorts = videos
-      .filter(video => video.duration <= 60)
-      .slice(0, 10);
+    const shortsCandidates = videos.filter(video => {
+      const match = video.duration.match(
+        /^PT(?:(\d+)M)?(?:(\d+)S)?$/
+      );
+
+      if (!match) return false;
+
+      const minutes = Number(match[1] || 0);
+      const seconds = Number(match[2] || 0);
+
+      return minutes === 0 && seconds > 0 && seconds <= 60;
+    });
 
     return res.status(200).json({
       regionCode,
       fetched: videos.length,
-      shorts: shorts.length,
-      items: shorts
+      shortsCandidates: shortsCandidates.slice(0, 10)
     });
 
   } catch (error) {
@@ -85,29 +82,4 @@ export default async function handler(req, res) {
       error: "Failed to fetch YouTube data"
     });
   }
-}
-
-
-/*
- * ISO 8601 duration
- * 例:
- * PT30S     → 30
- * PT1M      → 60
- * PT1M30S   → 90
- * PT2H      → 7200
- */
-function parseDuration(duration) {
-  const match = duration.match(
-    /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/
-  );
-
-  if (!match) {
-    return 0;
-  }
-
-  const hours = Number(match[1] || 0);
-  const minutes = Number(match[2] || 0);
-  const seconds = Number(match[3] || 0);
-
-  return hours * 3600 + minutes * 60 + seconds;
 }

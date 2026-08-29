@@ -10,15 +10,41 @@ export default async function handler(req, res) {
       });
     }
 
-    const apiKey =
+    const youtubeApiKey =
       process.env.YOUTUBE_API_KEY;
 
-    if (!apiKey) {
+    const supabaseUrl =
+      process.env.NEXT_PUBLIC_SUPABASE_URL;
+
+    const supabaseSecretKey =
+      process.env.SUPABASE_SECRET_KEY;
+
+    if (!youtubeApiKey) {
       return res.status(500).json({
         error:
           "YOUTUBE_API_KEY is not configured"
       });
     }
+
+    if (!supabaseUrl) {
+      return res.status(500).json({
+        error:
+          "NEXT_PUBLIC_SUPABASE_URL is not configured"
+      });
+    }
+
+    if (!supabaseSecretKey) {
+      return res.status(500).json({
+        error:
+          "SUPABASE_SECRET_KEY is not configured"
+      });
+    }
+
+    /*
+     * ==========================================
+     * 1. YouTubeから取得
+     * ==========================================
+     */
 
     const params =
       new URLSearchParams({
@@ -38,29 +64,41 @@ export default async function handler(req, res) {
           "50",
 
         key:
-          apiKey
+          youtubeApiKey
       });
 
-    const response =
+    const youtubeResponse =
       await fetch(
         `https://www.googleapis.com/youtube/v3/videos?${params.toString()}`
       );
 
-    const data =
-      await response.json();
+    const youtubeData =
+      await youtubeResponse.json();
 
-    if (!response.ok) {
+    if (!youtubeResponse.ok) {
       return res.status(
-        response.status
-      ).json(data);
+        youtubeResponse.status
+      ).json(youtubeData);
     }
 
+    /*
+     * ==========================================
+     * 2. YouTubeデータを整形
+     * ==========================================
+     */
+
     const gamingPopular =
-      (data.items || []).map(
-        item => {
+      (youtubeData.items || []).map(
+        (item) => {
 
           return {
             id:
+              item.id,
+
+            region_code:
+              regionCode,
+
+            video_id:
               item.id,
 
             title:
@@ -75,7 +113,7 @@ export default async function handler(req, res) {
                 ?.default?.url ||
               "",
 
-            channelTitle:
+            channel_title:
               item.snippet?.channelTitle || "",
 
             duration:
@@ -100,17 +138,179 @@ export default async function handler(req, res) {
                   ?.commentCount || 0
               ),
 
-            publishedAt:
+            published_at:
               item.snippet
-                ?.publishedAt || "",
+                ?.publishedAt || null,
 
-            categoryId:
+            category_id:
               item.snippet
-                ?.categoryId || "20"
+                ?.categoryId || "20",
+
+            fetched_at:
+              new Date().toISOString()
           };
 
         }
       );
+
+    /*
+     * ==========================================
+     * 3. 今回の地域の古いデータを削除
+     * ==========================================
+     *
+     * ※今回はテスト段階なので、
+     *    同じ地域だけを入れ替える。
+     */
+
+    const deleteResponse =
+      await fetch(
+        `${supabaseUrl}/rest/v1/current_videos?region_code=eq.${encodeURIComponent(regionCode)}`,
+        {
+          method:
+            "DELETE",
+
+          headers: {
+            apikey:
+              supabaseSecretKey,
+
+            Authorization:
+              `Bearer ${supabaseSecretKey}`,
+
+            "Content-Type":
+              "application/json"
+          }
+        }
+      );
+
+    if (!deleteResponse.ok) {
+
+      const deleteError =
+        await deleteResponse.text();
+
+      console.error(
+        "Supabase delete error:",
+        deleteError
+      );
+
+      return res.status(500).json({
+        error:
+          "Failed to delete old videos",
+
+        details:
+          deleteError
+      });
+    }
+
+    /*
+     * ==========================================
+     * 4. 新しいデータをSupabaseへ保存
+     * ==========================================
+     */
+
+    const insertRows =
+      gamingPopular.map(
+        (video, index) => {
+
+          return {
+            id:
+              Date.now() +
+              index,
+
+            region_code:
+              video.region_code,
+
+            video_id:
+              video.video_id,
+
+            title:
+              video.title,
+
+            thumbnail:
+              video.thumbnail,
+
+            channel_title:
+              video.channel_title,
+
+            duration:
+              video.duration,
+
+            views:
+              video.views,
+
+            likes:
+              video.likes,
+
+            comments:
+              video.comments,
+
+            published_at:
+              video.published_at,
+
+            category_id:
+              video.category_id,
+
+            fetched_at:
+              video.fetched_at
+          };
+
+        }
+      );
+
+    if (insertRows.length > 0) {
+
+      const insertResponse =
+        await fetch(
+          `${supabaseUrl}/rest/v1/current_videos`,
+          {
+            method:
+              "POST",
+
+            headers: {
+              apikey:
+                supabaseSecretKey,
+
+              Authorization:
+                `Bearer ${supabaseSecretKey}`,
+
+              "Content-Type":
+                "application/json",
+
+              Prefer:
+                "return=minimal"
+            },
+
+            body:
+              JSON.stringify(
+                insertRows
+              )
+          }
+        );
+
+      if (!insertResponse.ok) {
+
+        const insertError =
+          await insertResponse.text();
+
+        console.error(
+          "Supabase insert error:",
+          insertError
+        );
+
+        return res.status(500).json({
+          error:
+            "Failed to save videos to Supabase",
+
+          details:
+            insertError
+        });
+      }
+    }
+
+    /*
+     * ==========================================
+     * 5. 結果を返す
+     * ==========================================
+     */
 
     return res.status(200).json({
 
@@ -120,6 +320,9 @@ export default async function handler(req, res) {
       fetched:
         gamingPopular.length,
 
+      saved:
+        insertRows.length,
+
       gamingPopular:
         gamingPopular
 
@@ -127,12 +330,14 @@ export default async function handler(req, res) {
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "youtube API error:",
+      error
+    );
 
     return res.status(500).json({
       error:
-        "Failed to fetch YouTube videos"
+        "Failed to fetch and save YouTube videos"
     });
-
   }
 }

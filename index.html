@@ -66,6 +66,7 @@
       width: calc(100% - 40px);
       height: 120px;
       margin: 0 20px 60px;
+
       background: #111;
     }
 
@@ -80,9 +81,12 @@
 
     .country-name {
       color: #fff;
+
       font-size: 20px;
       font-weight: 600;
+
       padding: 0 20px;
+
       margin-bottom: 15px;
     }
 
@@ -114,11 +118,12 @@
 
 
     /* =========================
-       VIDEO SLOT
+       VIDEO CARD
        ========================= */
 
     .item {
       flex: 0 0 220px;
+
       width: 220px;
 
       cursor: pointer;
@@ -152,21 +157,11 @@
 
 
     /* =========================
-       CATEGORY
+       EMPTY SLOT
        ========================= */
 
-    .video-category {
-      width: 100%;
-
-      margin-top: 10px;
-
-      color: #fff;
-
-      font-size: 13px;
-
-      font-weight: 600;
-
-      line-height: 1.4;
+    .item.empty .thumbnail {
+      background: #111;
     }
 
 
@@ -177,7 +172,7 @@
     .video-title {
       width: 100%;
 
-      margin-top: 5px;
+      margin-top: 10px;
 
       color: #fff;
 
@@ -200,6 +195,25 @@
 
 
     /* =========================
+       CATEGORY
+       ========================= */
+
+    .video-category {
+      width: 100%;
+
+      margin-top: 10px;
+
+      color: #fff;
+
+      font-size: 13px;
+
+      font-weight: 600;
+
+      line-height: 1.4;
+    }
+
+
+    /* =========================
        SCORE
        ========================= */
 
@@ -208,22 +222,13 @@
 
       min-height: 44px;
 
-      margin-top: 6px;
+      margin-top: 0;
 
       color: #aaa;
 
       font-size: 13px;
 
       line-height: 1.6;
-    }
-
-
-    /* =========================
-       EMPTY SLOT
-       ========================= */
-
-    .item.empty .thumbnail {
-      background: #111;
     }
 
 
@@ -314,6 +319,7 @@
 
       .item {
         flex-basis: 180px;
+
         width: 180px;
       }
 
@@ -526,7 +532,7 @@
 
     /*
     ==========================================
-       SHUFFLE
+       RANDOM SHUFFLE
     ==========================================
     */
 
@@ -565,7 +571,7 @@
 
     /*
     ==========================================
-       CREATE UI
+       CREATE COUNTRY UI
     ==========================================
     */
 
@@ -617,7 +623,7 @@
 
 
         /*
-        CREATE 50 SLOTS
+        CREATE 50 FIXED SLOTS
         */
 
         for (
@@ -639,9 +645,9 @@
 
             <div class="thumbnail"></div>
 
-            <div class="video-category"></div>
-
             <div class="video-title"></div>
+
+            <div class="video-category"></div>
 
             <div class="score"></div>
 
@@ -691,7 +697,7 @@
 
     /*
     ==========================================
-       LOAD VIDEOS
+       LOAD COUNTRY VIDEOS
     ==========================================
     */
 
@@ -732,6 +738,7 @@
 
         insertVideos(
           country,
+
           videos.slice(
             0,
             MAX_VIDEOS
@@ -762,8 +769,12 @@
       videos
     ) {
 
+
       /*
-      RANDOM POSITIONS
+      RANDOM 50 SLOTS
+
+      Each country is shuffled
+      independently.
       */
 
       const positions =
@@ -805,15 +816,15 @@
             );
 
 
-          const category =
-            item.querySelector(
-              ".video-category"
-            );
-
-
           const title =
             item.querySelector(
               ".video-title"
+            );
+
+
+          const category =
+            item.querySelector(
+              ".video-category"
             );
 
 
@@ -855,19 +866,19 @@
 
 
           /*
-          CATEGORY
-          */
-
-          category.textContent =
-            "🎵 MUSIC";
-
-
-          /*
           TITLE
           */
 
           title.textContent =
             video.title || "";
+
+
+          /*
+          CATEGORY
+          */
+
+          category.textContent =
+            "🎵 MUSIC";
 
 
           /*
@@ -881,15 +892,20 @@
 
 
           /*
-          TRENDING DATA
+          TRENDING
 
-          Real-time hourly growth
+          Real-time growth data
           is not available yet.
           */
 
           score.innerHTML = `
+
+            🔥 — Trending<br>
+
             👁 ${views} views<br>
-            📈 —
+
+            📈 — / last hour
+
           `;
 
 
@@ -902,7 +918,7 @@
 
 
           /*
-          ACTIVE
+          ACTIVE CARD
           */
 
           item.classList.remove(
@@ -911,7 +927,7 @@
 
 
           /*
-          CLICK
+          CLICK TO PLAY
           */
 
           item.addEventListener(
@@ -955,6 +971,10 @@
       );
 
 
+    /*
+    OPEN PLAYER
+    */
+
     function openPlayer(
       videoId
     ) {
@@ -967,7 +987,7 @@
       /*
       PRIVACY-ENHANCED MODE
 
-      youtube-nocookie.com
+      NO-COOKIE DOMAIN
       */
 
       youtubePlayer.src =
@@ -998,6 +1018,10 @@
     }
 
 
+    /*
+    CLOSE BUTTON
+    */
+
     closePlayer.addEventListener(
       "click",
       closeVideoPlayer
@@ -1005,7 +1029,7 @@
 
 
     /*
-    CLOSE BY BACKGROUND
+    CLOSE BACKGROUND
     */
 
     playerOverlay.addEventListener(
@@ -1060,6 +1084,7 @@
 
       }
     );
+
 
   </script>
 

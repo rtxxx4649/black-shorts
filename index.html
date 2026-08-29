@@ -33,10 +33,6 @@
       color: #fff;
     }
 
-    /* =========================
-       HEADER
-       ========================= */
-
     .header {
       padding: 0 20px;
       margin-bottom: 30px;
@@ -64,20 +60,12 @@
       white-space: nowrap;
     }
 
-    /* =========================
-       ADVERTISEMENT
-       ========================= */
-
     .ad-space {
       width: calc(100% - 40px);
       height: 120px;
       margin: 0 20px 60px;
       background: #111;
     }
-
-    /* =========================
-       COUNTRY
-       ========================= */
 
     .country {
       margin-bottom: 55px;
@@ -90,10 +78,6 @@
       padding: 0 20px;
       margin-bottom: 18px;
     }
-
-    /* =========================
-       SLIDER
-       ========================= */
 
     .slider {
       display: flex;
@@ -110,19 +94,11 @@
       display: none;
     }
 
-    /* =========================
-       VIDEO CARD
-       ========================= */
-
     .item {
       flex: 0 0 300px;
       width: 300px;
       cursor: pointer;
     }
-
-    /* =========================
-       THUMBNAIL
-       ========================= */
 
     .thumbnail {
       position: relative;
@@ -140,10 +116,6 @@
       object-fit: cover;
     }
 
-    /* =========================
-       VIDEO TITLE
-       ========================= */
-
     .video-title {
       width: 100%;
       margin-top: 12px;
@@ -159,10 +131,6 @@
       word-break: break-word;
     }
 
-    /* =========================
-       CATEGORY
-       ========================= */
-
     .video-category {
       width: 100%;
       margin-top: 10px;
@@ -172,10 +140,6 @@
       line-height: 1.4;
     }
 
-    /* =========================
-       SCORE
-       ========================= */
-
     .score {
       width: 100%;
       margin-top: 0;
@@ -184,10 +148,6 @@
       line-height: 1.6;
       font-weight: 500;
     }
-
-    /* =========================
-       YOUTUBE PLAYER
-       ========================= */
 
     .player-overlay {
       position: fixed;
@@ -232,10 +192,6 @@
       cursor: pointer;
     }
 
-    /* =========================
-       MOBILE
-       ========================= */
-
     @media (max-width: 600px) {
 
       body {
@@ -276,10 +232,6 @@
 
 <body>
 
-  <!-- =========================
-       HEADER
-       ========================= -->
-
   <header class="header">
 
     <div class="site-title">
@@ -293,21 +245,9 @@
 
   </header>
 
-  <!-- =========================
-       ADVERTISEMENT
-       ========================= -->
-
   <div class="ad-space"></div>
 
-  <!-- =========================
-       COUNTRY SLIDERS
-       ========================= -->
-
   <main id="countries"></main>
-
-  <!-- =========================
-       YOUTUBE PLAYER
-       ========================= -->
 
   <div
     id="playerOverlay"
@@ -339,12 +279,6 @@
 
   <script>
 
-    /*
-    ==========================================
-       COUNTRIES
-    ==========================================
-    */
-
     const countries = [
       { flag: "🇺🇸", name: "UNITED STATES", regionCode: "US" },
       { flag: "🇬🇧", name: "UNITED KINGDOM", regionCode: "GB" },
@@ -366,20 +300,8 @@
       { flag: "🇹🇭", name: "THAILAND", regionCode: "TH" }
     ];
 
-    /*
-    ==========================================
-       SETTINGS
-    ==========================================
-    */
-
     const TOTAL_SLOTS = 50;
     const MAX_VIDEOS = 50;
-
-    /*
-    ==========================================
-       SHUFFLE
-    ==========================================
-    */
 
     function shuffle(array) {
 
@@ -400,12 +322,6 @@
       return result;
 
     }
-
-    /*
-    ==========================================
-       CREATE COUNTRY UI
-    ==========================================
-    */
 
     const container =
       document.getElementById("countries");
@@ -429,10 +345,6 @@
         document.createElement("div");
 
       slider.className = "slider";
-
-      /*
-      CREATE 50 FIXED SLOTS
-      */
 
       for (let i = 0; i < TOTAL_SLOTS; i++) {
 
@@ -478,19 +390,13 @@
 
     });
 
-    /*
-    ==========================================
-       LOAD COUNTRY VIDEOS
-    ==========================================
-    */
-
     async function loadCountryVideos(country) {
 
       try {
 
         const response =
           await fetch(
-            `/api/youtube?regionCode=${encodeURIComponent(
+            `/api/videos?regionCode=${encodeURIComponent(
               country.regionCode
             )}`
           );
@@ -507,13 +413,9 @@
           await response.json();
 
         const videos =
-          Array.isArray(data.gamingPopular)
-            ? data.gamingPopular
+          Array.isArray(data.videos)
+            ? data.videos
             : [];
-
-        /*
-        MAXIMUM 50 VIDEOS
-        */
 
         insertVideos(
           country,
@@ -531,18 +433,7 @@
 
     }
 
-    /*
-    ==========================================
-       INSERT VIDEOS
-    ==========================================
-    */
-
     function insertVideos(country, videos) {
-
-      /*
-      RANDOMLY SELECT VIDEO POSITIONS
-      FROM 50 FIXED SLOTS
-      */
 
       const positions =
         shuffle(
@@ -576,10 +467,6 @@
         const score =
           item.querySelector(".score");
 
-        /*
-        THUMBNAIL
-        */
-
         if (video.thumbnail) {
 
           const image =
@@ -598,73 +485,39 @@
 
         }
 
-        /*
-        TITLE
-        */
-
         title.textContent =
           video.title || "";
 
-        /*
-        CATEGORY
-        */
-
         category.textContent =
           "";
-
-        /*
-        VIEWS
-        */
 
         const views =
           Number(
             video.views || 0
           ).toLocaleString();
 
-        /*
-        SCORE
-        */
-
         score.innerHTML = `
           🎮 GAMING<br>
           🔥 Trending<br>
-          👤 ${video.channelTitle || "—"}<br>
+          👤 ${video.channel_title || "—"}<br>
           👁 ${views} views
         `;
 
-        /*
-        VIDEO ID
-        */
-
         item.dataset.videoId =
-          video.id;
-
-        /*
-        ACTIVE CARD
-        */
+          video.video_id;
 
         item.classList.remove("empty");
-
-        /*
-        CLICK TO PLAY
-        */
 
         item.addEventListener(
           "click",
           () => {
-            openPlayer(video.id);
+            openPlayer(video.video_id);
           }
         );
 
       });
 
     }
-
-    /*
-    ==========================================
-       YOUTUBE PLAYER
-       ==========================================
-    */
 
     const playerOverlay =
       document.getElementById(
@@ -718,9 +571,7 @@
       event => {
 
         if (event.target === playerOverlay) {
-
           closeVideoPlayer();
-
         }
 
       }
@@ -731,24 +582,14 @@
       event => {
 
         if (event.key === "Escape") {
-
           closeVideoPlayer();
-
         }
 
       }
     );
 
-    /*
-    ==========================================
-       LOAD ALL COUNTRIES
-    ==========================================
-    */
-
     countries.forEach(country => {
-
       loadCountryVideos(country);
-
     });
 
   </script>

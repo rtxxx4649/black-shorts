@@ -32,6 +32,11 @@
       color: #fff;
     }
 
+
+    /* =========================
+       HEADER
+       ========================= */
+
     .header {
       padding: 0 20px;
       margin-bottom: 30px;
@@ -52,12 +57,22 @@
       white-space: nowrap;
     }
 
+
+    /* =========================
+       ADVERTISEMENT
+       ========================= */
+
     .ad-space {
       width: calc(100% - 40px);
       height: 120px;
       margin: 0 20px 60px;
       background: #111;
     }
+
+
+    /* =========================
+       COUNTRY
+       ========================= */
 
     .country {
       margin-bottom: 50px;
@@ -67,18 +82,30 @@
       color: #fff;
       font-size: 20px;
       font-weight: 600;
+
       padding: 0 20px;
       margin-bottom: 15px;
     }
 
+
+    /* =========================
+       SLIDER
+       ========================= */
+
     .slider {
       display: flex;
-      gap: 16px;
+
+      gap: 24px;
+
       width: 100%;
+
       overflow-x: auto;
       overflow-y: hidden;
+
       padding: 0 20px;
+
       scrollbar-width: none;
+
       -webkit-overflow-scrolling: touch;
     }
 
@@ -86,55 +113,115 @@
       display: none;
     }
 
+
+    /* =========================
+       VIDEO SLOT
+       ========================= */
+
     .item {
-      position: relative;
       flex: 0 0 220px;
       width: 220px;
+
       cursor: pointer;
     }
 
+
+    /* =========================
+       THUMBNAIL
+       ========================= */
+
     .thumbnail {
       position: relative;
+
       width: 100%;
+
       aspect-ratio: 9 / 16;
+
       background: #111;
+
       overflow: hidden;
     }
 
     .thumbnail img {
       width: 100%;
       height: 100%;
+
       display: block;
+
       object-fit: cover;
     }
+
+
+    /* =========================
+       EMPTY SLOT
+       ========================= */
 
     .item.empty .thumbnail {
       background: #111;
     }
 
-    .score {
+
+    /* =========================
+       VIDEO TITLE
+       ========================= */
+
+    .video-title {
       width: 100%;
-      height: 40px;
+
       margin-top: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+
       color: #fff;
+
       font-size: 14px;
+
+      line-height: 1.4;
+
+      height: 58.8px;
+
+      display: -webkit-box;
+
+      -webkit-box-orient: vertical;
+
+      -webkit-line-clamp: 3;
+
+      overflow: hidden;
+
+      word-break: break-word;
     }
 
-    /*
-    ==========================================
-    PLAYER
-    ==========================================
-    */
+
+    /* =========================
+       SCORE
+       ========================= */
+
+    .score {
+      width: 100%;
+
+      min-height: 24px;
+
+      margin-top: 6px;
+
+      color: #aaa;
+
+      font-size: 13px;
+
+      line-height: 1.5;
+    }
+
+
+    /* =========================
+       YOUTUBE PLAYER
+       ========================= */
 
     .player-overlay {
       position: fixed;
+
       inset: 0;
+
       z-index: 9999;
 
       display: none;
+
       align-items: center;
       justify-content: center;
 
@@ -149,6 +236,7 @@
       position: relative;
 
       width: min(900px, 94vw);
+
       aspect-ratio: 16 / 9;
 
       background: #000;
@@ -159,6 +247,7 @@
       height: 100%;
 
       border: 0;
+
       display: block;
     }
 
@@ -172,16 +261,24 @@
       height: 36px;
 
       border: 0;
+
       border-radius: 50%;
 
       background: #fff;
+
       color: #000;
 
       font-size: 22px;
+
       line-height: 36px;
 
       cursor: pointer;
     }
+
+
+    /* =========================
+       MOBILE
+       ========================= */
 
     @media (max-width: 600px) {
 
@@ -202,17 +299,19 @@
         width: 180px;
       }
 
-      .player-container {
-        width: 94vw;
-      }
-
     }
 
   </style>
 
 </head>
 
+
 <body>
+
+
+  <!-- =========================
+       HEADER
+       ========================= -->
 
   <header class="header">
 
@@ -227,17 +326,23 @@
   </header>
 
 
+  <!-- =========================
+       ADVERTISEMENT
+       ========================= -->
+
   <div class="ad-space"></div>
 
+
+  <!-- =========================
+       COUNTRY SLIDERS
+       ========================= -->
 
   <main id="countries"></main>
 
 
-  <!--
-  ==========================================
-  YOUTUBE PLAYER
-  ==========================================
-  -->
+  <!-- =========================
+       YOUTUBE PLAYER
+       ========================= -->
 
   <div
     id="playerOverlay"
@@ -269,6 +374,7 @@
 
 
   <script>
+
 
     /*
     ==========================================
@@ -391,7 +497,7 @@
 
     /*
     ==========================================
-    SETTINGS
+       SETTINGS
     ==========================================
     */
 
@@ -402,14 +508,13 @@
 
     /*
     ==========================================
-    SHUFFLE
+       SHUFFLE
     ==========================================
     */
 
     function shuffle(array) {
 
-      const result =
-        [...array];
+      const result = [...array];
 
       for (
         let i = result.length - 1;
@@ -425,8 +530,7 @@
         [
           result[i],
           result[j]
-        ] =
-        [
+        ] = [
           result[j],
           result[i]
         ];
@@ -440,7 +544,7 @@
 
     /*
     ==========================================
-    CREATE UI
+       CREATE COUNTRY UI
     ==========================================
     */
 
@@ -461,6 +565,10 @@
         "country";
 
 
+      /*
+      COUNTRY NAME
+      */
+
       const title =
         document.createElement(
           "div"
@@ -473,6 +581,10 @@
         `${country.flag} ${country.name}`;
 
 
+      /*
+      SLIDER
+      */
+
       const slider =
         document.createElement(
           "div"
@@ -481,6 +593,10 @@
       slider.className =
         "slider";
 
+
+      /*
+      CREATE 50 SLOTS
+      */
 
       for (
         let i = 0;
@@ -500,6 +616,8 @@
         item.innerHTML = `
 
           <div class="thumbnail"></div>
+
+          <div class="video-title"></div>
 
           <div class="score"></div>
 
@@ -526,6 +644,10 @@
       );
 
 
+      /*
+      SAVE REFERENCES
+      */
+
       country.element =
         section;
 
@@ -544,7 +666,7 @@
 
     /*
     ==========================================
-    LOAD VIDEOS
+       LOAD COUNTRY VIDEOS
     ==========================================
     */
 
@@ -606,7 +728,7 @@
 
     /*
     ==========================================
-    INSERT VIDEOS
+       INSERT VIDEOS
     ==========================================
     */
 
@@ -652,6 +774,12 @@
             );
 
 
+          const title =
+            item.querySelector(
+              ".video-title"
+            );
+
+
           const score =
             item.querySelector(
               ".score"
@@ -690,13 +818,27 @@
 
 
           /*
+          TITLE
+          */
+
+          title.textContent =
+            video.title || "";
+
+
+          /*
           SCORE
           */
 
-          score.textContent =
+          const views =
             Number(
               video.views || 0
             ).toLocaleString();
+
+
+          score.innerHTML = `
+            👁 ${views} views<br>
+            ⏱ ${formatPublishedTime(video.publishedAt)}
+          `;
 
 
           /*
@@ -707,9 +849,9 @@
             video.id;
 
 
-          item.dataset.title =
-            video.title || "";
-
+          /*
+          ACTIVE
+          */
 
           item.classList.remove(
             "empty"
@@ -739,7 +881,82 @@
 
     /*
     ==========================================
-    YOUTUBE PLAYER
+       PUBLISHED TIME
+    ==========================================
+    */
+
+    function formatPublishedTime(
+      publishedAt
+    ) {
+
+      if (!publishedAt) {
+        return "—";
+      }
+
+
+      const published =
+        new Date(
+          publishedAt
+        );
+
+
+      const now =
+        new Date();
+
+
+      const seconds =
+        Math.floor(
+          (now - published) / 1000
+        );
+
+
+      if (seconds < 60) {
+
+        return `${seconds}s ago`;
+
+      }
+
+
+      const minutes =
+        Math.floor(
+          seconds / 60
+        );
+
+
+      if (minutes < 60) {
+
+        return `${minutes}m ago`;
+
+      }
+
+
+      const hours =
+        Math.floor(
+          minutes / 60
+        );
+
+
+      if (hours < 24) {
+
+        return `${hours}h ago`;
+
+      }
+
+
+      const days =
+        Math.floor(
+          hours / 24
+        );
+
+
+      return `${days}d ago`;
+
+    }
+
+
+    /*
+    ==========================================
+       YOUTUBE PLAYER
     ==========================================
     */
 
@@ -771,9 +988,9 @@
 
 
       /*
-      PRIVACY-ENHANCED MODE
+      YOUTUBE PRIVACY-ENHANCED MODE
 
-      YouTube official no-cookie domain
+      NO-COOKIE DOMAIN
       */
 
       youtubePlayer.src =
@@ -800,11 +1017,19 @@
     }
 
 
+    /*
+    CLOSE BUTTON
+    */
+
     closePlayer.addEventListener(
       "click",
       closeVideoPlayer
     );
 
+
+    /*
+    CLOSE BY BACKGROUND
+    */
 
     playerOverlay.addEventListener(
       "click",
@@ -822,6 +1047,10 @@
       }
     );
 
+
+    /*
+    ESC KEY
+    */
 
     document.addEventListener(
       "keydown",
@@ -841,7 +1070,7 @@
 
     /*
     ==========================================
-    LOAD ALL COUNTRIES
+       LOAD ALL COUNTRIES
     ==========================================
     */
 

@@ -111,6 +111,11 @@ flex:0 1 auto;
 white-space:nowrap
 }
 
+.slider-wrap{
+position:relative;
+width:100%
+}
+
 .slider{
 display:flex;
 gap:calc(24px * var(--site-scale));
@@ -124,6 +129,39 @@ scrollbar-width:none;
 
 .slider::-webkit-scrollbar{
 display:none
+}
+
+.slider-button{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+z-index:10;
+width:calc(42px * var(--site-scale));
+height:calc(42px * var(--site-scale));
+border:0;
+border-radius:50%;
+background:#000;
+color:#fff;
+font-size:calc(28px * var(--site-scale));
+font-weight:700;
+line-height:1;
+display:none;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+padding:0
+}
+
+.slider-button:hover{
+background:#222
+}
+
+.slider-button.left{
+left:calc(8px * var(--site-scale))
+}
+
+.slider-button.right{
+right:calc(8px * var(--site-scale))
 }
 
 .item{
@@ -262,6 +300,12 @@ color:#000;
 font-size:22px;
 line-height:36px;
 cursor:pointer
+}
+
+@media(min-width:601px){
+.slider-button{
+display:flex
+}
 }
 
 @media(max-width:600px){
@@ -456,6 +500,21 @@ title.innerHTML=`
 </div>
 </div>`;
 
+const sliderWrap=document.createElement("div");
+sliderWrap.className="slider-wrap";
+
+const leftButton=document.createElement("button");
+leftButton.className="slider-button left";
+leftButton.type="button";
+leftButton.setAttribute("aria-label",`Scroll ${country.name} left`);
+leftButton.textContent="‹";
+
+const rightButton=document.createElement("button");
+rightButton.className="slider-button right";
+rightButton.type="button";
+rightButton.setAttribute("aria-label",`Scroll ${country.name} right`);
+rightButton.textContent="›";
+
 const slider=document.createElement("div");
 slider.className="slider";
 
@@ -480,8 +539,20 @@ item.innerHTML=`
 slider.appendChild(item);
 }
 
+sliderWrap.appendChild(leftButton);
+sliderWrap.appendChild(slider);
+sliderWrap.appendChild(rightButton);
+
+leftButton.addEventListener("click",()=>{
+slider.scrollBy({left:-slider.clientWidth*.8,behavior:"smooth"});
+});
+
+rightButton.addEventListener("click",()=>{
+slider.scrollBy({left:slider.clientWidth*.8,behavior:"smooth"});
+});
+
 section.appendChild(title);
-section.appendChild(slider);
+section.appendChild(sliderWrap);
 
 container.appendChild(section);
 
@@ -627,7 +698,7 @@ closePlayerOverlay();
 }
 });
 
-countries.forEach(country=>{
+shuffledCountries.forEach(country=>{
 loadCountryVideos(country);
 });
 

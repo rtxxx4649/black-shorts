@@ -86,12 +86,19 @@
       padding: 18px 20px;
       margin-bottom: 18px;
       text-align: center;
-      border-top: 1px solid #444;
-      border-bottom: 1px solid #444;
+      border-top: 3px solid #444;
+      border-bottom: 3px solid #444;
     }
 
     .country-flag {
       font-size: 38px;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .country-top {
+      font-size: 24px;
+      font-weight: 700;
       line-height: 1.2;
       margin-bottom: 6px;
     }
@@ -283,6 +290,10 @@
         font-size: 34px;
       }
 
+      .country-top {
+        font-size: 21px;
+      }
+
       .country-title {
         font-size: 24px;
       }
@@ -410,7 +421,8 @@
 
       title.innerHTML = `
         <div class="country-flag">${country.flag} ${country.name}</div>
-        <div class="country-title"><span class="top-50">TOP 50</span> 👑 TRENDING VIDEOS 🔥</div>
+        <div class="country-top"><span class="top-50">TOP 50</span></div>
+        <div class="country-title">👑 TRENDING VIDEOS 🔥</div>
       `;
 
       const slider =

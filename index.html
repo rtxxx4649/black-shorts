@@ -80,12 +80,14 @@
     }
 
     .country-name {
+      width: 100%;
       color: #fff;
-      padding: 18px 20px;
+      padding: 18px 12px;
       margin-bottom: 18px;
       text-align: center;
       border-top: 4px solid #444;
       border-bottom: 4px solid #444;
+      overflow: hidden;
     }
 
     .country-header {
@@ -95,14 +97,17 @@
       justify-content: center;
       width: 100%;
       text-align: center;
-      white-space: nowrap;
     }
 
     .country-top {
+      width: 100%;
       color: #ff0000;
-      font-size: clamp(28px, 5vw, 42px);
+      font-size: 42px;
       font-weight: 700;
       line-height: 1.15;
+      white-space: nowrap;
+      overflow: visible;
+      text-align: center;
     }
 
     .country-location {
@@ -110,16 +115,25 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      margin-top: 7px;
-      font-size: clamp(20px, 3.5vw, 30px);
+      width: 100%;
+      margin-top: 10px;
+      font-size: 30px;
       font-weight: 600;
       line-height: 1.2;
       white-space: nowrap;
+      overflow: visible;
+      text-align: center;
     }
 
     .flag {
+      flex: 0 0 auto;
       font-size: 1em;
       line-height: 1;
+    }
+
+    .country-location-name {
+      flex: 0 1 auto;
+      white-space: nowrap;
     }
 
     .slider {
@@ -292,17 +306,17 @@
       }
 
       .country-name {
-        padding: 16px 12px;
+        padding: 16px 10px;
       }
 
       .country-top {
-        font-size: clamp(24px, 8vw, 32px);
+        font-size: 32px;
       }
 
       .country-location {
+        margin-top: 8px;
         gap: 7px;
-        margin-top: 6px;
-        font-size: clamp(18px, 5.5vw, 25px);
+        font-size: 25px;
       }
 
       .item {
@@ -411,6 +425,91 @@
 
     }
 
+    function fitTextToOneLine(element, maximumFontSize, minimumFontSize) {
+
+      if (!element) {
+        return;
+      }
+
+      const parent =
+        element.parentElement;
+
+      if (!parent) {
+        return;
+      }
+
+      element.style.fontSize =
+        `${maximumFontSize}px`;
+
+      const availableWidth =
+        parent.clientWidth;
+
+      if (availableWidth <= 0) {
+        return;
+      }
+
+      let currentFontSize =
+        maximumFontSize;
+
+      while (
+        element.scrollWidth > availableWidth &&
+        currentFontSize > minimumFontSize
+      ) {
+
+        currentFontSize -= 0.5;
+
+        element.style.fontSize =
+          `${currentFontSize}px`;
+
+      }
+
+    }
+
+    function fitCountryHeader(countryElement) {
+
+      if (!countryElement) {
+        return;
+      }
+
+      const top =
+        countryElement.querySelector(
+          ".country-top"
+        );
+
+      const location =
+        countryElement.querySelector(
+          ".country-location"
+        );
+
+      fitTextToOneLine(
+        top,
+        42,
+        16
+      );
+
+      fitTextToOneLine(
+        location,
+        30,
+        14
+      );
+
+    }
+
+    function fitAllCountryHeaders() {
+
+      const sections =
+        document.querySelectorAll(
+          ".country"
+        );
+
+      sections.forEach(section => {
+
+        fitCountryHeader(section);
+
+      });
+
+    }
+
     const container =
       document.getElementById("countries");
 
@@ -439,7 +538,7 @@
               ${country.flag}
             </span>
 
-            <span>
+            <span class="country-location-name">
               ${country.name}
             </span>
 
@@ -517,6 +616,24 @@
         [...slider.querySelectorAll(".item")];
 
     });
+
+    fitAllCountryHeaders();
+
+    const resizeObserver =
+      new ResizeObserver(() => {
+
+        fitAllCountryHeaders();
+
+      });
+
+    resizeObserver.observe(
+      document.documentElement
+    );
+
+    window.addEventListener(
+      "resize",
+      fitAllCountryHeaders
+    );
 
     async function loadCountryVideos(country) {
 
@@ -739,3 +856,4 @@
 </body>
 
 </html>
+```1

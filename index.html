@@ -31,7 +31,7 @@ white-space:nowrap
 .site-title .trend{color:#fff}
 .site-title .world{color:#ff0000}
 .site-title .e{color:#ff0000}
-.site-title .hub{color:#FFA31A}
+.site-title .hub{color:#fff}
 
 .site-subtitle{
 color:#aaa;
@@ -580,77 +580,53 @@ score.innerHTML=`
 <div class="score-item">👍 ${likes} likes</div>
 <div class="score-item">💬 ${comments} comments</div>`;
 
-item.dataset.videoId=video.video_id;
-
 item.classList.remove("empty");
 
-item.addEventListener("click",()=>{
+item.onclick=()=>{
 openPlayer(video.video_id);
-});
+};
 
 });
-
 }
 
-const playerOverlay=
-document.getElementById("playerOverlay");
-
-const youtubePlayer=
-document.getElementById("youtubePlayer");
-
-const closePlayer=
-document.getElementById("closePlayer");
+const playerOverlay=document.getElementById("playerOverlay");
+const youtubePlayer=document.getElementById("youtubePlayer");
+const closePlayer=document.getElementById("closePlayer");
 
 function openPlayer(videoId){
-
 if(!videoId)return;
 
-youtubePlayer.src=
-`https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?rel=0`;
-
+youtubePlayer.src=`https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1`;
 playerOverlay.classList.add("active");
-
+document.body.style.overflow="hidden";
 }
 
-function closeVideoPlayer(){
-
+function closePlayerOverlay(){
 youtubePlayer.src="";
-
 playerOverlay.classList.remove("active");
-
+document.body.style.overflow="";
 }
 
-closePlayer.addEventListener(
-"click",
-closeVideoPlayer
-);
+closePlayer.addEventListener("click",closePlayerOverlay);
 
-playerOverlay.addEventListener(
-"click",
-event=>{
-
+playerOverlay.addEventListener("click",event=>{
 if(event.target===playerOverlay){
-closeVideoPlayer();
+closePlayerOverlay();
 }
+});
 
-}
-);
-
-document.addEventListener(
-"keydown",
-event=>{
-
+document.addEventListener("keydown",event=>{
 if(event.key==="Escape"){
-closeVideoPlayer();
+closePlayerOverlay();
 }
-
-}
-);
+});
 
 countries.forEach(country=>{
 loadCountryVideos(country);
 });
-</script>
 
+setTimeout(fitAllHeaders,500);
+setTimeout(fitAllHeaders,1500);
+</script>
 </body>
 </html>

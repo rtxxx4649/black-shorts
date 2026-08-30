@@ -109,12 +109,16 @@
     }
 
     .country-name {
-      width: 100%;
-      color: #fff;
+      width: calc(100% - (40px * var(--site-scale)));
+      margin:
+        0
+        calc(20px * var(--site-scale))
+        calc(18px * var(--site-scale));
       padding:
         calc(18px * var(--site-scale))
         calc(12px * var(--site-scale));
-      margin-bottom: calc(18px * var(--site-scale));
+      color: #fff;
+      background: #000;
       text-align: center;
       overflow: hidden;
     }

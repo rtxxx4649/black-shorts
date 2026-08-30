@@ -375,26 +375,6 @@
     const TOTAL_SLOTS = 50;
     const MAX_VIDEOS = 50;
 
-    function shuffle(array) {
-
-      const result = [...array];
-
-      for (let i = result.length - 1; i > 0; i--) {
-
-        const j =
-          Math.floor(
-            Math.random() * (i + 1)
-          );
-
-        [result[i], result[j]] =
-          [result[j], result[i]];
-
-      }
-
-      return result;
-
-    }
-
     function formatNumber(value) {
 
       const number = Number(value);
@@ -542,21 +522,10 @@
 
     function insertVideos(country, videos) {
 
-      const positions =
-        shuffle(
-          [...Array(TOTAL_SLOTS).keys()]
-        ).slice(
-          0,
-          videos.length
-        );
-
       videos.forEach((video, videoIndex) => {
 
-        const slotIndex =
-          positions[videoIndex];
-
         const item =
-          country.items[slotIndex];
+          country.items[videoIndex];
 
         if (!item) {
           return;

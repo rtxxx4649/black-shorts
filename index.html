@@ -39,8 +39,23 @@
     }
 
     .header {
-      padding: 0 calc(20px * var(--site-scale));
+      position: relative;
+      padding:
+        calc(70px * var(--site-scale))
+        calc(20px * var(--site-scale));
       margin-bottom: calc(30px * var(--site-scale));
+      overflow: hidden;
+      background-image:
+        linear-gradient(
+          90deg,
+          rgba(0, 0, 0, 0.82) 0%,
+          rgba(0, 0, 0, 0.58) 55%,
+          rgba(0, 0, 0, 0.72) 100%
+        ),
+        url("./e2e1003b-f8c4-4441-924c-df430cc634a5.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
     }
 
     .site-title {

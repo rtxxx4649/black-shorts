@@ -90,15 +90,16 @@
       border-bottom: 3px solid #444;
     }
 
-    .country-flag {
-      font-size: 38px;
-      line-height: 1.2;
-      margin-bottom: 6px;
-    }
-
     .country-top {
       font-size: 28px;
       font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 6px;
+      text-align: left;
+    }
+
+    .country-flag {
+      font-size: 38px;
       line-height: 1.2;
       margin-bottom: 6px;
     }
@@ -286,12 +287,12 @@
         font-size: 24px;
       }
 
-      .country-flag {
-        font-size: 34px;
-      }
-
       .country-top {
         font-size: 24px;
+      }
+
+      .country-flag {
+        font-size: 34px;
       }
 
       .country-title {
@@ -420,8 +421,8 @@
       title.className = "country-name";
 
       title.innerHTML = `
-        <div class="country-flag">${country.flag} ${country.name}</div>
         <div class="country-top"><span class="top-50">TOP 50</span></div>
+        <div class="country-flag">${country.flag} ${country.name}</div>
         <div class="country-title">👑 TRENDING VIDEOS 🔥</div>
       `;
 

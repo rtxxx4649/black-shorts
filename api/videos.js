@@ -39,7 +39,7 @@ const videos = await sql`
     fetched_at
   FROM current_videos
   WHERE region_code = ${regionCode}
-  ORDER BY views DESC
+  ORDER BY views ASC
 `;
 
 return res.status(200).json({

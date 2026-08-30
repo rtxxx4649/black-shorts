@@ -110,10 +110,20 @@
     }
 
     .country-flag {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 24px;
       font-size: 28px;
       font-weight: 600;
       line-height: 1.2;
-      margin-top: 20px;
+      white-space: nowrap;
+    }
+
+    .flag {
+      font-size: 28px;
+      line-height: 1;
     }
 
     .top-50 {
@@ -306,8 +316,13 @@
       }
 
       .country-flag {
+        gap: 10px;
+        margin-top: 21px;
         font-size: 24px;
-        margin-top: 18px;
+      }
+
+      .flag {
+        font-size: 24px;
       }
 
       .item {
@@ -433,16 +448,31 @@
 
       title.innerHTML = `
         <div class="country-header-row">
+
           <div class="country-top">
-            <span class="top-50">TOP 50</span>
+            <span class="top-50">👑 TOP 50</span>
           </div>
+
           <div class="country-title">
-            👑 TRENDING VIDEOS 🔥
+            ❤️‍🔥 TRENDING VIDEOS 🔥
           </div>
+
         </div>
 
         <div class="country-flag">
-          ${country.flag} ${country.name}
+
+          <span class="flag">
+            ${country.flag}
+          </span>
+
+          <span>
+            ${country.name}
+          </span>
+
+          <span class="flag">
+            ${country.flag}
+          </span>
+
         </div>
       `;
 

@@ -83,9 +83,11 @@
       color: #fff;
       font-size: 28px;
       font-weight: 600;
-      padding: 0 20px;
+      padding: 18px 20px;
       margin-bottom: 18px;
       text-align: center;
+      border-top: 1px solid #444;
+      border-bottom: 1px solid #444;
     }
 
     .country-flag {
@@ -98,6 +100,10 @@
       font-size: 28px;
       font-weight: 600;
       line-height: 1.2;
+    }
+
+    .top-50 {
+      color: #ff0000;
     }
 
     .slider {
@@ -404,7 +410,7 @@
 
       title.innerHTML = `
         <div class="country-flag">${country.flag} ${country.name}</div>
-        <div class="country-title">TOP 50 TRENDING VIDEOS🔥</div>
+        <div class="country-title"><span class="top-50">TOP 50</span> 👑 TRENDING VIDEOS 🔥</div>
       `;
 
       const slider =

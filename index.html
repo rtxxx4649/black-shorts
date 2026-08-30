@@ -84,50 +84,49 @@
       padding: 18px 20px;
       margin-bottom: 18px;
       text-align: center;
-      border-top: 3px solid #444;
-      border-bottom: 3px solid #444;
+      border-top: 4px solid #444;
+      border-bottom: 4px solid #444;
     }
 
-    .country-header-row {
+    .country-header {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 24px;
       width: 100%;
+      text-align: center;
       white-space: nowrap;
     }
 
     .country-top {
-      font-size: clamp(26px, 4vw, 38px);
+      color: #ff0000;
+      font-size: clamp(28px, 5vw, 42px);
       font-weight: 700;
-      line-height: 1.2;
+      line-height: 1.15;
     }
 
     .country-title {
-      font-size: clamp(22px, 3.6vw, 34px);
-      font-weight: 600;
-      line-height: 1.2;
+      color: #fff;
+      font-size: clamp(24px, 4.2vw, 36px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-top: 6px;
     }
 
-    .country-flag {
+    .country-location {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 14px;
-      margin-top: 24px;
-      font-size: 28px;
+      gap: 10px;
+      margin-top: 8px;
+      font-size: clamp(22px, 3.8vw, 32px);
       font-weight: 600;
       line-height: 1.2;
-      white-space: nowrap;
     }
 
     .flag {
-      font-size: 28px;
+      font-size: 1em;
       line-height: 1;
-    }
-
-    .top-50 {
-      color: #ff0000;
     }
 
     .slider {
@@ -303,26 +302,19 @@
         padding: 16px 12px;
       }
 
-      .country-header-row {
-        gap: 12px;
-      }
-
       .country-top {
-        font-size: clamp(20px, 6.5vw, 30px);
+        font-size: clamp(24px, 8vw, 32px);
       }
 
       .country-title {
-        font-size: clamp(17px, 5.5vw, 26px);
+        font-size: clamp(21px, 7vw, 29px);
+        margin-top: 5px;
       }
 
-      .country-flag {
-        gap: 10px;
-        margin-top: 21px;
-        font-size: 24px;
-      }
-
-      .flag {
-        font-size: 24px;
+      .country-location {
+        gap: 8px;
+        margin-top: 7px;
+        font-size: clamp(20px, 6vw, 26px);
       }
 
       .item {
@@ -447,27 +439,27 @@
       title.className = "country-name";
 
       title.innerHTML = `
-        <div class="country-header-row">
+        <div class="country-header">
 
           <div class="country-top">
-            <span class="top-50">👑 TOP 50</span>
+            👑 TOP 50
           </div>
 
           <div class="country-title">
-            TRENDING VIDEOS 🔥
+            🔥 TRENDING VIDEOS
           </div>
 
-        </div>
+          <div class="country-location">
 
-        <div class="country-flag">
+            <span class="flag">
+              ${country.flag}
+            </span>
 
-          <span class="flag">
-            ${country.flag}
-          </span>
+            <span>
+              ${country.name}
+            </span>
 
-          <span>
-            ${country.name}
-          </span>
+          </div>
 
         </div>
       `;

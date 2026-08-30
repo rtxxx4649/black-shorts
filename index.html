@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -83,6 +84,27 @@
       background: #111;
     }
 
+    .trending-title {
+      width: 100%;
+      color: #ff0000;
+      padding:
+        0
+        calc(20px * var(--site-scale));
+      margin-bottom: calc(30px * var(--site-scale));
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .trending-title-text {
+      width: 100%;
+      font-size: calc(42px * var(--site-scale));
+      font-weight: 700;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: visible;
+      text-align: center;
+    }
+
     .country {
       margin-bottom: calc(55px * var(--site-scale));
     }
@@ -109,24 +131,12 @@
       text-align: center;
     }
 
-    .country-top {
-      width: 100%;
-      color: #ff0000;
-      font-size: calc(42px * var(--site-scale));
-      font-weight: 700;
-      line-height: 1.15;
-      white-space: nowrap;
-      overflow: visible;
-      text-align: center;
-    }
-
     .country-location {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: calc(8px * var(--site-scale));
       width: 100%;
-      margin-top: calc(10px * var(--site-scale));
       font-size: calc(30px * var(--site-scale));
       font-weight: 600;
       line-height: 1.2;
@@ -323,12 +333,7 @@
           calc(10px * var(--site-scale));
       }
 
-      .country-top {
-        font-size: calc(32px * var(--site-scale));
-      }
-
       .country-location {
-        margin-top: calc(8px * var(--site-scale));
         gap: calc(7px * var(--site-scale));
         font-size: calc(25px * var(--site-scale));
       }
@@ -371,6 +376,14 @@
 
   <div class="ad-space"></div>
 
+  <div class="trending-title">
+
+    <div class="trending-title-text">
+      👑 TOP 50 TRENDING VIDEOS 🔥
+    </div>
+
+  </div>
+
   <main id="countries"></main>
 
   <div
@@ -403,18 +416,10 @@
 
   <script>
 
-    /*
-     * サイト全体の自動サイズ調整
-     *
-     * 基準幅を1200pxとして、
-     * 画面が狭くなるほどサイト全体を比例して縮小する。
-     *
-     * 既存のデザイン・機能には触れない。
-     */
-
     function updateSiteScale() {
 
-      const viewportWidth = window.innerWidth;
+      const viewportWidth =
+        window.innerWidth;
 
       const scale =
         Math.min(
@@ -465,9 +470,11 @@
     const TOTAL_SLOTS = 50;
     const MAX_VIDEOS = 50;
 
+
     function formatNumber(value) {
 
-      const number = Number(value);
+      const number =
+        Number(value);
 
       if (!Number.isFinite(number)) {
         return "—";
@@ -476,6 +483,7 @@
       return number.toLocaleString();
 
     }
+
 
     function fitTextToOneLine(
       element,
@@ -537,27 +545,37 @@
 
     }
 
+
+    function fitTrendingTitle() {
+
+      const element =
+        document.querySelector(
+          ".trending-title-text"
+        );
+
+      if (!element) {
+        return;
+      }
+
+      fitTextToOneLine(
+        element,
+        42,
+        16
+      );
+
+    }
+
+
     function fitCountryHeader(countryElement) {
 
       if (!countryElement) {
         return;
       }
 
-      const top =
-        countryElement.querySelector(
-          ".country-top"
-        );
-
       const location =
         countryElement.querySelector(
           ".country-location"
         );
-
-      fitTextToOneLine(
-        top,
-        42,
-        16
-      );
 
       fitTextToOneLine(
         location,
@@ -567,158 +585,209 @@
 
     }
 
-    function fitAllCountryHeaders() {
+
+    function fitAllHeaders() {
+
+      fitTrendingTitle();
 
       const sections =
         document.querySelectorAll(
           ".country"
         );
 
-      sections.forEach(section => {
+      sections.forEach(
+        section => {
 
-        fitCountryHeader(section);
+          fitCountryHeader(
+            section
+          );
 
-      });
+        }
+      );
 
     }
 
+
     const container =
-      document.getElementById("countries");
+      document.getElementById(
+        "countries"
+      );
 
-    countries.forEach(country => {
 
-      const section =
-        document.createElement("section");
+    countries.forEach(
+      country => {
 
-      section.className = "country";
+        const section =
+          document.createElement(
+            "section"
+          );
 
-      const title =
-        document.createElement("div");
+        section.className =
+          "country";
 
-      title.className = "country-name";
 
-      title.innerHTML = `
-        <div class="country-header">
+        const title =
+          document.createElement(
+            "div"
+          );
 
-          <div class="country-top">
-            👑 TOP 50 TRENDING VIDEOS 🔥
-          </div>
+        title.className =
+          "country-name";
 
-          <div class="country-location">
 
-            <span class="flag">
-              ${country.flag}
-            </span>
+        title.innerHTML = `
 
-            <span class="country-location-name">
-              ${country.name}
-            </span>
+          <div class="country-header">
 
-          </div>
+            <div class="country-location">
 
-        </div>
-      `;
+              <span class="flag">
+                ${country.flag}
+              </span>
 
-      const slider =
-        document.createElement("div");
+              <span class="country-location-name">
+                ${country.name}
+              </span>
 
-      slider.className = "slider";
-
-      for (
-        let i = 0;
-        i < TOTAL_SLOTS;
-        i++
-      ) {
-
-        const item =
-          document.createElement("div");
-
-        item.className =
-          "item empty";
-
-        item.innerHTML = `
-
-          <div class="thumbnail"></div>
-
-          <div class="video-title">
-            TRENDING VIDEO
-          </div>
-
-          <div class="video-category">
-            🎮 GAMING
-          </div>
-
-          <div class="score">
-
-            <div class="score-item">
-              🎮 GAMING
-            </div>
-
-            <div class="score-item">
-              👤 —
-            </div>
-
-            <div class="score-item">
-              👁 — views
-            </div>
-
-            <div class="score-item">
-              📈 —/h
-            </div>
-
-            <div class="score-item">
-              👍 — likes
-            </div>
-
-            <div class="score-item">
-              💬 — comments
             </div>
 
           </div>
 
         `;
 
-        slider.appendChild(item);
+
+        const slider =
+          document.createElement(
+            "div"
+          );
+
+        slider.className =
+          "slider";
+
+
+        for (
+          let i = 0;
+          i < TOTAL_SLOTS;
+          i++
+        ) {
+
+          const item =
+            document.createElement(
+              "div"
+            );
+
+          item.className =
+            "item empty";
+
+
+          item.innerHTML = `
+
+            <div class="thumbnail"></div>
+
+            <div class="video-title">
+              TRENDING VIDEO
+            </div>
+
+            <div class="video-category">
+              🎮 GAMING
+            </div>
+
+            <div class="score">
+
+              <div class="score-item">
+                🎮 GAMING
+              </div>
+
+              <div class="score-item">
+                👤 —
+              </div>
+
+              <div class="score-item">
+                👁 — views
+              </div>
+
+              <div class="score-item">
+                📈 —/h
+              </div>
+
+              <div class="score-item">
+                👍 — likes
+              </div>
+
+              <div class="score-item">
+                💬 — comments
+              </div>
+
+            </div>
+
+          `;
+
+
+          slider.appendChild(
+            item
+          );
+
+        }
+
+
+        section.appendChild(
+          title
+        );
+
+        section.appendChild(
+          slider
+        );
+
+        container.appendChild(
+          section
+        );
+
+
+        country.element =
+          section;
+
+        country.slider =
+          slider;
+
+        country.items =
+          [
+            ...slider.querySelectorAll(
+              ".item"
+            )
+          ];
 
       }
+    );
 
-      section.appendChild(title);
-      section.appendChild(slider);
-      container.appendChild(section);
 
-      country.element = section;
-      country.slider = slider;
+    fitAllHeaders();
 
-      country.items =
-        [
-          ...slider.querySelectorAll(
-            ".item"
-          )
-        ];
-
-    });
-
-    fitAllCountryHeaders();
 
     const resizeObserver =
-      new ResizeObserver(() => {
+      new ResizeObserver(
+        () => {
 
-        updateSiteScale();
-        fitAllCountryHeaders();
+          updateSiteScale();
+          fitAllHeaders();
 
-      });
+        }
+      );
+
 
     resizeObserver.observe(
       document.documentElement
     );
 
+
     window.addEventListener(
       "resize",
-      fitAllCountryHeaders
+      fitAllHeaders
     );
 
 
-    async function loadCountryVideos(country) {
+    async function loadCountryVideos(
+      country
+    ) {
 
       try {
 
@@ -729,6 +798,7 @@
             )}`
           );
 
+
         if (!response.ok) {
 
           throw new Error(
@@ -737,13 +807,18 @@
 
         }
 
+
         const data =
           await response.json();
 
+
         const videos =
-          Array.isArray(data.videos)
+          Array.isArray(
+            data.videos
+          )
             ? data.videos
             : [];
+
 
         insertVideos(
           country,
@@ -752,6 +827,7 @@
             MAX_VIDEOS
           )
         );
+
 
       } catch (error) {
 
@@ -778,19 +854,23 @@
               videoIndex
             ];
 
+
           if (!item) {
             return;
           }
+
 
           const thumbnail =
             item.querySelector(
               ".thumbnail"
             );
 
+
           const title =
             item.querySelector(
               ".video-title"
             );
+
 
           if (video.thumbnail) {
 
@@ -799,14 +879,18 @@
                 "img"
               );
 
+
             image.src =
               video.thumbnail;
+
 
             image.alt =
               video.title || "";
 
+
             image.loading =
               "lazy";
+
 
             thumbnail.appendChild(
               image
@@ -814,8 +898,10 @@
 
           }
 
+
           title.textContent =
             video.title || "";
+
 
           const likes =
             video.likes == null
@@ -824,12 +910,14 @@
                   video.likes
                 );
 
+
           const views =
             video.views == null
               ? "—"
               : formatNumber(
                   video.views
                 );
+
 
           const comments =
             video.comments == null
@@ -838,10 +926,12 @@
                   video.comments
                 );
 
+
           const score =
             item.querySelector(
               ".score"
             );
+
 
           score.innerHTML = `
 
@@ -871,12 +961,15 @@
 
           `;
 
+
           item.dataset.videoId =
             video.video_id;
+
 
           item.classList.remove(
             "empty"
           );
+
 
           item.addEventListener(
             "click",
@@ -900,10 +993,12 @@
         "playerOverlay"
       );
 
+
     const youtubePlayer =
       document.getElementById(
         "youtubePlayer"
       );
+
 
     const closePlayer =
       document.getElementById(
@@ -911,16 +1006,20 @@
       );
 
 
-    function openPlayer(videoId) {
+    function openPlayer(
+      videoId
+    ) {
 
       if (!videoId) {
         return;
       }
 
+
       youtubePlayer.src =
         `https://www.youtube-nocookie.com/embed/${encodeURIComponent(
           videoId
         )}?rel=0`;
+
 
       playerOverlay.classList.add(
         "active"
@@ -994,3 +1093,4 @@
 </body>
 
 </html>
+```

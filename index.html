@@ -81,8 +81,6 @@
 
     .country-name {
       color: #fff;
-      font-size: 28px;
-      font-weight: 600;
       padding: 18px 20px;
       margin-bottom: 18px;
       text-align: center;
@@ -90,24 +88,30 @@
       border-bottom: 3px solid #444;
     }
 
+    .country-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
     .country-top {
       font-size: 38px;
       font-weight: 700;
       line-height: 1.2;
-      margin-bottom: 6px;
-      text-align: left;
     }
 
     .country-flag {
       font-size: 28px;
+      font-weight: 600;
       line-height: 1.2;
-      margin-bottom: 6px;
     }
 
     .country-title {
       font-size: 24px;
       font-weight: 600;
       line-height: 1.2;
+      margin-top: 24px;
     }
 
     .top-50 {
@@ -283,10 +287,6 @@
         margin-bottom: 45px;
       }
 
-      .country-name {
-        font-size: 24px;
-      }
-
       .country-top {
         font-size: 34px;
       }
@@ -297,6 +297,11 @@
 
       .country-title {
         font-size: 21px;
+        margin-top: 21px;
+      }
+
+      .country-header-row {
+        gap: 12px;
       }
 
       .item {
@@ -421,9 +426,17 @@
       title.className = "country-name";
 
       title.innerHTML = `
-        <div class="country-top"><span class="top-50">TOP 50</span></div>
-        <div class="country-flag">${country.flag} ${country.name}</div>
-        <div class="country-title">👑 TRENDING VIDEOS 🔥</div>
+        <div class="country-header-row">
+          <div class="country-top">
+            <span class="top-50">TOP 50</span>
+          </div>
+          <div class="country-flag">
+            ${country.flag} ${country.name}
+          </div>
+        </div>
+        <div class="country-title">
+          👑 TRENDING VIDEOS 🔥
+        </div>
       `;
 
       const slider =

@@ -1,68 +1,59 @@
+const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
+const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET;
+
+let cachedToken = null;
+let tokenExpiresAt = 0;
+
+async function getAppToken() {
+  if (cachedToken && Date.now() < tokenExpiresAt - 60_000) {
+    return cachedToken;
+  }
+
+  const params = new URLSearchParams({
+    client_id: TWITCH_CLIENT_ID,
+    client_secret: TWITCH_CLIENT_SECRET,
+    grant_type: 'client_credentials',
+  });
+
+  const res = await fetch(`https://id.twitch.tv/oauth2/token?${params}` , {
+    method: 'POST',
+  });
+
+  if (!res.ok) {
+    throw new Error(`Twitch token error: ${res.status}`);
+  }
+
+  const data = await res.json();
+  cachedToken = data.access_token;
+  tokenExpiresAt = Date.now() + data.expires_in * 1000;
+  return cachedToken;
+}
+
 export default async function handler(req, res) {
   try {
-    const clientId = process.env.TWITCH_CLIENT_ID;
-    const clientSecret = process.env.TWITCH_CLIENT_SECRET;
-
-    if (!clientId || !clientSecret) {
-      return res.status(500).json({
-        error: "Twitch API credentials are not configured"
-      });
-    }
-
-    const tokenResponse = await fetch("https://id.twitch.tv/oauth2/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: new URLSearchParams({
-        client_id: clientId,
-        client_secret: clientSecret,
-        grant_type: "client_credentials"
-      })
-    });
-
-    if (!tokenResponse.ok) {
-      const tokenError = await tokenResponse.text();
-      console.error("Twitch token error:", tokenError);
-
-      return res.status(502).json({
-        error: "Failed to authenticate with Twitch"
-      });
-    }
-
-    const tokenData = await tokenResponse.json();
-
-    const streamsResponse = await fetch("https://api.twitch.tv/helix/streams?first=50", {
-      headers: {
-        "Authorization": `Bearer ${tokenData.access_token}`,
-        "Client-Id": clientId
+    const token = await getAppToken();
+    const response = await fetch(
+      'https://api.twitch.tv/helix/streams?first=100&language=en',
+      {
+        headers: {
+          'Client-ID': TWITCH_CLIENT_ID,
+          Authorization: `Bearer ${token}`,
+        },
       }
-    });
+    );
 
-    if (!streamsResponse.ok) {
-      const streamsError = await streamsResponse.text();
-      console.error("Twitch streams error:", streamsError);
-
-      return res.status(502).json({
-        error: "Failed to fetch Twitch live streams"
-      });
+    if (!response.ok) {
+      throw new Error(`Twitch streams error: ${response.status}`);
     }
 
-    const streamsData = await streamsResponse.json();
-    const streams = Array.isArray(streamsData.data) ? streamsData.data : [];
-    const stream = streams.length > 0
-      ? streams[Math.floor(Math.random() * streams.length)]
-      : null;
+    const data = await response.json();
+    const streams = Array.isArray(data.data) ? data.data : [];
 
-    return res.status(200).json({
-      live: Boolean(stream),
-      stream
-    });
+    streams.sort((a, b) => (b.viewer_count || 0) - (a.viewer_count || 0));
+
+    res.status(200).json({ streams });
   } catch (error) {
-    console.error("Twitch API error:", error);
-
-    return res.status(500).json({
-      error: "Failed to connect to Twitch API"
-    });
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch Twitch streams' });
   }
 }

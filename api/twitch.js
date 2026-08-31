@@ -51,7 +51,42 @@ export default async function handler(req, res) {
 
     streams.sort((a, b) => (b.viewer_count || 0) - (a.viewer_count || 0));
 
-    res.status(200).json({ streams });
+    const logins = [...new Set(streams.map((stream) => stream.user_login).filter(Boolean))];
+    const profileMap = new Map();
+
+    if (logins.length) {
+      const userParams = new URLSearchParams();
+      logins.forEach((login) => userParams.append('login', login));
+
+      const usersResponse = await fetch(
+        `https://api.twitch.tv/helix/users?${userParams.toString()}`,
+        {
+          headers: {
+            'Client-ID': TWITCH_CLIENT_ID,
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!usersResponse.ok) {
+        throw new Error(`Twitch users error: ${usersResponse.status}`);
+      }
+
+      const usersData = await usersResponse.json();
+      const users = Array.isArray(usersData.data) ? usersData.data : [];
+      users.forEach((user) => {
+        if (user.login) {
+          profileMap.set(user.login, user.profile_image_url || '');
+        }
+      });
+    }
+
+    const enrichedStreams = streams.map((stream) => ({
+      ...stream,
+      profile_image_url: profileMap.get(stream.user_login) || '',
+    }));
+
+    res.status(200).json({ streams: enrichedStreams });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to fetch Twitch streams' });

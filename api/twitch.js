@@ -4,6 +4,11 @@ const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET;
 let cachedToken = null;
 let tokenExpiresAt = 0;
 
+// メモリ上だけで保持する1分キャッシュ。データベース等への保存は行わない。
+let cachedStreams = [];
+let streamsUpdatedAt = 0;
+const STREAMS_REFRESH_MS = 60_000;
+
 async function getAppToken() {
   if (cachedToken && Date.now() < tokenExpiresAt - 60_000) {
     return cachedToken;
@@ -48,9 +53,43 @@ async function fetchStreams(token, cursor = '') {
   return response.json();
 }
 
+async function getRankedStreams(token) {
+  if (
+    cachedStreams.length &&
+    Date.now() - streamsUpdatedAt < STREAMS_REFRESH_MS
+  ) {
+    return cachedStreams;
+  }
+
+  const streams = [];
+  let cursor = '';
+  let pagesFetched = 0;
+
+  // 上位から順に取得し、未表示者の補充候補までメモリ上に保持する。
+  while (streams.length < 1000 && pagesFetched < 10) {
+    const data = await fetchStreams(token, cursor);
+    const pageStreams = Array.isArray(data.data) ? data.data : [];
+    streams.push(...pageStreams);
+
+    const nextCursor = data.pagination?.cursor || '';
+    pagesFetched += 1;
+
+    if (!nextCursor || pageStreams.length === 0) break;
+    cursor = nextCursor;
+  }
+
+  streams.sort((a, b) => (b.viewer_count || 0) - (a.viewer_count || 0));
+  cachedStreams = streams;
+  streamsUpdatedAt = Date.now();
+
+  return cachedStreams;
+}
+
 export default async function handler(req, res) {
   try {
     const token = await getAppToken();
+    const allStreams = await getRankedStreams(token);
+
     const seenParam = typeof req.query?.seen === 'string' ? req.query.seen : '';
     const seen = new Set(
       seenParam
@@ -59,32 +98,14 @@ export default async function handler(req, res) {
         .filter(Boolean)
     );
 
-    const eligibleStreams = [];
-    let cursor = '';
-    let pagesFetched = 0;
-
-    while (eligibleStreams.length < 100 && pagesFetched < 10) {
-      const data = await fetchStreams(token, cursor);
-      const streams = Array.isArray(data.data) ? data.data : [];
-
-      for (const stream of streams) {
-        if (stream.user_login && !seen.has(stream.user_login.toLowerCase())) {
-          eligibleStreams.push(stream);
-        }
-      }
-
-      const nextCursor = data.pagination?.cursor || '';
-      pagesFetched += 1;
-
-      if (!nextCursor || streams.length === 0) {
-        break;
-      }
-
-      cursor = nextCursor;
-    }
-
-    eligibleStreams.sort((a, b) => (b.viewer_count || 0) - (a.viewer_count || 0));
-    const streams = eligibleStreams.slice(0, 100);
+    // 既に表示した配信者を除外し、視聴者数順で最大100人を候補にする。
+    const streams = allStreams
+      .filter(
+        (stream) =>
+          stream.user_login &&
+          !seen.has(stream.user_login.toLowerCase())
+      )
+      .slice(0, 100);
 
     const logins = [...new Set(streams.map((stream) => stream.user_login).filter(Boolean))];
     const profileMap = new Map();
@@ -122,10 +143,14 @@ export default async function handler(req, res) {
     }));
 
     const stream = enrichedStreams[0] || null;
+
+    res.setHeader('Cache-Control', 'no-store');
     res.status(200).json({
       streams: enrichedStreams,
       live: !!stream,
       stream,
+      updated_at: streamsUpdatedAt,
+      refresh_interval_ms: STREAMS_REFRESH_MS,
     });
   } catch (error) {
     console.error(error);

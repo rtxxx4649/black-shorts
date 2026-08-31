@@ -32,7 +32,7 @@ export default async function handler(req, res) {
 
     const tokenData = await tokenResponse.json();
 
-    const streamsResponse = await fetch("https://api.twitch.tv/helix/streams?first=1", {
+    const streamsResponse = await fetch("https://api.twitch.tv/helix/streams?first=50", {
       headers: {
         "Authorization": `Bearer ${tokenData.access_token}`,
         "Client-Id": clientId
@@ -49,7 +49,10 @@ export default async function handler(req, res) {
     }
 
     const streamsData = await streamsResponse.json();
-    const stream = streamsData.data?.[0] || null;
+    const streams = Array.isArray(streamsData.data) ? streamsData.data : [];
+    const stream = streams.length > 0
+      ? streams[Math.floor(Math.random() * streams.length)]
+      : null;
 
     return res.status(200).json({
       live: Boolean(stream),

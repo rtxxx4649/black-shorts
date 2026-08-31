@@ -15,7 +15,7 @@ async function getAppToken() {
     grant_type: 'client_credentials',
   });
 
-  const res = await fetch(`https://id.twitch.tv/oauth2/token?${params}` , {
+  const res = await fetch(`https://id.twitch.tv/oauth2/token?${params}`, {
     method: 'POST',
   });
 
@@ -29,27 +29,62 @@ async function getAppToken() {
   return cachedToken;
 }
 
+async function fetchStreams(token, cursor = '') {
+  const url = new URL('https://api.twitch.tv/helix/streams');
+  url.searchParams.set('first', '100');
+  if (cursor) url.searchParams.set('after', cursor);
+
+  const response = await fetch(url.toString(), {
+    headers: {
+      'Client-ID': TWITCH_CLIENT_ID,
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Twitch streams error: ${response.status}`);
+  }
+
+  return response.json();
+}
+
 export default async function handler(req, res) {
   try {
     const token = await getAppToken();
-    const response = await fetch(
-      'https://api.twitch.tv/helix/streams?first=100&language=en',
-      {
-        headers: {
-          'Client-ID': TWITCH_CLIENT_ID,
-          Authorization: `Bearer ${token}`,
-        },
-      }
+    const seenParam = typeof req.query?.seen === 'string' ? req.query.seen : '';
+    const seen = new Set(
+      seenParam
+        .split(',')
+        .map((login) => login.trim().toLowerCase())
+        .filter(Boolean)
     );
 
-    if (!response.ok) {
-      throw new Error(`Twitch streams error: ${response.status}`);
+    const eligibleStreams = [];
+    let cursor = '';
+    let pagesFetched = 0;
+
+    while (eligibleStreams.length < 100 && pagesFetched < 10) {
+      const data = await fetchStreams(token, cursor);
+      const streams = Array.isArray(data.data) ? data.data : [];
+
+      for (const stream of streams) {
+        if (stream.user_login && !seen.has(stream.user_login.toLowerCase())) {
+          eligibleStreams.push(stream);
+        }
+      }
+
+      const nextCursor = data.pagination?.cursor || '';
+      pagesFetched += 1;
+
+      if (!nextCursor || streams.length === 0) {
+        break;
+      }
+
+      cursor = nextCursor;
     }
 
-    const data = await response.json();
-    const streams = Array.isArray(data.data) ? data.data : [];
-
-    streams.sort((a, b) => (b.viewer_count || 0) - (a.viewer_count || 0));
+    eligibleStreams.sort((a, b) => (b.viewer_count || 0) - (a.viewer_count || 0));
+    const streams = eligibleStreams.slice(0, 100);
 
     const logins = [...new Set(streams.map((stream) => stream.user_login).filter(Boolean))];
     const profileMap = new Map();

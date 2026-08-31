@@ -86,7 +86,12 @@ export default async function handler(req, res) {
       profile_image_url: profileMap.get(stream.user_login) || '',
     }));
 
-    res.status(200).json({ streams: enrichedStreams });
+    const stream = enrichedStreams[0] || null;
+    res.status(200).json({
+      streams: enrichedStreams,
+      live: !!stream,
+      stream,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to fetch Twitch streams' });

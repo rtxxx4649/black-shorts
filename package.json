@@ -3,6 +3,9 @@
   "engines": {
     "node": "22.x"
   },
+  "scripts": {
+    "build": "node scripts/fix-youtube-meta.js"
+  },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2"
   }

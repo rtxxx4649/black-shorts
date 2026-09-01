@@ -59,7 +59,7 @@ export default async function handler(req, res) {
 
     const videoIds = videos.map((video) => video.video_id).filter(Boolean);
     const videoParams = new URLSearchParams({
-      part: "snippet",
+      part: "snippet,statistics",
       id: videoIds.join(","),
       key: youtubeApiKey
     });
@@ -109,6 +109,13 @@ export default async function handler(req, res) {
       }
     }
 
+    const videoStatsById = new Map(
+      (videoData.items || []).map((item) => [
+        item.id,
+        item.statistics || {}
+      ])
+    );
+
     const channelIdByVideoId = new Map(
       (videoData.items || []).map((item) => [
         item.id,
@@ -119,9 +126,13 @@ export default async function handler(req, res) {
     const enrichedVideos = videos.map((video) => {
       const channelId = channelIdByVideoId.get(video.video_id) || "";
       const channel = channelMap.get(channelId) || {};
+      const statistics = videoStatsById.get(video.video_id) || {};
 
       return {
         ...video,
+        views: statistics.viewCount ?? video.views ?? 0,
+        likes: statistics.likeCount ?? video.likes ?? 0,
+        comments: statistics.commentCount ?? video.comments ?? 0,
         channel_id: channelId,
         channel_avatar: channel.channel_avatar || ""
       };

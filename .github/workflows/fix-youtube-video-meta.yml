@@ -1,0 +1,48 @@
+name: Fix YouTube video metadata layout
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update YouTube metadata markup and logic
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('index2.html')
+          s = p.read_text()
+
+          old = '.youtube-video-meta{display:flex;align-items:center;gap:10px;background:#000;color:#fff;padding:10px 12px 8px;margin:0 auto;width:100%;position:relative;z-index:2;flex:none;overflow:hidden;order:2}.youtube-video-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;flex:none;background:#222}.youtube-video-info{min-width:0;display:flex;flex-direction:column;gap:3px;overflow:hidden}.youtube-video-channel{font-size:15px;font-weight:700;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.youtube-video-stats{font-size:13px;color:#bbb;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}'
+          new = '.youtube-video-title{width:100%;padding:clamp(8px,1vw,14px) clamp(12px,2vw,24px) 0;background:#000;color:#fff;font-size:clamp(14px,1.5vw,22px);font-weight:700;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;order:2}.youtube-video-meta{display:flex;align-items:center;gap:10px;background:#000;color:#fff;padding:clamp(6px,.8vw,10px) clamp(12px,2vw,24px) clamp(10px,1vw,16px);margin:0 auto;width:100%;position:relative;z-index:2;flex:none;overflow:hidden;order:3}.youtube-video-avatar{width:clamp(28px,3vw,44px);height:clamp(28px,3vw,44px);border-radius:50%;object-fit:cover;flex:none;background:#222}.youtube-video-info{min-width:0;display:flex;flex-direction:column;gap:3px;overflow:hidden}.youtube-video-channel{font-size:clamp(13px,1.4vw,20px);font-weight:700;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.youtube-video-stats{font-size:clamp(12px,1.2vw,18px);color:#bbb;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}'
+          if old not in s:
+              raise SystemExit('Expected YouTube metadata CSS was not found')
+          s = s.replace(old, new, 1)
+
+          old = '<div class="youtube-player" id="youtubePlayerArea"><div class="twitch-loading">YouTube動画を読み込み中…</div></div><div class="youtube-video-meta"><img class="youtube-video-avatar" id="youtubeVideoAvatar" alt=""><div class="youtube-video-info"><div class="youtube-video-channel" id="youtubeVideoChannel"></div><div class="youtube-video-stats" id="youtubeVideoStats"></div></div></div>'
+          new = '<div class="youtube-player" id="youtubePlayerArea"><div class="twitch-loading">YouTube動画を読み込み中…</div></div><div class="youtube-video-title" id="youtubeVideoTitle"></div><div class="youtube-video-meta"><img class="youtube-video-avatar" id="youtubeVideoAvatar" alt=""><div class="youtube-video-info"><div class="youtube-video-channel" id="youtubeVideoChannel"></div><div class="youtube-video-stats" id="youtubeVideoStats"></div></div></div>'
+          if old not in s:
+              raise SystemExit('Expected YouTube metadata HTML was not found')
+          s = s.replace(old, new, 1)
+
+          old = 'function setYouTubeVideoMeta(video){const avatar=document.getElementById(\'youtubeVideoAvatar\');const channel=document.getElementById(\'youtubeVideoChannel\');const stats=document.getElementById(\'youtubeVideoStats\');if(!video){avatar.removeAttribute(\'src\');channel.textContent=\'\';stats.textContent=\'\';return}avatar.src=video.channel_avatar||\'\';channel.textContent=video.channel_title||\'\';const views=Number(video.views||0).toLocaleString(\'en-US\');const likes=Number(video.likes||0).toLocaleString(\'en-US\');const comments=Number(video.comments||0).toLocaleString(\'en-US\');stats.textContent=views+\' views · \'+likes+\' likes · \'+comments+\' comments\'}'
+          new = 'function setYouTubeVideoMeta(video){const title=document.getElementById(\'youtubeVideoTitle\');const avatar=document.getElementById(\'youtubeVideoAvatar\');const channel=document.getElementById(\'youtubeVideoChannel\');const stats=document.getElementById(\'youtubeVideoStats\');if(!video){title.textContent=\'\';avatar.removeAttribute(\'src\');channel.textContent=\'\';stats.textContent=\'\';return}title.textContent=video.title||\'\';avatar.src=video.channel_avatar||\'\';channel.textContent=video.channel_title||\'\';const likes=Number(video.likes||0).toLocaleString(\'en-US\');const comments=Number(video.comments||0).toLocaleString(\'en-US\');stats.textContent=likes+\' likes · \'+comments+\' comments\'}'
+          if old not in s:
+              raise SystemExit('Expected YouTube metadata function was not found')
+          s = s.replace(old, new, 1)
+
+          p.write_text(s)
+      - name: Commit and remove temporary workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index2.html
+          git rm .github/workflows/fix-youtube-video-meta.yml
+          git commit -m "feat: show current YouTube video metadata"
+          git push origin main

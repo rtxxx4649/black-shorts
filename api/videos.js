@@ -13,10 +13,17 @@ export default async function handler(req, res) {
     }
 
     const databaseUrl = process.env.DATABASE_URL;
+    const youtubeApiKey = process.env.YOUTUBE_API_KEY;
 
     if (!databaseUrl) {
       return res.status(500).json({
         error: "DATABASE_URL is not configured"
+      });
+    }
+
+    if (!youtubeApiKey) {
+      return res.status(500).json({
+        error: "YOUTUBE_API_KEY is not configured"
       });
     }
 
@@ -42,10 +49,88 @@ export default async function handler(req, res) {
       ORDER BY views DESC
     `;
 
+    if (!videos.length) {
+      return res.status(200).json({
+        regionCode,
+        count: 0,
+        videos: []
+      });
+    }
+
+    const videoIds = videos.map((video) => video.video_id).filter(Boolean);
+    const videoParams = new URLSearchParams({
+      part: "snippet",
+      id: videoIds.join(","),
+      key: youtubeApiKey
+    });
+
+    const videoResponse = await fetch(
+      `https://www.googleapis.com/youtube/v3/videos?${videoParams.toString()}`
+    );
+    const videoData = await videoResponse.json();
+
+    if (!videoResponse.ok) {
+      return res.status(videoResponse.status).json(videoData);
+    }
+
+    const channelIds = [...new Set(
+      (videoData.items || [])
+        .map((item) => item.snippet?.channelId)
+        .filter(Boolean)
+    )];
+
+    const channelMap = new Map();
+
+    if (channelIds.length) {
+      const channelParams = new URLSearchParams({
+        part: "snippet",
+        id: channelIds.join(","),
+        key: youtubeApiKey
+      });
+
+      const channelResponse = await fetch(
+        `https://www.googleapis.com/youtube/v3/channels?${channelParams.toString()}`
+      );
+      const channelData = await channelResponse.json();
+
+      if (!channelResponse.ok) {
+        return res.status(channelResponse.status).json(channelData);
+      }
+
+      for (const channel of channelData.items || []) {
+        channelMap.set(channel.id, {
+          channel_id: channel.id,
+          channel_avatar:
+            channel.snippet?.thumbnails?.high?.url ||
+            channel.snippet?.thumbnails?.medium?.url ||
+            channel.snippet?.thumbnails?.default?.url ||
+            ""
+        });
+      }
+    }
+
+    const channelIdByVideoId = new Map(
+      (videoData.items || []).map((item) => [
+        item.id,
+        item.snippet?.channelId || ""
+      ])
+    );
+
+    const enrichedVideos = videos.map((video) => {
+      const channelId = channelIdByVideoId.get(video.video_id) || "";
+      const channel = channelMap.get(channelId) || {};
+
+      return {
+        ...video,
+        channel_id: channelId,
+        channel_avatar: channel.channel_avatar || ""
+      };
+    });
+
     return res.status(200).json({
       regionCode,
-      count: videos.length,
-      videos
+      count: enrichedVideos.length,
+      videos: enrichedVideos
     });
 
   } catch (error) {

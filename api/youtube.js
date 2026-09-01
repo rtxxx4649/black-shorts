@@ -89,13 +89,15 @@ const gamingPopular = (youtubeData.items || []).map(
   })
 );
 
-await sql`
-  DELETE FROM current_videos
-  WHERE region_code = ${regionCode}
-`;
+const queries = [
+  sql`
+    DELETE FROM current_videos
+    WHERE region_code = ${regionCode}
+  `
+];
 
 for (const video of gamingPopular) {
-  await sql`
+  queries.push(sql`
     INSERT INTO current_videos (
       region_code,
       video_id,
@@ -124,8 +126,10 @@ for (const video of gamingPopular) {
       ${video.category_id},
       ${video.fetched_at}
     )
-  `;
+  `);
 }
+
+await sql.transaction(queries);
 
 return res.status(200).json({
   regionCode,

@@ -41,3 +41,5 @@ jobs:
           git add .github/workflows/add-twitch-stream-meta.yml
           git commit -m "chore: remove one-time Twitch layout workflow"
           git push
+
+# trigger

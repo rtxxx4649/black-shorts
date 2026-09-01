@@ -9,4 +9,9 @@ if (!html.includes(before)) {
   throw new Error("YouTube metadata source pattern was not found in index2.html");
 }
 
-await writeFile(path, html.replace(before, after), "utf8");
+const youtubeMetaFixed = html.replace(before, after);
+const twitchGapBefore = "margin-bottom:clamp(6px,1vw,14px);";
+const twitchGapAfter = "margin-bottom:0;";
+const finalHtml = youtubeMetaFixed.replace(twitchGapBefore, twitchGapAfter);
+
+await writeFile(path, finalHtml, "utf8");

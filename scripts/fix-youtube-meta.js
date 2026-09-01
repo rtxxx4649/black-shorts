@@ -12,6 +12,10 @@ if (!html.includes(before)) {
 const youtubeMetaFixed = html.replace(before, after);
 const twitchGapBefore = "margin-bottom:clamp(6px,1vw,14px);";
 const twitchGapAfter = "margin-bottom:0;";
-const finalHtml = youtubeMetaFixed.replace(twitchGapBefore, twitchGapAfter);
+const pageControlsGapBefore = ".page-controls{display:flex;flex-direction:column;gap:8px;";
+const pageControlsGapAfter = ".page-controls{display:flex;flex-direction:column;gap:0;";
+const mobilePageControlsGapBefore = ".page-controls{gap:8px;";
+const mobilePageControlsGapAfter = ".page-controls{gap:0;";
+const pageControlsFixed = youtubeMetaFixed.replace(twitchGapBefore, twitchGapAfter).replace(pageControlsGapBefore, pageControlsGapAfter).replace(mobilePageControlsGapBefore, mobilePageControlsGapAfter);
 
-await writeFile(path, finalHtml, "utf8");
+await writeFile(path, pageControlsFixed, "utf8");

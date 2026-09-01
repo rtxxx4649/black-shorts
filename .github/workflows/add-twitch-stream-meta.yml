@@ -1,0 +1,43 @@
+name: Update Twitch stream metadata layout
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    if: ${{ !contains(github.event.head_commit.message, 'chore: apply Twitch stream metadata layout') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update index2.html
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('index2.html')
+          s = p.read_text()
+
+          old = '.twitch-stream-title,.twitch-stream-meta,#twitchStreamTitleBottom,#twitchStreamMetaBottom{display:none!important}'
+          new = '#twitchStreamTitle,#twitchStreamMeta{display:none!important}.twitch-stream-title#twitchStreamTitleBottom{display:block;width:100%;padding:clamp(8px,1vw,14px) clamp(12px,2vw,24px) 0;background:#000;color:#fff;font-size:clamp(14px,1.5vw,22px);font-weight:700;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.twitch-stream-meta#twitchStreamMetaBottom{display:flex;width:100%;align-items:center;gap:clamp(8px,1vw,14px);padding:clamp(6px,0.8vw,10px) clamp(12px,2vw,24px) clamp(10px,1vw,16px);background:#000;color:#fff;overflow:hidden}.twitch-stream-meta#twitchStreamMetaBottom .twitch-stream-avatar{width:clamp(28px,3vw,44px);height:clamp(28px,3vw,44px)}.twitch-stream-meta#twitchStreamMetaBottom .twitch-stream-name{font-size:clamp(13px,1.4vw,20px);font-weight:700;min-width:0;flex:1}.twitch-stream-meta#twitchStreamMetaBottom .twitch-stream-viewers{font-size:clamp(12px,1.2vw,18px);color:#bbb;white-space:nowrap;flex:none}'
+          if old not in s:
+              raise SystemExit('Expected existing Twitch metadata CSS was not found')
+          s = s.replace(old, new, 1)
+          p.write_text(s)
+          PY
+      - name: Commit change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index2.html
+          git commit -m "chore: apply Twitch stream metadata layout"
+          git push
+      - name: Remove one-time workflow
+        if: success()
+        run: |
+          rm -f .github/workflows/add-twitch-stream-meta.yml
+          git add .github/workflows/add-twitch-stream-meta.yml
+          git commit -m "chore: remove one-time Twitch layout workflow"
+          git push

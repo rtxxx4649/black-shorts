@@ -51,3 +51,25 @@ if (!html.includes(marker)) {
   html = html.slice(0, styleEnd + 8) + desktopResponsiveCss + html.slice(styleEnd + 8);
   await writeFile(path, html, "utf8");
 }
+
+const mobileTitleMarker = "/* mobile-header-text-size-v1 */";
+if (!html.includes(mobileTitleMarker)) {
+  const mobileHeaderTextCss = `<style>${mobileTitleMarker}
+@media (max-width:700px){
+  .site-title{
+    font-size:29.25px;
+    text-align:left;
+    margin-left:0;
+  }
+  .site-subtitle{
+    font-size:11.7px;
+    text-align:left;
+    margin-left:0;
+  }
+}
+</style>`;
+  const styleEnd = html.indexOf("</style>");
+  if (styleEnd === -1) throw new Error("Style closing tag was not found in index2.html");
+  html = html.slice(0, styleEnd + 8) + mobileHeaderTextCss + html.slice(styleEnd + 8);
+  await writeFile(path, html, "utf8");
+}

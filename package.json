@@ -4,7 +4,7 @@
     "node": "22.x"
   },
   "scripts": {
-    "build": "node scripts/fix-youtube-meta.js && node scripts/fix-desktop-responsive.js && node scripts/fix-cloudflare-players.js && node scripts/fix-cloudflare-players-v2.js && node scripts/prepare-cloudflare.js"
+    "build": "node scripts/fix-youtube-meta.js && node scripts/fix-desktop-responsive.js && node scripts/fix-player-compat.js && node scripts/fix-player-fallback.js && node scripts/prepare-static.js"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2"

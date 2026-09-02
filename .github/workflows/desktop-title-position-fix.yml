@@ -1,0 +1,36 @@
+name: Desktop title position fix
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: "!contains(github.event.head_commit.message, '[desktop-title-fixed]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply desktop-only 1cm offset
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index2.html')
+          s = p.read_text()
+          old = '@media(min-width:701px){.header{padding-bottom:442px}'
+          new = '@media(min-width:701px){.header{padding-bottom:442px}.site-title,.site-subtitle{transform:translateY(1cm)}'
+          if new in s:
+              raise SystemExit('Already patched')
+          if old not in s:
+              raise SystemExit('Expected desktop media-query anchor not found')
+          p.write_text(s.replace(old, new, 1))
+          PY
+      - name: Commit patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index2.html
+          git commit -m 'fix: move desktop title and subtitle down 1cm [desktop-title-fixed]'
+          git push

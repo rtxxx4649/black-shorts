@@ -86,8 +86,9 @@ async function videosApi(request) {
 
     const sql = neon(databaseUrl);
     const videos = await sql`
-      SELECT id, region_code, video_id, title, thumbnail, channel_title, duration,
-             views, likes, comments, published_at, category_id, fetched_at
+      SELECT id, region_code, video_id, title, thumbnail, channel_id, channel_title,
+             channel_avatar, duration, views, likes, comments, published_at,
+             category_id, fetched_at
       FROM current_videos
       WHERE region_code = ${regionCode}
       ORDER BY views DESC
@@ -98,8 +99,8 @@ async function videosApi(request) {
       count: videos.length,
       videos: videos.map(v => ({
         ...v,
-        channel_id: "",
-        channel_avatar: ""
+        channel_id: v.channel_id || "",
+        channel_avatar: v.channel_avatar || ""
       }))
     });
   } catch (error) {

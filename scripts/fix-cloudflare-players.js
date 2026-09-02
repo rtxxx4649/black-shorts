@@ -26,5 +26,11 @@ if (html.includes(youtubeApiAtEnd)) {
   html = html.replace(youtubeApiAtEnd, '</script></body>');
 }
 
+const oldYouTubeReady = /function onYouTubeIframeAPIReady\(\)\{youtubePlayer=new YT\.Player\('youtubePlayerArea',\{width:'100%',height:'100%',videoId:'',playerVars:\{autoplay:1,mute:1,rel:0,playsinline:1,enablejsapi:1,origin:location\.origin\},events:\{onReady:function\(\)\{youtubeReady=true;if\(youtubeVideos\.length\)\{const video=getNextYouTubeVideo\(\);if\(video\)\{currentYouTubeVideo=video;setYouTubeVideoMeta\(video\);youtubePlayer\.loadVideoById\(\{videoId:video\.video_id,startSeconds:0,suggestedQuality:'default'\}\);youtubePlayer\.playVideo\(\);applyAudioMode\(\)\}\}\},onStateChange:function\(event\)\{if\(event\.data===YT\.PlayerState\.ENDED\)playRandomYouTubeVideo\(\)\}\}\}\)\}/;
+const newYouTubeReady = "function onYouTubeIframeAPIReady(){const init=()=>{if(youtubePlayer)return;if(!youtubeVideos.length){setTimeout(init,250);return}const video=getNextYouTubeVideo();if(!video)return;currentYouTubeVideo=video;setYouTubeVideoMeta(video);youtubePlayer=new YT.Player('youtubePlayerArea',{width:'100%',height:'100%',videoId:video.video_id,playerVars:{autoplay:1,mute:1,rel:0,playsinline:1,enablejsapi:1,origin:location.origin},events:{onReady:function(){youtubeReady=true;if(audioMode==='twitch'){youtubePlayer.mute();youtubeMuted=true}else{youtubePlayer.unMute();youtubeMuted=false}youtubePlayer.playVideo();applyAudioMode()},onStateChange:function(event){if(event.data===YT.PlayerState.ENDED)playRandomYouTubeVideo()},onAutoplayBlocked:function(){console.log('YouTube autoplay blocked; player remains available for user interaction')}}})};init()}";
+if (oldYouTubeReady.test(html)) {
+  html = html.replace(oldYouTubeReady, newYouTubeReady);
+}
+
 await writeFile(path, html);
 console.log("Cloudflare player compatibility fixes applied.");

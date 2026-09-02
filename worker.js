@@ -1,5 +1,107 @@
 import { neon } from "@neondatabase/serverless";
 
+let twitchToken = null;
+let twitchTokenExpiresAt = 0;
+let twitchStreams = [];
+let twitchStreamsUpdatedAt = 0;
+const TWITCH_REFRESH_MS = 60_000;
+
+async function getTwitchAppToken(env) {
+  const clientId = env.TWITCH_CLIENT_ID;
+  const clientSecret = env.TWITCH_CLIENT_SECRET;
+  if (!clientId) throw new Error("TWITCH_CLIENT_ID is not configured");
+  if (!clientSecret) throw new Error("TWITCH_CLIENT_SECRET is not configured");
+
+  if (twitchToken && Date.now() < twitchTokenExpiresAt - 60_000) {
+    return twitchToken;
+  }
+
+  const params = new URLSearchParams({
+    client_id: clientId,
+    client_secret: clientSecret,
+    grant_type: "client_credentials"
+  });
+  const response = await fetch(`https://id.twitch.tv/oauth2/token?${params}`, { method: "POST" });
+  if (!response.ok) throw new Error(`Twitch token error: ${response.status}`);
+
+  const data = await response.json();
+  twitchToken = data.access_token;
+  twitchTokenExpiresAt = Date.now() + Number(data.expires_in || 0) * 1000;
+  return twitchToken;
+}
+
+async function twitchApi(request, env) {
+  try {
+    const clientId = env.TWITCH_CLIENT_ID;
+    if (!clientId) return Response.json({ error: "TWITCH_CLIENT_ID is not configured" }, { status: 500 });
+
+    const token = await getTwitchAppToken(env);
+    const url = new URL(request.url);
+    const seenParam = url.searchParams.get("seen") || "";
+    const seen = new Set(seenParam.split(",").map(login => login.trim().toLowerCase()).filter(Boolean));
+
+    if (!twitchStreams.length || Date.now() - twitchStreamsUpdatedAt >= TWITCH_REFRESH_MS) {
+      const streams = [];
+      let cursor = "";
+      let pages = 0;
+
+      while (streams.length < 1000 && pages < 10) {
+        const streamsUrl = new URL("https://api.twitch.tv/helix/streams");
+        streamsUrl.searchParams.set("first", "100");
+        if (cursor) streamsUrl.searchParams.set("after", cursor);
+        const response = await fetch(streamsUrl, {
+          headers: { "Client-ID": clientId, Authorization: `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error(`Twitch streams error: ${response.status}`);
+        const data = await response.json();
+        const pageStreams = Array.isArray(data.data) ? data.data : [];
+        streams.push(...pageStreams);
+        cursor = data.pagination?.cursor || "";
+        pages += 1;
+        if (!cursor || !pageStreams.length) break;
+      }
+
+      streams.sort((a, b) => (b.viewer_count || 0) - (a.viewer_count || 0));
+      twitchStreams = streams;
+      twitchStreamsUpdatedAt = Date.now();
+    }
+
+    const streams = twitchStreams.filter(stream => stream.user_login && !seen.has(stream.user_login.toLowerCase())).slice(0, 100);
+    const logins = [...new Set(streams.map(stream => stream.user_login).filter(Boolean))];
+    const profileMap = new Map();
+
+    if (logins.length) {
+      const usersUrl = new URL("https://api.twitch.tv/helix/users");
+      for (const login of logins) usersUrl.searchParams.append("login", login);
+      const usersResponse = await fetch(usersUrl, {
+        headers: { "Client-ID": clientId, Authorization: `Bearer ${token}` }
+      });
+      if (!usersResponse.ok) throw new Error(`Twitch users error: ${usersResponse.status}`);
+      const usersData = await usersResponse.json();
+      for (const user of usersData.data || []) {
+        if (user.login) profileMap.set(user.login, user.profile_image_url || "");
+      }
+    }
+
+    const enrichedStreams = streams.map(stream => ({
+      ...stream,
+      profile_image_url: profileMap.get(stream.user_login) || ""
+    }));
+    const stream = enrichedStreams[0] || null;
+
+    return Response.json({
+      streams: enrichedStreams,
+      live: !!stream,
+      stream,
+      updated_at: twitchStreamsUpdatedAt,
+      refresh_interval_ms: TWITCH_REFRESH_MS
+    }, { headers: { "Cache-Control": "no-store" } });
+  } catch (error) {
+    console.error("twitch API error:", error);
+    return Response.json({ error: "Failed to fetch Twitch streams" }, { status: 500 });
+  }
+}
+
 async function videosApi(request, env) {
   try {
     const url = new URL(request.url);
@@ -69,9 +171,9 @@ async function videosApi(request, env) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname === "/api/twitch") return twitchApi(request, env);
     if (url.pathname === "/api/videos") return videosApi(request, env);
 
-    // The original site uses index2.html; Cloudflare serves the built copy as index.html.
     return env.ASSETS.fetch(request);
   }
 };

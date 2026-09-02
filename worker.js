@@ -105,9 +105,11 @@ async function twitchApi(request, env) {
 async function videosApi(request, env) {
   try {
     const url = new URL(request.url);
-    const regionCode = String(url.searchParams.get("regionCode") || "").toUpperCase();
+    // Accept a standard two-letter country code. If omitted, use Japan.
+    const rawRegionCode = String(url.searchParams.get("regionCode") || "JP").trim().toUpperCase();
+    const regionCode = rawRegionCode.slice(0, 2);
     if (!/^[A-Z]{2}$/.test(regionCode)) {
-      return Response.json({ error: "Invalid regionCode" }, { status: 400 });
+      return Response.json({ error: "Invalid regionCode", received: rawRegionCode }, { status: 400 });
     }
 
     const databaseUrl = env.DATABASE_URL;

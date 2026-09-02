@@ -9,7 +9,7 @@ if (html.includes(youtubeMetaBefore)) html = html.replace(youtubeMetaBefore, you
 
 html = html.replace(/margin-bottom:clamp\(6px,1vw,14px\);/, "margin-bottom:0;");
 
-const mobileFitCss = ".audio-switch-button{height:46px;width:min(90vw,1200px)}.page-controls{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:8px 8px;align-items:stretch}.page-controls .twitch-switch-controls{grid-column:1;grid-row:1;width:100%}.page-controls .youtube-switch-controls{grid-column:2;grid-row:1;width:100%}.page-controls .audio-switch-button{grid-column:1 / -1;grid-row:2;width:100%;margin:0}.mobile-fit-stack .twitch-player,.mobile-fit-stack .youtube-player{width:var(--mobile-player-width)!important;max-width:var(--mobile-player-width)!important;height:var(--mobile-player-height)!important;min-height:0!important;margin-left:auto!important;margin-right:auto!important;box-sizing:border-box!important}.mobile-fit-stack .twitch-video-frame,.mobile-fit-stack .youtube-player iframe{display:block;width:100%!important;max-width:none!important;height:100%!important}";
+const mobileFitCss = "@media (max-width:700px){.audio-switch-button{height:46px;width:min(90vw,1200px)}.page-controls{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:8px 8px;align-items:stretch}.page-controls .twitch-switch-controls{grid-column:1;grid-row:1;width:100%}.page-controls .youtube-switch-controls{grid-column:2;grid-row:1;width:100%}.page-controls .audio-switch-button{grid-column:1 / -1;grid-row:2;width:100%;margin:0}.mobile-fit-stack .twitch-player,.mobile-fit-stack .youtube-player{width:var(--mobile-player-width)!important;max-width:var(--mobile-player-width)!important;height:var(--mobile-player-height)!important;min-height:0!important;margin-left:auto!important;margin-right:auto!important;box-sizing:border-box!important}.mobile-fit-stack .twitch-video-frame,.mobile-fit-stack .youtube-player iframe{display:block;width:100%!important;max-width:none!important;height:100%!important}}";
 const mobileFitCssPattern = /\.audio-switch-button\{height:46px;width:min\(90vw,1200px\)\}\}/;
 if (!html.includes(".mobile-fit-stack .twitch-player")) {
   if (!mobileFitCssPattern.test(html)) throw new Error("Mobile player CSS source pattern was not found in index2.html");
@@ -22,7 +22,7 @@ if (!html.includes("let mobilePlayerHeightLocked=null;")) {
   if (!audioHandlerPattern.test(html)) throw new Error("Audio switch handler source pattern was not found in index2.html");
   html = html.replace(audioHandlerPattern, mobileFitJs);
 } else {
-  const mobileFitJsPattern = /let mobilePlayerHeightLocked=null;function fitMobilePlayerStack\(\)\{[\s\S]*?document\.getElementById\('audioSwitchButton'\)\.onclick=\(\)=>\{audioMode=audioMode==='twitch'\?'youtube'\:'twitch';applyAudioMode\(\)\};/;
+  const mobileFitJsPattern = /let mobilePlayerHeightLocked=null;function fitMobilePlayerStack\(\)\{[\s\S]*?document\.getElementById\('audioSwitchButton'\)\.onclick=\(\)=>\{audioMode=audioMode==='twitch'\?'youtube':'twitch';applyAudioMode\(\)\};/;
   if (!mobileFitJsPattern.test(html)) throw new Error("Existing mobile player JS block was not found in index2.html");
   html = html.replace(mobileFitJsPattern, mobileFitJs);
 }

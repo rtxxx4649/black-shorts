@@ -48,10 +48,7 @@ jobs:
           if mount_css not in s and marker in s:
               s = s.replace(marker, marker + mount_css, 1)
 
-          # Normalize every YouTube IFrame API script tag so external code is
-          # loaded by a real src-only script element and any inline helper code
-          # remains executable in a separate normal script element.
-          pattern = re.compile(r'<script\\s+src=["\']https://www\\.youtube\\.com/iframe_api["\']>(.*?)</script>', re.S)
+          pattern = re.compile(r'<script\s+src=["\']https://www\.youtube\.com/iframe_api["\']>(.*?)</script>', re.S)
           matches = list(pattern.finditer(s))
           inline_chunks = [m.group(1) for m in matches if m.group(1).strip()]
           s = pattern.sub('', s)

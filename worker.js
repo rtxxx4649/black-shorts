@@ -113,7 +113,6 @@ async function videosApi(request, env) {
     const databaseUrl = env.DATABASE_URL;
     const youtubeApiKey = env.YOUTUBE_API_KEY;
     if (!databaseUrl) return Response.json({ error: "DATABASE_URL is not configured" }, { status: 500 });
-    if (!youtubeApiKey) return Response.json({ error: "YOUTUBE_API_KEY is not configured" }, { status: 500 });
 
     const sql = neon(databaseUrl);
     const videos = await sql`
@@ -125,6 +124,17 @@ async function videosApi(request, env) {
     `;
 
     if (!videos.length) return Response.json({ regionCode, count: 0, videos: [] });
+
+    // The database already contains the video metadata needed by the player.
+    // YouTube API enrichment is optional so the player can still start when
+    // YOUTUBE_API_KEY has not yet been copied to Cloudflare.
+    if (!youtubeApiKey) {
+      return Response.json({
+        regionCode,
+        count: videos.length,
+        videos: videos.map(video => ({ ...video, channel_id: "", channel_avatar: "" }))
+      });
+    }
 
     const videoIds = videos.map(v => v.video_id).filter(Boolean);
     const videoParams = new URLSearchParams({ part: "snippet,statistics", id: videoIds.join(","), key: youtubeApiKey });

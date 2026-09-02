@@ -1,0 +1,13 @@
+import { readFile, writeFile } from "node:fs/promises";
+
+const path = "index2.html";
+let html = await readFile(path, "utf8");
+
+const marker = "/* desktop-viewport-responsive-v1 */";
+if (!html.includes(marker)) {
+  const desktopResponsiveCss = `<style>${marker}\n@media (min-width:701px){\n  html,body{width:100%;max-width:none;overflow-x:hidden}\n  .header{width:100%;padding-left:clamp(12px,1.5vw,20px);padding-right:clamp(12px,1.5vw,20px);padding-bottom:clamp(180px,32vh,442px)}\n  .site-title{font-size:clamp(52px,8vw,160px)!important;line-height:1.05}\n  .site-subtitle{font-size:clamp(18px,2.2vw,44px)!important;margin-top:clamp(6px,.8vw,12px)}\n  .twitch-player{width:100%;max-width:100%;height:56.25vw;min-height:0}\n  #youtubePlayerArea{width:100%!important;max-width:100%!important;height:auto!important;aspect-ratio:16/9;min-height:0}\n  .twitch-stream-title#twitchStreamTitleBottom,.youtube-video-title{font-size:clamp(16px,1.5vw,28px);padding-left:clamp(12px,1.5vw,28px);padding-right:clamp(12px,1.5vw,28px)}\n  .twitch-stream-meta#twitchStreamMetaBottom,.youtube-video-meta{gap:clamp(8px,1vw,16px);padding-left:clamp(12px,1.5vw,28px);padding-right:clamp(12px,1.5vw,28px);padding-top:clamp(8px,.8vw,14px);padding-bottom:clamp(10px,1vw,18px)}\n  .twitch-stream-meta#twitchStreamMetaBottom .twitch-stream-avatar,.youtube-video-avatar{width:clamp(30px,2.8vw,52px);height:clamp(30px,2.8vw,52px)}\n  .twitch-stream-meta#twitchStreamMetaBottom .twitch-stream-name,.youtube-video-channel{font-size:clamp(15px,1.35vw,24px)}\n  .twitch-stream-meta#twitchStreamMetaBottom .twitch-stream-viewers,.youtube-video-stats{font-size:clamp(13px,1.1vw,20px)}\n  .page-controls{width:100%;gap:clamp(4px,.4vw,8px);padding-top:clamp(6px,.6vw,12px);padding-bottom:clamp(10px,1vw,20px)}\n  .page-controls button,.audio-switch-button{height:clamp(56px,6.5vw,120px);font-size:clamp(15px,1.35vw,24px)}\n  .page-controls .twitch-switch-controls,.page-controls .youtube-switch-controls,.page-controls .audio-switch-button{width:100%}\n}\n</style>`;
+  const styleEnd = html.indexOf("</style>");
+  if (styleEnd === -1) throw new Error("Style closing tag was not found in index2.html");
+  html = html.slice(0, styleEnd + 8) + desktopResponsiveCss + html.slice(styleEnd + 8);
+  await writeFile(path, html, "utf8");
+}

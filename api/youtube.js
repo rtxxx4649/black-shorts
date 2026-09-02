@@ -50,42 +50,71 @@ if (!youtubeResponse.ok) {
   ).json(youtubeData);
 }
 
-const gamingPopular = (youtubeData.items || []).map(
+const items = Array.isArray(youtubeData.items) ? youtubeData.items : [];
+
+// videos.list gives us the channelId, while the channel avatar itself
+// comes from channels.list(snippet). Fetch unique channels in batches.
+const channelIds = [
+  ...new Set(
+    items
+      .map((item) => item.snippet?.channelId)
+      .filter(Boolean)
+  )
+];
+
+const channelAvatarMap = new Map();
+
+for (let i = 0; i < channelIds.length; i += 50) {
+  const batch = channelIds.slice(i, i + 50);
+  const channelParams = new URLSearchParams({
+    part: "snippet",
+    id: batch.join(","),
+    maxResults: "50",
+    key: youtubeApiKey
+  });
+
+  const channelResponse = await fetch(
+    `https://www.googleapis.com/youtube/v3/channels?${channelParams.toString()}`
+  );
+  const channelData = await channelResponse.json();
+
+  if (!channelResponse.ok) {
+    return res.status(
+      channelResponse.status
+    ).json(channelData);
+  }
+
+  for (const channel of channelData.items || []) {
+    const avatar =
+      channel.snippet?.thumbnails?.high?.url ||
+      channel.snippet?.thumbnails?.medium?.url ||
+      channel.snippet?.thumbnails?.default?.url ||
+      "";
+
+    channelAvatarMap.set(channel.id, avatar);
+  }
+}
+
+const gamingPopular = items.map(
   (item) => ({
     region_code: regionCode,
     video_id: item.id,
-
     title: item.snippet?.title || "",
-
     thumbnail:
       item.snippet?.thumbnails?.high?.url ||
       item.snippet?.thumbnails?.medium?.url ||
       item.snippet?.thumbnails?.default?.url ||
       "",
-
-    channel_title:
-      item.snippet?.channelTitle || "",
-
-    duration:
-      item.contentDetails?.duration || "",
-
-    views:
-      Number(item.statistics?.viewCount || 0),
-
-    likes:
-      Number(item.statistics?.likeCount || 0),
-
-    comments:
-      Number(item.statistics?.commentCount || 0),
-
-    published_at:
-      item.snippet?.publishedAt || null,
-
-    category_id:
-      item.snippet?.categoryId || "20",
-
-    fetched_at:
-      new Date().toISOString()
+    channel_id: item.snippet?.channelId || "",
+    channel_title: item.snippet?.channelTitle || "",
+    channel_avatar: channelAvatarMap.get(item.snippet?.channelId) || "",
+    duration: item.contentDetails?.duration || "",
+    views: Number(item.statistics?.viewCount || 0),
+    likes: Number(item.statistics?.likeCount || 0),
+    comments: Number(item.statistics?.commentCount || 0),
+    published_at: item.snippet?.publishedAt || null,
+    category_id: item.snippet?.categoryId || "20",
+    fetched_at: new Date().toISOString()
   })
 );
 
@@ -103,7 +132,9 @@ for (const video of gamingPopular) {
       video_id,
       title,
       thumbnail,
+      channel_id,
       channel_title,
+      channel_avatar,
       duration,
       views,
       likes,
@@ -117,7 +148,9 @@ for (const video of gamingPopular) {
       ${video.video_id},
       ${video.title},
       ${video.thumbnail},
+      ${video.channel_id},
       ${video.channel_title},
+      ${video.channel_avatar},
       ${video.duration},
       ${video.views},
       ${video.likes},

@@ -91,3 +91,19 @@ if (!html.includes(mobileTitlePositionMarker)) {
   html = html.slice(0, styleEnd + 8) + mobileHeaderTextPositionCss + html.slice(styleEnd + 8);
   await writeFile(path, html, "utf8");
 }
+
+const mobileTitleLeftMarker = "/* mobile-header-text-left-v1 */";
+if (!html.includes(mobileTitleLeftMarker)) {
+  const mobileHeaderTextLeftCss = `<style>${mobileTitleLeftMarker}
+@media (max-width:700px){
+  .site-title,
+  .site-subtitle{
+    margin-left:-28px;
+  }
+}
+</style>`;
+  const styleEnd = html.indexOf("</style>");
+  if (styleEnd === -1) throw new Error("Style closing tag was not found in index2.html");
+  html = html.slice(0, styleEnd + 8) + mobileHeaderTextLeftCss + html.slice(styleEnd + 8);
+  await writeFile(path, html, "utf8");
+}

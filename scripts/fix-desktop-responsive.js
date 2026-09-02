@@ -107,3 +107,20 @@ if (!html.includes(mobileTitleLeftMarker)) {
   html = html.slice(0, styleEnd + 8) + mobileHeaderTextLeftCss + html.slice(styleEnd + 8);
   await writeFile(path, html, "utf8");
 }
+
+const desktopTitlePositionMarker = "/* desktop-header-text-position-v1 */";
+if (!html.includes(desktopTitlePositionMarker)) {
+  const desktopHeaderTextPositionCss = `<style>${desktopTitlePositionMarker}
+@media (min-width:701px){
+  .site-title,
+  .site-subtitle{
+    position:relative;
+    top:38px;
+  }
+}
+</style>`;
+  const styleEnd = html.indexOf("</style>");
+  if (styleEnd === -1) throw new Error("Style closing tag was not found in index2.html");
+  html = html.slice(0, styleEnd + 8) + desktopHeaderTextPositionCss + html.slice(styleEnd + 8);
+  await writeFile(path, html, "utf8");
+}

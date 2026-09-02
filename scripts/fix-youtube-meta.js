@@ -28,8 +28,7 @@ if (!html.includes("let mobilePlayerHeightLocked=null;")) {
   html = html.replace(mobileFitJsPattern, mobileFitJs);
 }
 
-// Desktop only: make the YouTube player's rendered box exactly match the Twitch
-// player's rendered box. No mobile styles or mobile behavior are changed here.
+// Desktop only: make the YouTube player's rendered box exactly match the Twitch player's rendered box.
 const desktopFitCss = "@media (min-width:701px){.youtube-player{width:100%;height:var(--desktop-player-height,56.25vw)!important}.youtube-player iframe{width:100%;height:100%!important}}";
 if (!html.includes("--desktop-player-height")) {
   const styleEnd = html.indexOf("</style>");
@@ -37,10 +36,9 @@ if (!html.includes("--desktop-player-height")) {
   html = html.slice(0, styleEnd) + desktopFitCss + html.slice(styleEnd);
 }
 
-// Desktop only: force the three visible control buttons into an explicit two-row grid.
-// Hidden mute buttons remain hidden. Mobile layout is untouched.
-const desktopControlsCss = "@media (min-width:701px){.page-controls .twitch-switch-controls,.page-controls .youtube-switch-controls{display:contents}.page-controls #twitchNextButton{grid-column:1;grid-row:1;width:100%}.page-controls #youtubeNextButton{grid-column:2;grid-row:1;width:100%}.page-controls .audio-switch-button{grid-column:1 / -1;grid-row:2;width:100%}}";
-if (!html.includes(".page-controls #twitchNextButton{grid-column:1")) {
+// Desktop only: force the three visible control buttons into the requested layout.
+const desktopControlsCss = "@media (min-width:701px){.page-controls{display:grid!important;grid-template-columns:1fr 1fr!important;grid-template-rows:auto auto!important;gap:0!important;align-items:stretch!important}.page-controls .twitch-switch-controls,.page-controls .youtube-switch-controls{display:contents!important}.page-controls #twitchNextButton{display:block!important;grid-column:1!important;grid-row:1!important;width:100%!important;height:clamp(92px,8vw,128px)!important}.page-controls #youtubeNextButton{display:block!important;grid-column:2!important;grid-row:1!important;width:100%!important;height:clamp(92px,8vw,128px)!important}.page-controls .audio-switch-button{display:block!important;grid-column:1 / -1!important;grid-row:2!important;width:100%!important;height:clamp(92px,8vw,128px)!important}}";
+if (!html.includes(".page-controls{display:grid!important;grid-template-columns:1fr 1fr!important")) {
   const styleEnd = html.indexOf("</style>");
   if (styleEnd === -1) throw new Error("Style closing tag was not found in index2.html");
   html = html.slice(0, styleEnd) + desktopControlsCss + html.slice(styleEnd);
@@ -53,5 +51,12 @@ if (!html.includes("syncDesktopYouTubeToTwitch")) {
   html = html.slice(0, bodyEnd) + "<script>" + desktopFitJs + "</script>" + html.slice(bodyEnd);
 }
 
-// Desktop control placement is intentionally isolated to min-width:701px.
+// Desktop only: structurally reparent the three visible controls so their order cannot be affected by wrapper layout.
+const desktopControlsJs = "(function(){function applyDesktopControlLayout(){if(window.innerWidth<=700)return;const controls=document.querySelector('.page-controls');const twitchWrap=controls&&controls.querySelector('.twitch-switch-controls');const youtubeWrap=controls&&controls.querySelector('.youtube-switch-controls');const twitchNext=document.getElementById('twitchNextButton');const youtubeNext=document.getElementById('youtubeNextButton');const audio=document.getElementById('audioSwitchButton');if(!controls||!twitchWrap||!youtubeWrap||!twitchNext||!youtubeNext||!audio)return;if(twitchNext.parentElement!==controls)controls.appendChild(twitchNext);if(youtubeNext.parentElement!==controls)controls.appendChild(youtubeNext);if(audio.parentElement!==controls)controls.appendChild(audio);twitchWrap.remove();youtubeWrap.remove();controls.style.setProperty('display','grid','important');controls.style.setProperty('grid-template-columns','1fr 1fr','important');controls.style.setProperty('grid-template-rows','auto auto','important');controls.style.setProperty('gap','0','important');twitchNext.style.setProperty('grid-column','1','important');twitchNext.style.setProperty('grid-row','1','important');youtubeNext.style.setProperty('grid-column','2','important');youtubeNext.style.setProperty('grid-row','1','important');audio.style.setProperty('grid-column','1 / -1','important');audio.style.setProperty('grid-row','2','important')}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',applyDesktopControlLayout);else applyDesktopControlLayout();window.addEventListener('resize',applyDesktopControlLayout)})();";
+if (!html.includes("applyDesktopControlLayout")) {
+  const bodyEnd = html.lastIndexOf("</body>");
+  if (bodyEnd === -1) throw new Error("Body closing tag was not found in index2.html");
+  html = html.slice(0, bodyEnd) + "<script>" + desktopControlsJs + "</script>" + html.slice(bodyEnd);
+}
+
 await writeFile(path, html, "utf8");

@@ -53,4 +53,5 @@ if (!html.includes("syncDesktopYouTubeToTwitch")) {
   html = html.slice(0, bodyEnd) + "<script>" + desktopFitJs + "</script>" + html.slice(bodyEnd);
 }
 
+// Desktop control placement is intentionally isolated to min-width:701px.
 await writeFile(path, html, "utf8");

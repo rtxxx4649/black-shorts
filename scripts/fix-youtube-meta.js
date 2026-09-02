@@ -27,9 +27,25 @@ if (!html.includes("let mobilePlayerHeightLocked=null;")) {
   if (!audioHandlerPattern.test(html)) throw new Error("Audio switch handler source pattern was not found in index2.html");
   html = html.replace(audioHandlerPattern, mobileFitJs);
 } else {
-  const mobileFitJsPattern = /let mobilePlayerHeightLocked=null;function fitMobilePlayerStack\(\)\{[\s\S]*?document\.getElementById\('audioSwitchButton'\)\.onclick=\(\)=>\{audioMode=audioMode==='twitch'\?'youtube'\:'twitch';applyAudioMode\(\)\};/;
+  const mobileFitJsPattern = /let mobilePlayerHeightLocked=null;function fitMobilePlayerStack\(\)\{[\s\S]*?document\.getElementById\('audioSwitchButton'\)\.onclick=\(\)=>\{audioMode=audioMode==='twitch'\?'youtube':'twitch';applyAudioMode\(\)\};/;
   if (!mobileFitJsPattern.test(html)) throw new Error("Existing mobile player JS block was not found in index2.html");
   html = html.replace(mobileFitJsPattern, mobileFitJs);
+}
+
+// Desktop only: make the YouTube player's rendered box exactly match the Twitch
+// player's rendered box. No mobile styles or mobile behavior are changed here.
+const desktopFitCss = "@media (min-width:701px){.youtube-player{width:100%;height:var(--desktop-player-height,56.25vw)!important}.youtube-player iframe{width:100%;height:100%!important}}";
+if (!html.includes("--desktop-player-height")) {
+  const styleEnd = html.indexOf("</style>");
+  if (styleEnd === -1) throw new Error("Style closing tag was not found in index2.html");
+  html = html.slice(0, styleEnd) + desktopFitCss + html.slice(styleEnd);
+}
+
+const desktopFitJs = "(function(){function syncDesktopYouTubeToTwitch(){if(window.innerWidth<=700)return;const twitch=document.getElementById('twitchPlayerArea');const youtube=document.getElementById('youtubePlayerArea');if(!twitch||!youtube)return;const rect=twitch.getBoundingClientRect();if(rect.width<=0||rect.height<=0)return;document.documentElement.style.setProperty('--desktop-player-height',rect.height+'px');youtube.style.width=rect.width+'px';youtube.style.height=rect.height+'px'}window.addEventListener('load',syncDesktopYouTubeToTwitch);window.addEventListener('resize',syncDesktopYouTubeToTwitch);const twitch=document.getElementById('twitchPlayerArea');if(twitch&&window.ResizeObserver)new ResizeObserver(syncDesktopYouTubeToTwitch).observe(twitch);requestAnimationFrame(syncDesktopYouTubeToTwitch)})();";
+if (!html.includes("syncDesktopYouTubeToTwitch")) {
+  const bodyEnd = html.lastIndexOf("</body>");
+  if (bodyEnd === -1) throw new Error("Body closing tag was not found in index2.html");
+  html = html.slice(0, bodyEnd) + "<script>" + desktopFitJs + "</script>" + html.slice(bodyEnd);
 }
 
 await writeFile(path, html, "utf8");

@@ -59,4 +59,12 @@ if (!html.includes("applyDesktopControlLayout")) {
   html = html.slice(0, bodyEnd) + "<script>" + desktopControlsJs + "</script>" + html.slice(bodyEnd);
 }
 
+// Desktop only: make the title and subtitle exactly 4x their current desktop sizes.
+const desktopTitleScaleCss = "@media (min-width:701px){.site-title{font-size:clamp(360px,40vw,480px)!important}.site-subtitle{font-size:clamp(144px,16vw,176px)!important}}";
+if (!html.includes("font-size:clamp(360px,40vw,480px)!important")) {
+  const styleEnd = html.indexOf("</style>");
+  if (styleEnd === -1) throw new Error("Style closing tag was not found in index2.html");
+  html = html.slice(0, styleEnd) + desktopTitleScaleCss + html.slice(styleEnd);
+}
+
 await writeFile(path, html, "utf8");

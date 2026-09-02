@@ -1,0 +1,90 @@
+name: Repair and refresh snapshots
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 */2 * * *'
+      timezone: 'Asia/Tokyo'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: snapshot-refresh
+  cancel-in-progress: false
+
+jobs:
+  repair-and-refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Repair YouTube player structure and data endpoints
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('index2.html')
+          s = p.read_text(encoding='utf-8')
+
+          old = '<div class="youtube-player" id="youtubePlayerArea"><div class="twitch-loading">YouTube動画を読み込み中…</div></div>'
+          new = '<div class="youtube-player" id="youtubePlayerArea"><div id="youtubePlayerMount"><div class="twitch-loading">YouTube動画を読み込み中…</div></div></div>'
+          if old in s:
+              s = s.replace(old, new, 1)
+
+          s = s.replace("new YT.Player('youtubePlayerArea'", "new YT.Player('youtubePlayerMount'", 1)
+          s = s.replace("width:'100%',height:'100%',videoId:'',", "videoId:'',", 1)
+          s = s.replace("fetch('/api/twitch')", "fetch('/data/twitch.json')")
+          s = s.replace("fetch(\"/api/twitch\")", "fetch(\"/data/twitch.json\")")
+
+          mount_css = '.youtube-player>#youtubePlayerMount{position:relative;width:100%;height:100%;min-width:0;min-height:0}.youtube-player>#youtubePlayerMount iframe{display:block;width:100%!important;height:100%!important;border:0}'
+          marker = '.youtube-player iframe{display:block;width:100%;height:100%;border:0}'
+          if mount_css not in s and marker in s:
+              s = s.replace(marker, marker + mount_css, 1)
+
+          if 'https://www.youtube.com/iframe_api' not in s:
+              marker_script = '<script src="https://player.twitch.tv/js/embed/v1.js"></script>'
+              s = s.replace(marker_script, '<script src="https://www.youtube.com/iframe_api"></script>' + marker_script, 1)
+
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Update YouTube snapshot
+        run: |
+          curl --fail --show-error --silent --retry 3 \
+            https://black-shorts-rtxxx4649.vercel.app/api/update-all
+
+      - name: Update Twitch snapshot file
+        run: |
+          mkdir -p data
+          curl --fail --show-error --silent --retry 3 \
+            https://black-shorts-rtxxx4649.vercel.app/api/twitch \
+            -o data/twitch.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('data/twitch.json')
+          d = json.loads(p.read_text(encoding='utf-8'))
+          if not isinstance(d, dict) or 'streams' not in d:
+              raise SystemExit('Invalid Twitch snapshot')
+          if not isinstance(d.get('streams'), list):
+              raise SystemExit('Invalid Twitch streams')
+          print('Twitch streams:', len(d['streams']))
+          PY
+
+      - name: Commit repaired code and current Twitch snapshot
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index2.html data/twitch.json
+          if git diff --cached --quiet; then
+            echo 'No file changes to commit.'
+          else
+            git commit -m 'fix: repair players and refresh current Twitch snapshot'
+            git push
+          fi

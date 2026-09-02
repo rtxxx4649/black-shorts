@@ -31,6 +31,7 @@ if (!html.includes(marker)) {
 }
 @media (max-width:700px){
   .header{background-color:#000}
+  .twitch-section{margin-top:-120px}
   .twitch-stream-meta#twitchStreamMetaBottom{margin-bottom:0}
 }
 </style>`;

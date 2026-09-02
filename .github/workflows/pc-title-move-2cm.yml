@@ -1,0 +1,33 @@
+name: PC title move 2cm
+on:
+  push:
+    paths:
+      - '.github/workflows/pc-title-move-2cm.yml'
+    branches:
+      - main
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Move PC title and subtitle down 2cm
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index2.html')
+          s = p.read_text()
+          old = '@media(min-width:701px){.header{padding-bottom:442px}.site-title,.site-subtitle{transform:translateY(1cm)}'
+          new = '@media(min-width:701px){.header{padding-bottom:442px}.site-title,.site-subtitle{transform:translateY(2cm)}'
+          if old not in s:
+              raise SystemExit('target CSS not found')
+          p.write_text(s.replace(old, new, 1))
+          PY
+      - name: Commit change
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index2.html
+          git commit -m 'fix: move PC title and subtitle down 2cm'
+          git push

@@ -30,8 +30,19 @@ if (!html.includes(marker)) {
   .score{font-size:clamp(12px,1vw,18px);margin-top:clamp(6px,.8vw,12px)}
 }
 @media (max-width:700px){
-  .header{background-color:#000}
-  .twitch-section{margin-top:-120px}
+  .header{
+    height:165px;
+    min-height:165px;
+    padding:0 20px;
+    margin-bottom:0;
+    background-color:#000;
+    background-image:linear-gradient(90deg,#0004,#0001,#0004),url('./e2e1003b-f8c4-4441-924c-df430cc634a5.png');
+    background-position:center;
+    background-size:cover;
+    background-repeat:no-repeat;
+    text-align:left;
+  }
+  .twitch-section{margin-top:0}
   .twitch-stream-meta#twitchStreamMetaBottom{margin-bottom:0}
 }
 </style>`;

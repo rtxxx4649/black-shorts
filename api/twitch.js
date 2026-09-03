@@ -124,9 +124,10 @@ export default async function handler(req, res) {
     const logins = [...new Set(streams.map((stream) => stream.user_login).filter(Boolean))];
     const profileMap = new Map();
 
-    if (logins.length) {
+    for (let i = 0; i < logins.length; i += 100) {
+      const batch = logins.slice(i, i + 100);
       const userParams = new URLSearchParams();
-      logins.forEach((login) => userParams.append('login', login));
+      batch.forEach((login) => userParams.append('login', login));
 
       const usersResponse = await fetch(
         `https://api.twitch.tv/helix/users?${userParams.toString()}`,

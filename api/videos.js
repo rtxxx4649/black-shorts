@@ -31,7 +31,6 @@ export default async function handler(req, res) {
         video_id,
         title,
         thumbnail,
-        channel_id,
         channel_title,
         channel_avatar,
         duration,

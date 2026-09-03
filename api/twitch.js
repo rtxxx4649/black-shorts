@@ -85,8 +85,9 @@ async function getRankedStreams(token) {
     cursor = nextCursor;
   }
 
-  streams.sort((a, b) => (b.viewer_count || 0) - (a.viewer_count || 0));
-  cachedStreams = streams;
+  const englishStreams = streams.filter((stream) => stream.language === 'en');
+  englishStreams.sort((a, b) => (b.viewer_count || 0) - (a.viewer_count || 0));
+  cachedStreams = englishStreams;
   streamsUpdatedAt = Date.now();
 
   return cachedStreams;

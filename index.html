@@ -123,15 +123,16 @@ function createTwitchPlayer(name){
  player.addEventListener(Twitch.Player.PLAYING,()=>{try{player.setMuted(audioMode!=='twitch')}catch(e){}});
  player.addEventListener(Twitch.Player.READY,()=>{try{player.setMuted(audioMode!=='twitch');player.play()}catch(e){}});
 }
-async function refreshTwitchPool(){
+async function refreshTwitchPool(resetSeen=false){
  if(twitchPoolRefreshing)return;
  twitchPoolRefreshing=true;
  try{
+  if(resetSeen)seenTwitchStreamers.clear();
   const seen=[...seenTwitchStreamers].join(',');
   const r=await fetch(seen?'/api/twitch?seen='+encodeURIComponent(seen):'/api/twitch',{cache:'no-store'});
   if(!r.ok)throw Error(r.status);
   const d=await r.json();
-  twitchPool=(Array.isArray(d.streams)?d.streams:[]).filter(s=>s&&s.user_login&&!seenTwitchStreamers.has(s.user_login.toLowerCase())).slice(0,100);
+  twitchPool=(Array.isArray(d.streams)?d.streams:[]).filter(s=>s&&s.user_login&&!seenTwitchStreamers.has(s.user_login.toLowerCase())).slice(0,200);
  }catch(e){console.error(e)}
  finally{twitchPoolRefreshing=false}
 }
@@ -155,7 +156,7 @@ document.getElementById('youtubeNextButton').onclick=()=>playRandomYouTubeVideo(
 document.getElementById('twitchNextButton').onclick=async()=>{if(busy)return;busy=true;const b=document.getElementById('twitchNextButton');b.disabled=true;document.getElementById('twitchPlayerArea').innerHTML='<div class="loading">次のTwitch LIVEを読み込み中…</div>';try{await showNextTwitch();applyAudioMode()}finally{busy=false;b.disabled=false}};
 loadYouTubeVideos();
 loadTwitch();
-setInterval(refreshTwitchPool,60000);
+setInterval(()=>refreshTwitchPool(true),60000);
 </script>
 </body>
 </html>

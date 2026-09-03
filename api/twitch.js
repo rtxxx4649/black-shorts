@@ -46,6 +46,7 @@ async function getAppToken() {
 async function fetchStreams(token, cursor = '') {
   const url = new URL('https://api.twitch.tv/helix/streams');
   url.searchParams.set('first', '100');
+  url.searchParams.set('language', 'en');
   if (cursor) url.searchParams.set('after', cursor);
 
   const response = await fetch(url.toString(), {

@@ -7,6 +7,7 @@ let tokenExpiresAt = 0;
 let cachedStreams = [];
 let streamsUpdatedAt = 0;
 const STREAMS_REFRESH_MS = 60_000;
+const MAX_RANKED_STREAMS = 200;
 
 async function getAppToken() {
   if (cachedToken && Date.now() < tokenExpiresAt - 60_000) {
@@ -87,7 +88,7 @@ async function getRankedStreams(token) {
 
   const englishStreams = streams.filter((stream) => stream.language === 'en');
   englishStreams.sort((a, b) => (b.viewer_count || 0) - (a.viewer_count || 0));
-  cachedStreams = englishStreams;
+  cachedStreams = englishStreams.slice(0, MAX_RANKED_STREAMS);
   streamsUpdatedAt = Date.now();
 
   return cachedStreams;
@@ -114,13 +115,11 @@ export default async function handler(req, res) {
         .filter(Boolean)
     );
 
-    const streams = allStreams
-      .filter(
-        (stream) =>
-          stream.user_login &&
-          !seen.has(stream.user_login.toLowerCase())
-      )
-      .slice(0, 100);
+    const streams = allStreams.filter(
+      (stream) =>
+        stream.user_login &&
+        !seen.has(stream.user_login.toLowerCase())
+    );
 
     const logins = [...new Set(streams.map((stream) => stream.user_login).filter(Boolean))];
     const profileMap = new Map();
@@ -166,6 +165,7 @@ export default async function handler(req, res) {
       stream,
       updated_at: streamsUpdatedAt,
       refresh_interval_ms: STREAMS_REFRESH_MS,
+      max_ranked_streams: MAX_RANKED_STREAMS,
     });
   } catch (error) {
     console.error(error);

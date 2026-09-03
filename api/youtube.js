@@ -52,11 +52,16 @@ if (!youtubeResponse.ok) {
 
 const items = Array.isArray(youtubeData.items) ? youtubeData.items : [];
 
+// Enforce Gaming category 20 using the category returned in each video's snippet.
+const gamingItems = items.filter(
+  (item) => String(item.snippet?.categoryId || "") === "20"
+);
+
 // videos.list gives us the channelId, while the channel avatar itself
 // comes from channels.list(snippet). Fetch unique channels in batches.
 const channelIds = [
   ...new Set(
-    items
+    gamingItems
       .map((item) => item.snippet?.channelId)
       .filter(Boolean)
   )
@@ -95,7 +100,7 @@ for (let i = 0; i < channelIds.length; i += 50) {
   }
 }
 
-const gamingPopular = items.map(
+const gamingPopular = gamingItems.map(
   (item) => ({
     region_code: regionCode,
     video_id: item.id,
@@ -113,7 +118,7 @@ const gamingPopular = items.map(
     likes: Number(item.statistics?.likeCount || 0),
     comments: Number(item.statistics?.commentCount || 0),
     published_at: item.snippet?.publishedAt || null,
-    category_id: item.snippet?.categoryId || "20",
+    category_id: "20",
     fetched_at: new Date().toISOString()
   })
 );

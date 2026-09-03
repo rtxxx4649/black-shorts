@@ -51,10 +51,8 @@ html,body{margin:0;padding:0;background:#000;color:#fff;font-family:Arial,sans-s
  </div>
 </section>
 <div class="controls">
- <button id="twitchMuteButton">Mute</button>
  <button id="twitchNextButton">Next Stream</button>
  <button id="audioSwitchButton" class="audio">Twitch audio</button>
- <button id="youtubeMuteButton">Mute</button>
  <button id="youtubeNextButton">Next Video</button>
 </div>
 <script src="https://www.youtube.com/iframe_api"></script>
@@ -65,8 +63,6 @@ let youtubeVideos=[],youtubeUsedIds=new Set(),youtubePlayer=null,youtubeReady=fa
 let player=null,login='',busy=false,audioMode='twitch';
 let twitchPool=[],twitchPoolRefreshing=false;
 const seenTwitchStreamers=new Set();
-const twitchMuteButton=document.getElementById('twitchMuteButton');
-const youtubeMuteButton=document.getElementById('youtubeMuteButton');
 
 function setYouTubeMeta(video){
  const avatar=document.getElementById('youtubeAvatar');
@@ -84,12 +80,12 @@ function applyAudioMode(){
  const button=document.getElementById('audioSwitchButton');
  if(audioMode==='twitch'){
   button.textContent='Twitch audio';
-  if(player)try{player.setMuted(false);twitchMuteButton.textContent='Mute'}catch(e){}
-  if(youtubePlayer)try{youtubePlayer.mute();youtubeMuted=true;youtubeMuteButton.textContent='Unmute'}catch(e){}
+  if(player)try{player.setMuted(false)}catch(e){}
+  if(youtubePlayer)try{youtubePlayer.mute();youtubeMuted=true}catch(e){}
  }else{
   button.textContent='YouTube audio';
-  if(player)try{player.setMuted(true);twitchMuteButton.textContent='Unmute'}catch(e){}
-  if(youtubePlayer)try{youtubePlayer.unMute();youtubeMuted=false;youtubeMuteButton.textContent='Mute'}catch(e){}
+  if(player)try{player.setMuted(true)}catch(e){}
+  if(youtubePlayer)try{youtubePlayer.unMute();youtubeMuted=false}catch(e){}
  }
 }
 async function loadYouTubeVideos(){
@@ -117,17 +113,15 @@ function onYouTubeIframeAPIReady(){
   onStateChange:function(e){if(e.data===YT.PlayerState.ENDED)playRandomYouTubeVideo();}
  }});
 }
-function setTwitchMuteButton(){if(!player)return;try{twitchMuteButton.textContent=player.getMuted()?'Unmute':'Mute'}catch(e){}}
 function createTwitchPlayer(name){
  const area=document.getElementById('twitchPlayerArea');area.innerHTML='';
  const video=document.createElement('div');video.className='twitch-video-frame';area.appendChild(video);
  const chat=document.createElement('iframe');chat.className='twitch-chat-frame';chat.src='https://www.twitch.tv/embed/'+encodeURIComponent(name)+'/chat?parent='+encodeURIComponent(location.hostname)+'&darkpopout';chat.allow='autoplay;fullscreen';area.appendChild(chat);
  if(!window.Twitch||!Twitch.Player)throw Error('Twitch Player API unavailable');
  player=new Twitch.Player(video,{channel:name,width:'100%',height:'100%',autoplay:true,muted:audioMode!=='twitch',parent:[location.hostname]});
- setTwitchMuteButton();
- player.addEventListener(Twitch.Player.PLAY,()=>{try{player.setMuted(audioMode!=='twitch')}catch(e){}setTwitchMuteButton()});
- player.addEventListener(Twitch.Player.PLAYING,()=>{try{player.setMuted(audioMode!=='twitch')}catch(e){}setTwitchMuteButton()});
- player.addEventListener(Twitch.Player.READY,()=>{try{player.setMuted(audioMode!=='twitch');player.play()}catch(e){}setTwitchMuteButton()});
+ player.addEventListener(Twitch.Player.PLAY,()=>{try{player.setMuted(audioMode!=='twitch')}catch(e){}});
+ player.addEventListener(Twitch.Player.PLAYING,()=>{try{player.setMuted(audioMode!=='twitch')}catch(e){}});
+ player.addEventListener(Twitch.Player.READY,()=>{try{player.setMuted(audioMode!=='twitch');player.play()}catch(e){}});
 }
 async function refreshTwitchPool(){
  if(twitchPoolRefreshing)return;
@@ -156,8 +150,6 @@ async function showNextTwitch(){
  return true;
 }
 async function loadTwitch(){await showNextTwitch()}
-twitchMuteButton.onclick=()=>{if(!player)return;try{player.setMuted(!player.getMuted());setTwitchMuteButton()}catch(e){}};
-youtubeMuteButton.onclick=()=>{if(!youtubePlayer)return;try{if(youtubeMuted){youtubePlayer.unMute();youtubeMuted=false;youtubeMuteButton.textContent='Mute'}else{youtubePlayer.mute();youtubeMuted=true;youtubeMuteButton.textContent='Unmute'}}catch(e){}};
 document.getElementById('audioSwitchButton').onclick=()=>{audioMode=audioMode==='twitch'?'youtube':'twitch';applyAudioMode()};
 document.getElementById('youtubeNextButton').onclick=()=>playRandomYouTubeVideo();
 document.getElementById('twitchNextButton').onclick=async()=>{if(busy)return;busy=true;const b=document.getElementById('twitchNextButton');b.disabled=true;document.getElementById('twitchPlayerArea').innerHTML='<div class="loading">次のTwitch LIVEを読み込み中…</div>';try{await showNextTwitch();applyAudioMode()}finally{busy=false;b.disabled=false}};

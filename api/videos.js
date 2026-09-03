@@ -2,6 +2,14 @@ import { neon } from "@neondatabase/serverless";
 
 export default async function handler(req, res) {
   try {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+    if (req.method === "OPTIONS") {
+      return res.status(204).end();
+    }
+
     const regionCode = String(req.query.regionCode || "").toUpperCase();
 
     if (!/^[A-Z]{2}$/.test(regionCode)) {

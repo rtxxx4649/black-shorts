@@ -4,7 +4,6 @@ const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET;
 let cachedToken = null;
 let tokenExpiresAt = 0;
 
-// メモリ上だけで保持する1分キャッシュ。データベース等への保存は行わない。
 let cachedStreams = [];
 let streamsUpdatedAt = 0;
 const STREAMS_REFRESH_MS = 60_000;
@@ -65,7 +64,6 @@ async function getRankedStreams(token) {
   let cursor = '';
   let pagesFetched = 0;
 
-  // 上位から順に取得し、未表示者の補充候補までメモリ上に保持する。
   while (streams.length < 1000 && pagesFetched < 10) {
     const data = await fetchStreams(token, cursor);
     const pageStreams = Array.isArray(data.data) ? data.data : [];
@@ -87,6 +85,14 @@ async function getRankedStreams(token) {
 
 export default async function handler(req, res) {
   try {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+      return res.status(204).end();
+    }
+
     const token = await getAppToken();
     const allStreams = await getRankedStreams(token);
 
@@ -98,7 +104,6 @@ export default async function handler(req, res) {
         .filter(Boolean)
     );
 
-    // 既に表示した配信者を除外し、視聴者数順で最大100人を候補にする。
     const streams = allStreams
       .filter(
         (stream) =>

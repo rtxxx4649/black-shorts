@@ -24,50 +24,46 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Repair YouTube player structure and data endpoints
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import re
-
-          p = Path('index2.html')
-          s = p.read_text(encoding='utf-8')
-
-          old = '<div class="youtube-player" id="youtubePlayerArea"><div class="twitch-loading">YouTube動画を読み込み中…</div></div>'
-          new = '<div class="youtube-player" id="youtubePlayerArea"><div id="youtubePlayerMount"><div class="twitch-loading">YouTube動画を読み込み中…</div></div></div>'
-          if old in s:
-              s = s.replace(old, new, 1)
-
-          s = s.replace("new YT.Player('youtubePlayerArea'", "new YT.Player('youtubePlayerMount'", 1)
-          s = s.replace("width:'100%',height:'100%',videoId:'',", "videoId:'',", 1)
-          s = s.replace("fetch('/api/twitch')", "fetch('/data/twitch.json')")
-          s = s.replace("fetch(\"/api/twitch\")", "fetch(\"/data/twitch.json\")")
-
-          mount_css = '.youtube-player>#youtubePlayerMount{position:relative;width:100%;height:100%;min-width:0;min-height:0}.youtube-player>#youtubePlayerMount iframe{display:block;width:100%!important;height:100%!important;border:0}'
-          marker = '.youtube-player iframe{display:block;width:100%;height:100%;border:0}'
-          if mount_css not in s and marker in s:
-              s = s.replace(marker, marker + mount_css, 1)
-
-          pattern = re.compile(r'<script\s+src=["\']https://www\.youtube\.com/iframe_api["\']>(.*?)</script>', re.S)
-          matches = list(pattern.finditer(s))
-          inline_chunks = [m.group(1) for m in matches if m.group(1).strip()]
-          s = pattern.sub('', s)
-          api_tag = '<script src="https://www.youtube.com/iframe_api"></script>'
-          marker_script = '<script src="https://player.twitch.tv/js/embed/v1.js"></script>'
-          if api_tag not in s:
-              s = s.replace(marker_script, api_tag + marker_script, 1)
-          for chunk in inline_chunks:
-              s = s.replace(marker_script, marker_script + '<script>' + chunk + '</script>', 1)
-
-          p.write_text(s, encoding='utf-8')
-          PY
-
-      - name: Update YouTube snapshot
+      - name: Update YouTube database snapshot
         run: |
           curl --fail --show-error --silent --retry 3 \
             https://black-shorts-rtxxx4649.vercel.app/api/update-all
 
-      - name: Update Twitch snapshot file
+      - name: Build static YouTube snapshots
+        run: |
+          mkdir -p data/youtube
+          python - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          countries = [
+              'US','GB','AU','CA','DE','PH','ES','FR','KR',
+              'IT','VN','TR','IN','BR','ID','JP','MX','TH'
+          ]
+          base = 'https://black-shorts-rtxxx4649.vercel.app/api/videos?regionCode='
+
+          for region in countries:
+              target = Path('data/youtube') / f'{region}.json'
+              raw = subprocess.check_output([
+                  'curl', '--fail', '--show-error', '--silent', '--retry', '3',
+                  f'{base}{region}'
+              ], text=True)
+              data = json.loads(raw)
+              videos = data.get('videos') if isinstance(data, dict) else None
+              if not isinstance(videos, list):
+                  raise SystemExit(f'Invalid YouTube snapshot for {region}')
+              if len(videos) != 50:
+                  raise SystemExit(f'Expected 50 YouTube videos for {region}, got {len(videos)}')
+              target.write_text(json.dumps({
+                  'regionCode': region,
+                  'count': len(videos),
+                  'videos': videos
+              }, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+              print(f'{region}: {len(videos)} videos')
+          PY
+
+      - name: Update Twitch static snapshot
         run: |
           mkdir -p data
           curl --fail --show-error --silent --retry 3 \
@@ -78,21 +74,70 @@ jobs:
           from pathlib import Path
           p = Path('data/twitch.json')
           d = json.loads(p.read_text(encoding='utf-8'))
-          if not isinstance(d, dict) or 'streams' not in d:
+          if not isinstance(d, dict) or not isinstance(d.get('streams'), list):
               raise SystemExit('Invalid Twitch snapshot')
-          if not isinstance(d.get('streams'), list):
-              raise SystemExit('Invalid Twitch streams')
           print('Twitch streams:', len(d['streams']))
           PY
 
-      - name: Commit repaired code and current Twitch snapshot
+      - name: Convert frontend to static snapshot mode
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('index2.html')
+          s = p.read_text(encoding='utf-8')
+
+          s = s.replace(
+              "fetch('/api/videos?regionCode='+c.regionCode)",
+              "fetch('./data/youtube/'+c.regionCode+'.json')"
+          )
+          s = s.replace(
+              "fetch(\"/api/videos?regionCode=\"+c.regionCode)",
+              "fetch('./data/youtube/'+c.regionCode+'.json')"
+          )
+          s = s.replace(
+              "const url=seen?'/api/twitch?seen='+encodeURIComponent(seen):'/api/twitch';",
+              "const url='./data/twitch.json';"
+          )
+          s = s.replace(
+              "const url=seen?\"/api/twitch?seen=\"+encodeURIComponent(seen):\"/api/twitch\";",
+              "const url='./data/twitch.json';"
+          )
+
+          p.write_text(s, encoding='utf-8')
+          Path('index.html').write_text(s, encoding='utf-8')
+          PY
+
+      - name: Validate static frontend
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          for name in ('index.html', 'index2.html'):
+              s = Path(name).read_text(encoding='utf-8')
+              if "fetch('/api/videos" in s or 'fetch("/api/videos' in s:
+                  raise SystemExit(f'{name}: YouTube API endpoint still present')
+              if "'/api/twitch'" in s or '"/api/twitch"' in s:
+                  raise SystemExit(f'{name}: Twitch API endpoint still present')
+              if "./data/youtube/" not in s:
+                  raise SystemExit(f'{name}: YouTube static snapshot path missing')
+              if "./data/twitch.json" not in s:
+                  raise SystemExit(f'{name}: Twitch static snapshot path missing')
+          files = list(Path('data/youtube').glob('*.json'))
+          if len(files) != 18:
+              raise SystemExit(f'Expected 18 YouTube snapshot files, got {len(files)}')
+          print('Validated 18 YouTube snapshots and static frontend files.')
+          PY
+
+      - name: Commit static snapshots and frontend
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index2.html data/twitch.json
+          git add index.html index2.html data/youtube data/twitch.json
           if git diff --cached --quiet; then
-            echo 'No file changes to commit.'
+            echo 'No snapshot changes to commit.'
           else
-            git commit -m 'fix: repair players and refresh current Twitch snapshot'
+            git commit -m 'fix: serve video players from static snapshots'
             git push
           fi

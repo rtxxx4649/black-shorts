@@ -124,3 +124,50 @@ if (!html.includes(desktopTitlePositionMarker)) {
   html = html.slice(0, styleEnd + 8) + desktopHeaderTextPositionCss + html.slice(styleEnd + 8);
   await writeFile(path, html, "utf8");
 }
+
+const playerJoinMarker = "/* player-join-v1 */";
+if (!html.includes(playerJoinMarker)) {
+  const playerJoinCss = `<style>${playerJoinMarker}
+.twitch-section,
+.youtube-section{
+  background:#000!important;
+  margin-top:0!important;
+}
+.twitch-player,
+#youtubePlayerArea{
+  margin-top:0!important;
+  margin-bottom:0!important;
+}
+.twitch-stream-title#twitchStreamTitleBottom,
+.twitch-stream-meta#twitchStreamMetaBottom,
+.youtube-video-title,
+.youtube-video-meta{
+  margin-top:0!important;
+}
+.twitch-stream-meta#twitchStreamMetaBottom{
+  margin-bottom:0!important;
+}
+@media (max-width:700px){
+  .twitch-section,
+  .youtube-section,
+  .twitch-player,
+  #youtubePlayerArea{
+    margin-top:0!important;
+    margin-bottom:0!important;
+  }
+}
+@media (min-width:701px){
+  .twitch-section,
+  .youtube-section,
+  .twitch-player,
+  #youtubePlayerArea{
+    margin-top:0!important;
+    margin-bottom:0!important;
+  }
+}
+</style>`;
+  const styleEnd = html.indexOf("</style>");
+  if (styleEnd === -1) throw new Error("Style closing tag was not found in index2.html");
+  html = html.slice(0, styleEnd + 8) + playerJoinCss + html.slice(styleEnd + 8);
+  await writeFile(path, html, "utf8");
+}

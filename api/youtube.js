@@ -57,11 +57,19 @@ const gamingItems = items.filter(
   (item) => String(item.snippet?.categoryId || "") === "20"
 );
 
+// Keep only videos whose default audio track is explicitly English.
+// Videos without English audio-language metadata are excluded rather than
+// guessing from the title or channel name.
+const englishGamingItems = gamingItems.filter((item) => {
+  const language = String(item.snippet?.defaultAudioLanguage || "").toLowerCase();
+  return language === "en" || language.startsWith("en-");
+});
+
 // videos.list gives us the channelId, while the channel avatar itself
 // comes from channels.list(snippet). Fetch unique channels in batches.
 const channelIds = [
   ...new Set(
-    gamingItems
+    englishGamingItems
       .map((item) => item.snippet?.channelId)
       .filter(Boolean)
   )
@@ -100,7 +108,7 @@ for (let i = 0; i < channelIds.length; i += 50) {
   }
 }
 
-const gamingPopular = gamingItems.map(
+const gamingPopular = englishGamingItems.map(
   (item) => ({
     region_code: regionCode,
     video_id: item.id,

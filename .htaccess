@@ -1,6 +1,0 @@
-RewriteEngine On
-
-# XServer Static has no server-side /api runtime. Forward the existing
-# browser API paths to the Vercel backend while keeping the frontend unchanged.
-RewriteRule ^api/videos$ https://black-shorts-rtxxx4649.vercel.app/api/videos [R=307,L,NE]
-RewriteRule ^api/twitch$ https://black-shorts-rtxxx4649.vercel.app/api/twitch [R=307,L,NE]

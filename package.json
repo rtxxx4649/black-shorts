@@ -1,12 +1,5 @@
 {
+  "private": true,
   "type": "module",
-  "engines": {
-    "node": "22.x"
-  },
-  "scripts": {
-    "build": "node scripts/fix-youtube-meta.js && node scripts/fix-desktop-responsive.js && node scripts/fix-player-compat.js && node scripts/fix-player-fallback.js && node scripts/prepare-static.js"
-  },
-  "dependencies": {
-    "@neondatabase/serverless": "^1.0.2"
-  }
+  "engines": {"node": "22.x"}
 }

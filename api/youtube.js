@@ -52,21 +52,17 @@ if (!youtubeResponse.ok) {
 
 const items = Array.isArray(youtubeData.items) ? youtubeData.items : [];
 
-// Enforce Gaming category 20 using the category returned in each video's snippet.
 const gamingItems = items.filter(
   (item) => String(item.snippet?.categoryId || "") === "20"
 );
 
-// Keep only videos whose default audio track is explicitly English.
-// Videos without English audio-language metadata are excluded rather than
-// guessing from the title or channel name.
 const englishGamingItems = gamingItems.filter((item) => {
   const language = String(item.snippet?.defaultAudioLanguage || "").toLowerCase();
   return language === "en" || language.startsWith("en-");
 });
 
-// videos.list gives us the channelId, while the channel avatar itself
-// comes from channels.list(snippet). Fetch unique channels in batches.
+// channelId is used only in memory to resolve the channel avatar. The
+// production current_videos table does not contain a channel_id column.
 const channelIds = [
   ...new Set(
     englishGamingItems
@@ -118,7 +114,6 @@ const gamingPopular = englishGamingItems.map(
       item.snippet?.thumbnails?.medium?.url ||
       item.snippet?.thumbnails?.default?.url ||
       "",
-    channel_id: item.snippet?.channelId || "",
     channel_title: item.snippet?.channelTitle || "",
     channel_avatar: channelAvatarMap.get(item.snippet?.channelId) || "",
     duration: item.contentDetails?.duration || "",
@@ -145,7 +140,6 @@ for (const video of gamingPopular) {
       video_id,
       title,
       thumbnail,
-      channel_id,
       channel_title,
       channel_avatar,
       duration,
@@ -161,7 +155,6 @@ for (const video of gamingPopular) {
       ${video.video_id},
       ${video.title},
       ${video.thumbnail},
-      ${video.channel_id},
       ${video.channel_title},
       ${video.channel_avatar},
       ${video.duration},

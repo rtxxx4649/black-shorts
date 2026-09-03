@@ -13,18 +13,27 @@ async function getAppToken() {
     return cachedToken;
   }
 
-  const params = new URLSearchParams({
+  if (!TWITCH_CLIENT_ID || !TWITCH_CLIENT_SECRET) {
+    throw new Error('Twitch credentials are not configured');
+  }
+
+  const body = new URLSearchParams({
     client_id: TWITCH_CLIENT_ID,
     client_secret: TWITCH_CLIENT_SECRET,
     grant_type: 'client_credentials',
   });
 
-  const res = await fetch(`https://id.twitch.tv/oauth2/token?${params}`, {
+  const res = await fetch('https://id.twitch.tv/oauth2/token', {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body,
   });
 
   if (!res.ok) {
-    throw new Error(`Twitch token error: ${res.status}`);
+    const errorText = await res.text();
+    throw new Error(`Twitch token error: ${res.status}: ${errorText}`);
   }
 
   const data = await res.json();

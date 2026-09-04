@@ -24,6 +24,29 @@ html,body{margin:0;padding:0;background:#000;color:#fff;font-family:Arial,sans-s
 .controls button:disabled{opacity:.5;cursor:default}
 .controls .audio{grid-column:1/-1;grid-row:2}
 .loading,.error{height:100%;min-height:240px;display:flex;align-items:center;justify-content:center;color:#aaa;text-align:center;padding:20px}
+
+/* Game news carousel: static data, no API/build dependency */
+.game-news-section{width:100%;padding:22px 12px 24px;background:#000;color:#fff}
+.game-news-inner{max-width:1400px;margin:0 auto}
+.game-news-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.game-news-title{margin:0;font-size:22px;font-weight:800;letter-spacing:-.02em}
+.game-news-controls{display:flex;gap:7px}
+.game-news-btn{width:40px;height:40px;border:1px solid #444;border-radius:50%;background:#111;color:#fff;font-size:21px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.game-news-btn:hover{background:#222}
+.game-news-carousel{display:flex;gap:16px;overflow-x:auto;overflow-y:hidden;padding:3px 3px 16px;scroll-snap-type:x mandatory;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;scrollbar-width:none;cursor:grab}
+.game-news-carousel::-webkit-scrollbar{display:none}
+.game-news-carousel.dragging{cursor:grabbing;scroll-behavior:auto;scroll-snap-type:none}
+.game-news-card{flex:0 0 min(390px,86vw);scroll-snap-align:start;background:#fff;color:#111;border:1px solid #ddd;border-radius:16px;overflow:hidden;box-shadow:0 5px 18px rgba(0,0,0,.25)}
+.game-news-video{width:100%;aspect-ratio:16/9;background:#000}
+.game-news-video iframe{display:block;width:100%;height:100%;border:0}
+.game-news-content{padding:16px 17px 18px}
+.game-news-card h3{margin:0 0 10px;font-size:21px;line-height:1.25;font-weight:800}
+.game-news-desc{margin:0 0 15px;font-size:14px;line-height:1.62;color:#444}
+.game-news-desc span{display:block}
+.game-news-link{display:inline-flex;align-items:center;gap:5px;color:#111;font-size:14px;font-weight:700;text-decoration:none}
+.game-news-link:hover{text-decoration:underline}
+.game-news-hint{text-align:center;margin-top:2px;color:#888;font-size:12px}
+@media(min-width:701px){.game-news-hint{display:none}}
 @media(max-width:700px){
  .twitch-player{display:block;height:56.25vw}
  .twitch-chat-frame{display:none}
@@ -35,10 +58,109 @@ html,body{margin:0;padding:0;background:#000;color:#fff;font-family:Arial,sans-s
  .source{right:12px;font-size:12px}
  .controls{grid-template-columns:1fr 1fr}
  .controls button{height:46px;font-size:15px}
+ .game-news-section{padding:18px 10px 20px}
+ .game-news-title{font-size:20px}
+ .game-news-card{flex-basis:86vw;border-radius:15px}
+ .game-news-content{padding:15px 16px 17px}
+ .game-news-card h3{font-size:20px}
+ .game-news-desc{font-size:13.5px}
 }
 </style>
 </head>
 <body>
+
+<section id="gameNewsSection" class="game-news-section">
+ <div class="game-news-inner">
+  <div class="game-news-header">
+   <h2 class="game-news-title">Latest Game News</h2>
+   <div class="game-news-controls">
+    <button id="gameNewsPrev" class="game-news-btn" type="button" aria-label="Previous game news">←</button>
+    <button id="gameNewsNext" class="game-news-btn" type="button" aria-label="Next game news">→</button>
+   </div>
+  </div>
+
+  <div id="gameNewsCarousel" class="game-news-carousel">
+
+   <article class="game-news-card">
+    <div class="game-news-video">
+     <iframe src="https://www.youtube.com/embed/pfqrUIGUC1o" title="Final Fantasy VII Revelation - Release Date Reveal Trailer | PS5 Games" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+    <div class="game-news-content">
+     <h3>Final Fantasy VII Revelation</h3>
+     <p class="game-news-desc">
+      <span>The final chapter of the Final Fantasy VII remake project takes Cloud and his companions across a vast world.</span>
+      <span>Players can take to the skies aboard the Highwind, explore freely, and fight alongside a fully assembled party.</span>
+      <span>Its evolved combat system combines real-time action with strategic commands for a larger and deeper finale.</span>
+     </p>
+     <a class="game-news-link" href="https://www.square-enix.com/ffvii/en-us/games/revelation/" target="_blank" rel="noopener noreferrer">🔗 Official Website</a>
+    </div>
+   </article>
+
+   <article class="game-news-card">
+    <div class="game-news-video">
+     <iframe src="https://www.youtube.com/embed/mg4Phb2Aulg" title="Maneater 2 - Announcement Trailer | PS5 Games" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+    <div class="game-news-content">
+     <h3>Maneater 2</h3>
+     <p class="game-news-desc">
+      <span>Become a man-eating bull shark unleashed inside Neptune’s Kingdom, an ultra-luxury private island theme park.</span>
+      <span>Eat, explore, and evolve through a dangerous aquatic sandbox while searching for a way to escape.</span>
+      <span>The sequel expands the original shark-powered action with a larger world and new possibilities built in Unreal Engine 5.</span>
+     </p>
+     <a class="game-news-link" href="https://store.playstation.com/en-us/concept/10016990" target="_blank" rel="noopener noreferrer">🔗 Official Website</a>
+    </div>
+   </article>
+
+   <article class="game-news-card">
+    <div class="game-news-video">
+     <iframe src="https://www.youtube.com/embed/6OGoAWzNV2s" title="Metro 2039 - PlayStation 5 Pro Gameplay Reveal | PS5 Games" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+    <div class="game-news-content">
+     <h3>Metro 2039</h3>
+     <p class="game-news-desc">
+      <span>Return to post-apocalyptic Moscow as the mysterious Stranger in a new single-player Metro story.</span>
+      <span>Exploration, survival, stealth, and brutal first-person combat are woven into a tense journey above and below ground.</span>
+      <span>The latest PS5 Pro footage showcases 60fps gameplay with ray tracing in the devastated world of 2039.</span>
+     </p>
+     <a class="game-news-link" href="https://www.deepsilver.com/gb/games/metro2039" target="_blank" rel="noopener noreferrer">🔗 Official Website</a>
+    </div>
+   </article>
+
+   <article class="game-news-card">
+    <div class="game-news-video">
+     <iframe src="https://www.youtube.com/embed/SodbU0PEVH4" title="Monster Hunter Wilds - Ascendance 1st Trailer | PS5 Games" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+    <div class="game-news-content">
+     <h3>Monster Hunter Wilds: Ascendance</h3>
+     <p class="game-news-desc">
+      <span>This massive expansion continues the story with new monsters, a new locale, and Master Rank hunting content.</span>
+      <span>Hunters will explore the Skybound Eyrie and face new threats including the Elder Dragon Gundoraja.</span>
+      <span>The new Boost Bracer enhances the combat abilities of all 14 weapon types with powerful new actions.</span>
+     </p>
+     <a class="game-news-link" href="https://www.monsterhunter.com/wilds-ascendance/" target="_blank" rel="noopener noreferrer">🔗 Official Website</a>
+    </div>
+   </article>
+
+   <article class="game-news-card">
+    <div class="game-news-video">
+     <iframe src="https://www.youtube.com/embed/-wjhso38sAY" title="Until Dawn 2 - Choice & Consequence Pre-Order Trailer | PS5 Games" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+    <div class="game-news-content">
+     <h3>Until Dawn 2</h3>
+     <p class="game-news-desc">
+      <span>Follow the Dead True ghost-hunting crew as they travel to the remote Akishima Island chasing their next viral story.</span>
+      <span>Your decisions shape relationships, events, and who survives as the supernatural mystery unfolds.</span>
+      <span>The new standalone horror adventure combines cinematic storytelling with meaningful choices and multiple outcomes.</span>
+     </p>
+     <a class="game-news-link" href="https://firesprite.com/games/untildawn2" target="_blank" rel="noopener noreferrer">🔗 Official Website</a>
+    </div>
+   </article>
+
+  </div>
+  <div class="game-news-hint">← Swipe or drag to explore →</div>
+ </div>
+</section>
+
 <section id="twitchSection">
  <div id="twitchPlayerArea" class="player twitch-player"><div class="loading">Twitch LIVEを読み込み中…</div></div>
  <div class="info">
@@ -170,6 +292,24 @@ document.getElementById('twitchNextButton').onclick=async()=>{if(busy)return;bus
 loadYouTubeVideos();
 loadTwitch();
 setInterval(()=>refreshTwitchPool(true),600000);
+</script>
+<script>
+(function(){
+ const carousel=document.getElementById('gameNewsCarousel');
+ const prev=document.getElementById('gameNewsPrev');
+ const next=document.getElementById('gameNewsNext');
+ if(!carousel||!prev||!next)return;
+ const amount=()=>{const card=carousel.querySelector('.game-news-card');if(!card)return 0;const gap=parseFloat(getComputedStyle(carousel).gap)||0;return card.getBoundingClientRect().width+gap};
+ prev.addEventListener('click',()=>carousel.scrollBy({left:-amount(),behavior:'smooth'}));
+ next.addEventListener('click',()=>carousel.scrollBy({left:amount(),behavior:'smooth'}));
+ let dragging=false,startX=0,startLeft=0;
+ carousel.addEventListener('mousedown',e=>{dragging=true;startX=e.pageX;startLeft=carousel.scrollLeft;carousel.classList.add('dragging')});
+ window.addEventListener('mouseup',()=>{dragging=false;carousel.classList.remove('dragging')});
+ carousel.addEventListener('mouseleave',()=>{dragging=false;carousel.classList.remove('dragging')});
+ carousel.addEventListener('mousemove',e=>{if(!dragging)return;e.preventDefault();carousel.scrollLeft=startLeft-(e.pageX-startX)});
+ prev.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')e.preventDefault()});
+ next.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')e.preventDefault()});
+})();
 </script>
 </body>
 </html>

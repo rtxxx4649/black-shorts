@@ -7,7 +7,7 @@ let tokenExpiresAt = 0;
 let cachedStreams = [];
 let streamsUpdatedAt = 0;
 const STREAMS_REFRESH_MS = 60_000;
-const MAX_RANKED_STREAMS = 150;
+const MAX_RANKED_STREAMS = 100;
 
 async function getAppToken() {
   if (cachedToken && Date.now() < tokenExpiresAt - 60_000) return cachedToken;

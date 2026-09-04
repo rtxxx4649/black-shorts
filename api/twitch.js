@@ -71,14 +71,24 @@ async function getRankedStreams(token) {
     return cachedStreams;
   }
 
-  const streams = [];
+  const gameStreams = [];
   let cursor = '';
   let pagesFetched = 0;
 
-  while (streams.length < 1000 && pagesFetched < 10) {
+  // Twitch's Get Streams endpoint is globally ranked by viewer count.
+  // Keep paging until we have 200 streams with a game/category set.
+  while (gameStreams.length < MAX_RANKED_STREAMS) {
     const data = await fetchStreams(token, cursor);
     const pageStreams = Array.isArray(data.data) ? data.data : [];
-    streams.push(...pageStreams);
+
+    gameStreams.push(
+      ...pageStreams.filter(
+        (stream) =>
+          stream.game_id &&
+          stream.game_name &&
+          stream.language === 'en'
+      )
+    );
 
     const nextCursor = data.pagination?.cursor || '';
     pagesFetched += 1;
@@ -87,9 +97,8 @@ async function getRankedStreams(token) {
     cursor = nextCursor;
   }
 
-  const englishStreams = streams.filter((stream) => stream.language === 'en');
-  englishStreams.sort((a, b) => (b.viewer_count || 0) - (a.viewer_count || 0));
-  cachedStreams = englishStreams.slice(0, MAX_RANKED_STREAMS);
+  gameStreams.sort((a, b) => (b.viewer_count || 0) - (a.viewer_count || 0));
+  cachedStreams = gameStreams.slice(0, MAX_RANKED_STREAMS);
   streamsUpdatedAt = Date.now();
 
   return cachedStreams;

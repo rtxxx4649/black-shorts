@@ -7,36 +7,14 @@ let tokenExpiresAt = 0;
 let cachedStreams = [];
 let streamsUpdatedAt = 0;
 const STREAMS_REFRESH_MS = 60_000;
-const MAX_RANKED_STREAMS = 200;
+const MAX_RANKED_STREAMS = 150;
 
 async function getAppToken() {
-  if (cachedToken && Date.now() < tokenExpiresAt - 60_000) {
-    return cachedToken;
-  }
-
-  if (!TWITCH_CLIENT_ID || !TWITCH_CLIENT_SECRET) {
-    throw new Error('Twitch credentials are not configured');
-  }
-
-  const body = new URLSearchParams({
-    client_id: TWITCH_CLIENT_ID,
-    client_secret: TWITCH_CLIENT_SECRET,
-    grant_type: 'client_credentials',
-  });
-
-  const res = await fetch('https://id.twitch.tv/oauth2/token', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body,
-  });
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Twitch token error: ${res.status}: ${errorText}`);
-  }
-
+  if (cachedToken && Date.now() < tokenExpiresAt - 60_000) return cachedToken;
+  if (!TWITCH_CLIENT_ID || !TWITCH_CLIENT_SECRET) throw new Error('Twitch credentials are not configured');
+  const body = new URLSearchParams({ client_id: TWITCH_CLIENT_ID, client_secret: TWITCH_CLIENT_SECRET, grant_type: 'client_credentials' });
+  const res = await fetch('https://id.twitch.tv/oauth2/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
+  if (!res.ok) throw new Error(`Twitch token error: ${res.status}: ${await res.text()}`);
   const data = await res.json();
   cachedToken = data.access_token;
   tokenExpiresAt = Date.now() + data.expires_in * 1000;
@@ -48,59 +26,26 @@ async function fetchStreams(token, cursor = '') {
   url.searchParams.set('first', '100');
   url.searchParams.set('language', 'en');
   if (cursor) url.searchParams.set('after', cursor);
-
-  const response = await fetch(url.toString(), {
-    headers: {
-      'Client-ID': TWITCH_CLIENT_ID,
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`Twitch streams error: ${response.status}`);
-  }
-
+  const response = await fetch(url.toString(), { headers: { 'Client-ID': TWITCH_CLIENT_ID, Authorization: `Bearer ${token}` } });
+  if (!response.ok) throw new Error(`Twitch streams error: ${response.status}`);
   return response.json();
 }
 
 async function getRankedStreams(token) {
-  if (
-    cachedStreams.length &&
-    Date.now() - streamsUpdatedAt < STREAMS_REFRESH_MS
-  ) {
-    return cachedStreams;
-  }
-
+  if (cachedStreams.length && Date.now() - streamsUpdatedAt < STREAMS_REFRESH_MS) return cachedStreams;
   const gameStreams = [];
   let cursor = '';
-  let pagesFetched = 0;
-
-  // Twitch's Get Streams endpoint is globally ranked by viewer count.
-  // Keep paging until we have 200 streams with a game/category set.
   while (gameStreams.length < MAX_RANKED_STREAMS) {
     const data = await fetchStreams(token, cursor);
     const pageStreams = Array.isArray(data.data) ? data.data : [];
-
-    gameStreams.push(
-      ...pageStreams.filter(
-        (stream) =>
-          stream.game_id &&
-          stream.game_name &&
-          stream.language === 'en'
-      )
-    );
-
+    gameStreams.push(...pageStreams.filter((stream) => stream.game_id && stream.game_name && stream.language === 'en'));
     const nextCursor = data.pagination?.cursor || '';
-    pagesFetched += 1;
-
     if (!nextCursor || pageStreams.length === 0) break;
     cursor = nextCursor;
   }
-
   gameStreams.sort((a, b) => (b.viewer_count || 0) - (a.viewer_count || 0));
   cachedStreams = gameStreams.slice(0, MAX_RANKED_STREAMS);
   streamsUpdatedAt = Date.now();
-
   return cachedStreams;
 }
 
@@ -109,75 +54,28 @@ export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-    if (req.method === 'OPTIONS') {
-      return res.status(204).end();
-    }
-
+    if (req.method === 'OPTIONS') return res.status(204).end();
     const token = await getAppToken();
     const allStreams = await getRankedStreams(token);
-
     const seenParam = typeof req.query?.seen === 'string' ? req.query.seen : '';
-    const seen = new Set(
-      seenParam
-        .split(',')
-        .map((login) => login.trim().toLowerCase())
-        .filter(Boolean)
-    );
-
-    const streams = allStreams.filter(
-      (stream) =>
-        stream.user_login &&
-        !seen.has(stream.user_login.toLowerCase())
-    );
-
+    const seen = new Set(seenParam.split(',').map((login) => login.trim().toLowerCase()).filter(Boolean));
+    const streams = allStreams.filter((stream) => stream.user_login && !seen.has(stream.user_login.toLowerCase()));
     const logins = [...new Set(streams.map((stream) => stream.user_login).filter(Boolean))];
     const profileMap = new Map();
-
     for (let i = 0; i < logins.length; i += 100) {
       const batch = logins.slice(i, i + 100);
       const userParams = new URLSearchParams();
       batch.forEach((login) => userParams.append('login', login));
-
-      const usersResponse = await fetch(
-        `https://api.twitch.tv/helix/users?${userParams.toString()}`,
-        {
-          headers: {
-            'Client-ID': TWITCH_CLIENT_ID,
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!usersResponse.ok) {
-        throw new Error(`Twitch users error: ${usersResponse.status}`);
-      }
-
+      const usersResponse = await fetch(`https://api.twitch.tv/helix/users?${userParams.toString()}`, { headers: { 'Client-ID': TWITCH_CLIENT_ID, Authorization: `Bearer ${token}` } });
+      if (!usersResponse.ok) throw new Error(`Twitch users error: ${usersResponse.status}`);
       const usersData = await usersResponse.json();
       const users = Array.isArray(usersData.data) ? usersData.data : [];
-      users.forEach((user) => {
-        if (user.login) {
-          profileMap.set(user.login, user.profile_image_url || '');
-        }
-      });
+      users.forEach((user) => { if (user.login) profileMap.set(user.login, user.profile_image_url || ''); });
     }
-
-    const enrichedStreams = streams.map((stream) => ({
-      ...stream,
-      profile_image_url: profileMap.get(stream.user_login) || '',
-    }));
-
+    const enrichedStreams = streams.map((stream) => ({ ...stream, profile_image_url: profileMap.get(stream.user_login) || '' }));
     const stream = enrichedStreams[0] || null;
-
     res.setHeader('Cache-Control', 'no-store');
-    res.status(200).json({
-      streams: enrichedStreams,
-      live: !!stream,
-      stream,
-      updated_at: streamsUpdatedAt,
-      refresh_interval_ms: STREAMS_REFRESH_MS,
-      max_ranked_streams: MAX_RANKED_STREAMS,
-    });
+    res.status(200).json({ streams: enrichedStreams, live: !!stream, stream, updated_at: streamsUpdatedAt, refresh_interval_ms: STREAMS_REFRESH_MS, max_ranked_streams: MAX_RANKED_STREAMS });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to fetch Twitch streams' });

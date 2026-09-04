@@ -45,8 +45,6 @@ html,body{margin:0;padding:0;background:#000;color:#fff;font-family:Arial,sans-s
 .game-news-desc span{display:block}
 .game-news-link{display:inline-flex;align-items:center;gap:5px;color:#111;font-size:14px;font-weight:700;text-decoration:none}
 .game-news-link:hover{text-decoration:underline}
-.game-news-hint{text-align:center;margin-top:2px;color:#888;font-size:12px}
-@media(min-width:701px){.game-news-hint{display:none}}
 @media(max-width:700px){
  .twitch-player{display:block;height:56.25vw}
  .twitch-chat-frame{display:none}
@@ -73,10 +71,6 @@ html,body{margin:0;padding:0;background:#000;color:#fff;font-family:Arial,sans-s
  <div class="game-news-inner">
   <div class="game-news-header">
    <h2 class="game-news-title">Latest Game News</h2>
-   <div class="game-news-controls">
-    <button id="gameNewsPrev" class="game-news-btn" type="button" aria-label="Previous game news">←</button>
-    <button id="gameNewsNext" class="game-news-btn" type="button" aria-label="Next game news">→</button>
-   </div>
   </div>
 
   <div id="gameNewsCarousel" class="game-news-carousel">
@@ -157,7 +151,11 @@ html,body{margin:0;padding:0;background:#000;color:#fff;font-family:Arial,sans-s
    </article>
 
   </div>
-  <div class="game-news-hint">← Swipe or drag to explore →</div>
+
+  <div class="game-news-controls">
+   <button id="gameNewsPrev" class="game-news-btn" type="button" aria-label="Previous game news">←</button>
+   <button id="gameNewsNext" class="game-news-btn" type="button" aria-label="Next game news">→</button>
+  </div>
  </div>
 </section>
 
